@@ -1,15 +1,17 @@
 import React from "react";
 import HomePage from "../Pages/HomePage";
 import ProblemsPage from "../Pages/ProblemsPage";
+import Submit from "../Pages/Submit";
 import BlogsPage from "../Pages/BlogsPage";
 import RankingPage from "../Pages/RankingPage";
+import LoginPage from "../Pages/Auth/LoginPage";
+import RegisterPage from "../Pages/Auth/RegisterPage";
 
-import GeneralPage from "../Pages/LearningPathSource/GeneralPage";
 import BronzePage from "../Pages/LearningPathSource/BronzePage";
 import SilverPage from "../Pages/LearningPathSource/SilverPage";
 import GoldPage from "../Pages/LearningPathSource/GoldPage";
 import PlatinumPage from "../Pages/LearningPathSource/PlatinumPage";
-import AdvancedPage from "../Pages/LearningPathSource/AdvancedPage";
+import ModuleContentDetail from "../Pages/LearningPathSource/ModuleContentDetail";
 
 const MainRouter = ({ activePage }) => {
     switch (activePage) {
@@ -17,12 +19,16 @@ const MainRouter = ({ activePage }) => {
             return <HomePage />;
         case "problems":
             return <ProblemsPage />;
+        case "submit":
+            return <Submit />;
         case "blogs":
             return <BlogsPage />;
         case "ranking":
             return <RankingPage />;
-        case "general":
-            return <GeneralPage />;
+        case "login":
+            return <LoginPage />;
+        case "register":
+            return <RegisterPage />;
         case "bronze":
             return <BronzePage />;
         case "silver":
@@ -31,11 +37,12 @@ const MainRouter = ({ activePage }) => {
             return <GoldPage />;
         case "platinum":
             return <PlatinumPage />;
-        case "advanced":
-            return <AdvancedPage />;
+        case "module-content":
+            const moduleId = window.location.pathname.split("/").pop();
+            return <ModuleContentDetail moduleId={moduleId} />;
         default:
             return <HomePage />;
-      }
+    }
 };
 
 export default MainRouter;
