@@ -13,6 +13,8 @@ import GoldPage from "../Pages/LearningPathSource/GoldPage";
 import PlatinumPage from "../Pages/LearningPathSource/PlatinumPage";
 import ModuleContentDetail from "../Pages/LearningPathSource/ModuleContentDetail";
 
+import ProfessorLayout from "../Pages/Professor/Layout/ProfessorLayout";
+
 const MainRouter = ({ activePage }) => {
     switch (activePage) {
         case "home":
@@ -40,6 +42,8 @@ const MainRouter = ({ activePage }) => {
         case "module-content":
             const moduleId = window.location.pathname.split("/").pop();
             return <ModuleContentDetail moduleId={moduleId} />;
+        case "professor":
+            return <ProfessorLayout />;
         default:
             return <HomePage />;
     }
