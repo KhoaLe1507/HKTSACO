@@ -18,6 +18,7 @@ import ModuleContentDetail from "./Pages/LearningPathSource/ModuleContentDetail"
 
 import Submission from "./Pages/Submission";
 import ProfessorLayout from "./Pages/Professor/Layout/ProfessorLayout";
+import AdminLayout from "./Pages/Admin/Layout/AdminLayout";
 
 const App = () => {
   return (
@@ -41,6 +42,7 @@ const App = () => {
             <Route path="/:level/module/:moduleId" element={<ModuleContentDetail />} />
             <Route path="/submission" element={<Submission />} />
             <Route path="/professor/*" element={<ProfessorLayout />} />
+            <Route path="/admin/*" element={<AdminLayout />} />
           </Routes>
         </main>
 

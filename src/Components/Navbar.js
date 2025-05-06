@@ -18,6 +18,13 @@ const Navbar = () => {
     }
   };
 
+  const handleProfileMenu = (action) => {
+    setDropdownOpen(false);
+    if (action === "profile") navigate("/profile");
+    else if (action === "edit") navigate("/profile/edit");
+    else if (action === "logout") navigate("/logout");
+  };
+
   return (
     <nav className="fixed top-0 w-full h-16 bg-black text-white px-6 py-4 flex justify-between items-center z-50">
       {/* Logo */}
@@ -26,6 +33,16 @@ const Navbar = () => {
         alt="HKTOJ logo"
         className="h-16 object-contain absolute top-0 left-0"
       />
+
+      {/* Nút Home cho Professor */}
+      {role === "Professor" && (
+        <button
+          onClick={() => navigate("/professor")}
+          className="ml-20 px-4 py-2 bg-blue-500 text-white rounded font-bold hover:bg-blue-600"
+        >
+          Home
+        </button>
+      )}
 
       {/* Content ẩn nếu là Professor */}
       {role !== "Professor" && (
@@ -77,17 +94,28 @@ const Navbar = () => {
             👤
           </button>
           {dropdownOpen && (
-            <div className="absolute right-0 mt-2 w-32 bg-white text-black rounded shadow z-10">
-              {["Student", "Professor", "Admin"].map((r) => (
-                <div
-                  key={r}
-                  className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
-                  onClick={() => handleRoleChange(r)}
-                >
-                  {r}
+            <>
+              {/* Menu chọn role */}
+              <div className="absolute right-0 mt-2 w-32 bg-white text-black rounded shadow z-20">
+                { ["Student", "Professor", "Admin"].map((r) => (
+                  <div
+                    key={r}
+                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                    onClick={() => handleRoleChange(r)}
+                  >
+                    {r}
+                  </div>
+                ))}
+              </div>
+              {/* Nếu là Professor thì hiện thêm menu profile */}
+              {role === "Professor" && (
+                <div className="absolute right-36 mt-2 w-40 bg-white text-black rounded shadow z-10">
+                  <div className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleProfileMenu("profile")}>My Profile</div>
+                  <div className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleProfileMenu("edit")}>Edit Profile</div>
+                  <div className="px-4 py-2 hover:bg-gray-200 cursor-pointer" onClick={() => handleProfileMenu("logout")}>Logout</div>
                 </div>
-              ))}
-            </div>
+              )}
+            </>
           )}
         </div>
 

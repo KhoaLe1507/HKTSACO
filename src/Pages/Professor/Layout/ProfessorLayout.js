@@ -22,6 +22,9 @@ import EditBlog from "../Blogs/EditBlog";
 import AllLearningPath from "../LearningPath/AllLearningPath";
 import EditModule from "../LearningPath/EditModule";
 import AddModuleContent from "../LearningPath/AddModuleContent";
+import EditMyModuleContent from "../LearningPath/EditMyModuleContent";
+import ModuleContentDetail from "../LearningPath/ModuleContentDetail";
+import EditModuleContent from "../LearningPath/EditModuleContent";
 
 const ProfessorLayout = () => {
   return (
@@ -48,8 +51,11 @@ const ProfessorLayout = () => {
 
           {/* Learning Path */}
           <Route path="sections" element={<AllLearningPath />} />
+          <Route path="my-module-content" element={<EditMyModuleContent />} />
           <Route path="modules/:id/edit" element={<EditModule />} />
           <Route path="modules/:id/add-content" element={<AddModuleContent />} />
+          <Route path="modules/content/:id" element={<ModuleContentDetail />} />
+          <Route path="modules/content/:id/edit" element={<EditModuleContent />} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/professor" />} />
