@@ -46,9 +46,9 @@ const BronzePage = () => {
   ];
 
   return (
-    <div className="text-white">
+    <div className="text-black">
       {/* Header */}
-      <Section className="bg-[#a64d16] text-white text-center py-10">
+      <Section className="bg-[#99480c] text-black text-center py-10"> 
         <h1 className="text-5xl font-extrabold mb-6">Bronze</h1>
         <p className="text-lg max-w-3xl mx-auto">
           The topics below are not exhaustive for this division. <br />
@@ -62,7 +62,7 @@ const BronzePage = () => {
           { title: "Modules Progress", completed: 0, inProgress: 0, skipped: 0, notStarted: 12 },
           { title: "Problems Progress", completed: 0, inProgress: 0, skipped: 0, notStarted: 99 },
         ].map(({ title, completed, inProgress, skipped, notStarted }, idx) => (
-          <div key={idx} className="bg-[#0f172a] p-6 rounded-xl w-full md:w-[480px] shadow-lg text-center">
+          <div key={idx} className="bg-[#0f172a] text-white p-6 rounded-xl w-full md:w-[480px] shadow-lg text-center">
             <h3 className="text-2xl font-semibold mb-6">{title}</h3>
             <div className="flex justify-between mb-6">
               {[

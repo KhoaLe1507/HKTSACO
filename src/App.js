@@ -23,10 +23,10 @@ import AdminLayout from "./Pages/Admin/Layout/AdminLayout";
 const App = () => {
   return (
     <BrowserRouter>
-      <div className="bg-black min-h-screen text-white font-[Inter] flex flex-col justify-between">
+      <div className="bg-white min-h-screen text-gray-800 font-[Inter] flex flex-col justify-between">
         <Navbar />
 
-        <main className="mt-20 p-6 space-y-8 flex-grow mb-20">
+        <main className="mt-20 p-6 space-y-8 flex-grow mb-20 animate-fadeIn">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/problems" element={<ProblemsPage />} />

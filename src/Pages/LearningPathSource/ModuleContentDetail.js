@@ -152,9 +152,9 @@ const ModuleContentDetail = () => {
       .find(([key]) => key === moduleId)?.[1] || "Module Not Found";
 
   return (
-    <div className="text-white flex">
+    <div className="text-black flex">
       {/* Sidebar */}
-      <div className="w-[300px] bg-[#1e293b] p-4 border-r border-gray-600 min-h-screen">
+      <div className="w-[300px] bg-white p-4 border-r border-gray-600 min-h-screen">
         <h2 className="text-xl font-bold mb-4 capitalize">
           Learning Path ({level})
         </h2>
