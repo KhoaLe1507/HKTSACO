@@ -17,14 +17,16 @@ import PlatinumPage from "./Pages/LearningPathSource/PlatinumPage";
 import ModuleContentDetail from "./Pages/LearningPathSource/ModuleContentDetail";
 
 import Submission from "./Pages/Submission";
+import ProfessorLayout from "./Pages/Professor/Layout/ProfessorLayout";
+import AdminLayout from "./Pages/Admin/Layout/AdminLayout";
 
 const App = () => {
   return (
     <BrowserRouter>
-      <div className="bg-black min-h-screen text-white font-[Inter] flex flex-col justify-between">
+      <div className="bg-white min-h-screen text-gray-800 font-[Inter] flex flex-col justify-between">
         <Navbar />
 
-        <main className="mt-20 p-6 space-y-8 flex-grow mb-20">
+        <main className="mt-20 p-6 space-y-8 flex-grow mb-20 animate-fadeIn">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/problems" element={<ProblemsPage />} />
@@ -39,6 +41,8 @@ const App = () => {
             <Route path="/platinum" element={<PlatinumPage />} />
             <Route path="/:level/module/:moduleId" element={<ModuleContentDetail />} />
             <Route path="/submission" element={<Submission />} />
+            <Route path="/professor/*" element={<ProfessorLayout />} />
+            <Route path="/admin/*" element={<AdminLayout />} />
           </Routes>
         </main>
 

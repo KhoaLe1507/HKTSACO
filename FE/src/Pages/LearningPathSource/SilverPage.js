@@ -48,7 +48,7 @@ const SilverPage = () => {
   ];
 
   return (
-    <div className="text-white">
+    <div className="text-black">
       {/* Header Section */}
       <Section className="bg-[#64748b] text-white text-center py-10">
         <h1 className="text-5xl font-extrabold mb-6">Silver</h1>
@@ -64,7 +64,7 @@ const SilverPage = () => {
           { title: "Modules Progress", completed: 0, inProgress: 0, skipped: 0, notStarted: 12 },
           { title: "Problems Progress", completed: 0, inProgress: 0, skipped: 0, notStarted: 88 },
         ].map(({ title, completed, inProgress, skipped, notStarted }, idx) => (
-          <div key={idx} className="bg-[#0f172a] p-6 rounded-xl w-full md:w-[480px] shadow-lg text-center">
+          <div key={idx} className="bg-[#0f172a] text-white p-6 rounded-xl w-full md:w-[480px] shadow-lg text-center">
             <h3 className="text-2xl font-semibold mb-6">{title}</h3>
             <div className="flex justify-between mb-6">
               {[

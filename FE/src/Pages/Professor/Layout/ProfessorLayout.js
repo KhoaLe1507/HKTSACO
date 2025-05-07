@@ -22,12 +22,15 @@ import EditBlog from "../Blogs/EditBlog";
 import AllLearningPath from "../LearningPath/AllLearningPath";
 import EditModule from "../LearningPath/EditModule";
 import AddModuleContent from "../LearningPath/AddModuleContent";
+import EditMyModuleContent from "../LearningPath/EditMyModuleContent";
+import ModuleContentDetail from "../LearningPath/ModuleContentDetail";
+import EditModuleContent from "../LearningPath/EditModuleContent";
 
 const ProfessorLayout = () => {
   return (
     <div className="flex bg-[#0f1f3b] text-white min-h-screen">
       <Sidebar />
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-6 overflow-y-auto ml-64">
         <Routes>
           {/* Dashboard */}
           <Route path="" element={<ProfessorHomePage />} />
@@ -48,8 +51,11 @@ const ProfessorLayout = () => {
 
           {/* Learning Path */}
           <Route path="sections" element={<AllLearningPath />} />
+          <Route path="my-module-content" element={<EditMyModuleContent />} />
           <Route path="modules/:id/edit" element={<EditModule />} />
           <Route path="modules/:id/add-content" element={<AddModuleContent />} />
+          <Route path="modules/content/:id" element={<ModuleContentDetail />} />
+          <Route path="modules/content/:id/edit" element={<EditModuleContent />} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/professor" />} />
