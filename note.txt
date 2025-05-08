@@ -3,3 +3,5 @@ Tab Problem chỉnh lại bố cục các bài tập giống trên usaco
 blogs làm như 28tech
 ranking chưa cần hỉnh gì
 contact us bỏ cái QR donate
+
+bg-[#0f1f3b]

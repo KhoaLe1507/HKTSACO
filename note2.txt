@@ -1,0 +1,8 @@
+- nhận dữ liệu từ BE có định dạng là json làm cách nào để hiển thị nó ra
+- hãy thử gửi một mẫu kết quả trả về từ 1 lần gọi tới Judge0 để tôi test việc hiển thị lên màn hình
+- khi click vào test case thì nó hiển thị ra 3 dòng input, my output, right answer output 
+- Khi nó là time limit exceeded hoặc out of memory thì dòng thứ 3 thay vì hiển thị right answer output thì nó hiển thị là time limit exceeded hoặc là out of memory
+
+
+
+- hãy chỉnh lại giao diện của file này sao cho thật là đẹp, thật bắt mắt người xem, có thêm animation

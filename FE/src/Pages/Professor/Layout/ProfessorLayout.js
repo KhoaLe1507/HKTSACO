@@ -5,7 +5,8 @@ import Sidebar from "./Sidebar";
 import ProfessorHomePage from "../Dashboard/ProfessorHomePage";
 
 // Problems
-import AllProblem from "../Problems/AllProblem";
+// import AllProblem from "../Problems/AllProblem";
+import ProblemsPage from '../../ProblemsPage';
 import AddProblem from "../Problems/AddProblem";
 import EditProblem from "../Problems/EditProblem";
 import ProblemDetail from "../Problems/ProblemDetail";
@@ -28,7 +29,7 @@ import EditModuleContent from "../LearningPath/EditModuleContent";
 
 const ProfessorLayout = () => {
   return (
-    <div className="flex bg-[#0f1f3b] text-white min-h-screen">
+    <div className="flex bg-white text-white min-h-screen">
       <Sidebar />
       <div className="flex-1 p-6 overflow-y-auto ml-64">
         <Routes>
@@ -36,7 +37,8 @@ const ProfessorLayout = () => {
           <Route path="" element={<ProfessorHomePage />} />
 
           {/* Problems */}
-          <Route path="problems" element={<AllProblem />} />
+          {/* <Route path="problems" element={<AllProblem />} /> */}
+          <Route path="problems" element={<ProblemsPage />} />
           <Route path="problems/add" element={<AddProblem />} />
           <Route path="problems/:id" element={<ProblemDetail />} />
           <Route path="problems/:id/edit" element={<EditProblem />} />

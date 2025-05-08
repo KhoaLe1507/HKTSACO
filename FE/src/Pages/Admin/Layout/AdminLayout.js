@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { Outlet, useNavigate, Routes, Route } from "react-router-dom";
-import AllProblem from '../AllProblem';
-import AddProblem from '../AddProblem';
+// import AllProblem from '../AllProblem';
+import ProblemsPage from '../../ProblemsPage';
+// import AddProblem from '../AddProblem';
+import AddProblem from '../../Professor/Problems/AddProblem';
 import AllLearningPath from '../AllLearningPath';
 import AddAndEditLearningPath from '../AddAndEditLearningPath';
 import ListSection from '../ListSection';
@@ -136,7 +138,9 @@ const AdminLayout = () => {
         <div className="pt-20 px-8">
           <Routes>
             <Route index element={<AdminHome />} />
-            <Route path="problems" element={<AllProblem />} />
+            {/* <Route path="problems" element={<AllProblem />} /> */}
+            <Route path="problems" element={<ProblemsPage />} />
+            {/* <Route path="problems/add" element={<AddProblem />} /> */}
             <Route path="problems/add" element={<AddProblem />} />
             <Route path="learning-path/bronze" element={<AllLearningPath section='bronze' />} />
             <Route path="learning-path/silver" element={<AllLearningPath section='silver' />} />

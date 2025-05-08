@@ -1,7 +1,11 @@
 import React from "react";
 import HomePage from "../Pages/HomePage";
+
 import ProblemsPage from "../Pages/ProblemsPage";
+import ProblemDetails from "../Pages/ProblemDetails";
 import Submit from "../Pages/Submit";
+import Submission from "../Pages/Submission";
+
 import BlogsPage from "../Pages/BlogsPage";
 import RankingPage from "../Pages/RankingPage";
 import LoginPage from "../Pages/Auth/LoginPage";
@@ -21,8 +25,12 @@ const MainRouter = ({ activePage }) => {
             return <HomePage />;
         case "problems":
             return <ProblemsPage />;
+        case "problem-details":
+            return <ProblemDetails />;
         case "submit":
             return <Submit />;
+        case "submission":
+            return <Submission />;
         case "blogs":
             return <BlogsPage />;
         case "ranking":

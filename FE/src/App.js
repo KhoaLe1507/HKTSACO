@@ -3,8 +3,12 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import HomePage from "./Pages/HomePage";
+
 import ProblemsPage from "./Pages/ProblemsPage";
+import ProblemDetails from "./Pages/ProblemDetail";
 import Submit from "./Pages/Submit";
+import Submission from "./Pages/Submission";
+
 import BlogsPage from "./Pages/BlogsPage";
 import RankingPage from "./Pages/RankingPage";
 import LoginPage from "./Pages/Auth/LoginPage";
@@ -16,7 +20,6 @@ import GoldPage from "./Pages/LearningPathSource/GoldPage";
 import PlatinumPage from "./Pages/LearningPathSource/PlatinumPage";
 import ModuleContentDetail from "./Pages/LearningPathSource/ModuleContentDetail";
 
-import Submission from "./Pages/Submission";
 import ProfessorLayout from "./Pages/Professor/Layout/ProfessorLayout";
 import AdminLayout from "./Pages/Admin/Layout/AdminLayout";
 
@@ -30,7 +33,9 @@ const App = () => {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/problems" element={<ProblemsPage />} />
+            <Route path="/problem-details" element={<ProblemDetails />} />
             <Route path="/submit" element={<Submit />} /> 
+            <Route path="/submission" element={<Submission />} />
             <Route path="/blogs" element={<BlogsPage />} />
             <Route path="/ranking" element={<RankingPage />} />
             <Route path="/login" element={<LoginPage />} />
@@ -40,7 +45,6 @@ const App = () => {
             <Route path="/gold" element={<GoldPage />} />
             <Route path="/platinum" element={<PlatinumPage />} />
             <Route path="/:level/module/:moduleId" element={<ModuleContentDetail />} />
-            <Route path="/submission" element={<Submission />} />
             <Route path="/professor/*" element={<ProfessorLayout />} />
             <Route path="/admin/*" element={<AdminLayout />} />
           </Routes>
