@@ -24,14 +24,17 @@ const RankingPage = () => {
     });
 
   return (
-    <Section title="Ranking" className="bg-[#0f1f3b] text-white px-4 py-6">
+    <Section title="Ranking" className="bg-white text-black px-4 py-6">
       {/* Tabs */}
       <div className="flex space-x-4 mb-4">
         {["Student", "Professor"].map((tab) => (
           <button
             key={tab}
-            className={`px-4 py-2 rounded ${activeTab === tab ? "bg-white text-black" : "bg-gray-700"
-              }`}
+            className={`px-4 py-2 rounded font-semibold border ${
+              activeTab === tab
+                ? "bg-blue-600 text-white"
+                : "bg-white text-black border-gray-300 hover:bg-gray-100"
+            }`}
             onClick={() => setActiveTab(tab)}
           >
             {tab}
@@ -40,27 +43,27 @@ const RankingPage = () => {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-4">
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
         <input
           type="text"
           placeholder="Search Username or Full Name"
           value={searchUser}
           onChange={(e) => setSearchUser(e.target.value)}
-          className="text-black px-3 py-1.5 text-sm rounded w-full sm:w-64"
+          className="border border-gray-300 px-3 py-2 rounded w-full sm:w-64"
         />
         <input
           type="text"
           placeholder="Search School"
           value={searchSchool}
           onChange={(e) => setSearchSchool(e.target.value)}
-          className="text-black px-3 py-1.5 text-sm rounded w-full sm:w-64"
+          className="border border-gray-300 px-3 py-2 rounded w-full sm:w-64"
         />
         <button
           onClick={() => {
             const element = document.getElementById("my-rank");
             if (element) element.scrollIntoView({ behavior: "smooth" });
           }}
-          className="bg-green-600 px-4 py-2 rounded text-white"
+          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
         >
           View My Rank
         </button>
@@ -68,14 +71,14 @@ const RankingPage = () => {
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="w-full table-auto border-collapse">
-          <thead>
-            <tr className="bg-gray-800 text-left">
-              <th className="px-3 py-2">Rank</th>
-              <th className="px-3 py-2">Username</th>
-              <th className="px-3 py-2">Full Name</th>
-              <th className="px-3 py-2">School</th>
-              <th className="px-3 py-2">
+        <table className="w-full table-auto border border-gray-300 text-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="px-3 py-2 text-left">Rank</th>
+              <th className="px-3 py-2 text-left">Username</th>
+              <th className="px-3 py-2 text-left">Full Name</th>
+              <th className="px-3 py-2 text-left">School</th>
+              <th className="px-3 py-2 text-left">
                 {activeTab === "Student" ? "Problem Solved" : "Problem Created"}
               </th>
             </tr>
@@ -86,15 +89,15 @@ const RankingPage = () => {
                 index === 0
                   ? "🥇"
                   : index === 1
-                    ? "🥈"
-                    : index === 2
-                      ? "🥉"
-                      : index + 1;
+                  ? "🥈"
+                  : index === 2
+                  ? "🥉"
+                  : index + 1;
               return (
                 <tr
                   key={user.username}
                   id={user.username === "my_account" ? "my-rank" : undefined}
-                  className="border-b border-gray-600 hover:bg-gray-700"
+                  className="border-b border-gray-200 hover:bg-gray-50"
                 >
                   <td className="px-3 py-2">{rankIcon}</td>
                   <td className="px-3 py-2">{user.username}</td>

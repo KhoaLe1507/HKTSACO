@@ -15,7 +15,7 @@ import SubmissionOfProblem from "../Problems/SubmissionOfProblem";
 
 // Blogs
 import AllBlog from "../Blogs/AllBlog";
-import MyBlog from "../Blogs/MyBlog";
+import MyBlog from '../../User/MyBlog';
 import AddBlog from "../Blogs/AddBlog";
 import EditBlog from "../Blogs/EditBlog";
 
