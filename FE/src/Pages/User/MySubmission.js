@@ -78,7 +78,10 @@ const MySubmission = () => {
                                 </td>
                                 <td className="px-3 py-2 border">
                                     <button
-                                        onClick={() => navigate(`/submission/${s.id}`)}
+                                        onClick={() => {
+                                            localStorage.setItem("lastSubmission", JSON.stringify(s)); // ✅ lưu trước khi chuyển
+                                            navigate(`/submission/${s.id}`);
+                                        }}
                                         className="text-blue-600 hover:underline"
                                     >
                                         Details

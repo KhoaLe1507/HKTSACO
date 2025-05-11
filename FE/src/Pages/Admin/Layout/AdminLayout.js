@@ -35,7 +35,20 @@ const Sidebar = () => {
   const toggle = (key) => setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
   return (
     <aside className="sidebar w-64 h-screen flex flex-col py-6 px-4 shadow-lg text-sm fixed top-0 left-0 z-50 overflow-y-auto animate-slideIn">
+      {/* Logo */}
+      <div className="flex justify-center mb-4">
+        <img src="/Image/Logo.jpg" alt="HKTOJ Logo" className="h-14 object-contain" />
+      </div>
+
       <div className="mb-8 text-2xl font-extrabold text-center text-navy tracking-wide uppercase">ADMIN DASHBOARD</div>
+      {/* Nút Home */}
+      <div
+        onClick={() => navigate("/admin/home")}
+        className="cursor-pointer flex items-center gap-2 px-2 py-1 rounded hover:bg-blue-100 text-navy font-semibold mb-3"
+      >
+        <span className="text-lg">🏠</span>
+        <span>Home</span>
+      </div>
       <nav className="flex-1 space-y-4 text-navy">
         {/* Module Problem */}
         <div className="transform hover:scale-105 transition-transform duration-300">
@@ -137,7 +150,7 @@ const AdminLayout = () => {
         <Topbar />
         <div className="pt-20 px-8">
           <Routes>
-            <Route index element={<AdminHome />} />
+            <Route path="home" element={<AdminHome />} />
             {/* <Route path="problems" element={<AllProblem />} /> */}
             <Route path="problems" element={<ProblemsPage />} />
             {/* <Route path="problems/add" element={<AddProblem />} /> */}
