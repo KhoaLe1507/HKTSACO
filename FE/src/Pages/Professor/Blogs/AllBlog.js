@@ -11,9 +11,9 @@ const AllBlog = () => {
       <h2 className="text-2xl font-bold mb-4">Tất cả Blog</h2>
       <div className="space-y-4">
         {mockBlogs.map((blog) => (
-          <div key={blog.id} className="bg-[#1a2a47] p-4 rounded shadow">
+          <div key={blog.id} className="bg-gray text-black p-4 rounded shadow">
             <div className="font-semibold text-lg">{blog.title}</div>
-            <div className="text-sm text-gray-400 mb-2">Tác giả: {blog.author} | Ngày: {blog.date}</div>
+            <div className="text-sm text-gray-500 mb-2">Tác giả: {blog.author} | Ngày: {blog.date}</div>
           </div>
         ))}
       </div>

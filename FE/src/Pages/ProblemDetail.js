@@ -216,17 +216,6 @@ const ProblemDetails = () => {
               </svg>
               Submit Solution
             </button>
-            
-            <button
-              className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors flex items-center"
-              onClick={() => window.navigator.clipboard.writeText(window.location.href)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" />
-                <path d="M6 3a2 2 0 00-2 2v11a2 2 0 002 2h8a2 2 0 002-2V5a2 2 0 00-2-2 3 3 0 01-3 3H9a3 3 0 01-3-3z" />
-              </svg>
-              Share
-            </button>
           </div>
           
           <button

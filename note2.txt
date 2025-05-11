@@ -5,4 +5,4 @@
 
 
 
-- hãy chỉnh lại giao diện của file này sao cho thật là đẹp, thật bắt mắt người xem, có thêm animation
+- Hãy chỉnh lại giao diện của code này sao cho thật là đẹp, thật bắt mắt người xem, có thêm animation

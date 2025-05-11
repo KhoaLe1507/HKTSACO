@@ -26,7 +26,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="navbar w-full px-8 py-3 flex items-center justify-between shadow-md">
+    <nav className="navbar fixed top-0 left-0 z-50 w-full px-8 py-3 flex items-center justify-between shadow-md bg-white">
       <div className="flex items-center gap-2 h-16">
         {/* Logo sát trái, căn giữa dọc */}
         <img src="/Image/Logo.jpg" alt="HKTOJ logo" className="h-14 object-contain ml-0" style={{marginLeft: 0}} />
