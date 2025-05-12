@@ -2,11 +2,14 @@ import React, { useState } from "react";
 import { Outlet, useNavigate, Routes, Route } from "react-router-dom";
 // import AllProblem from '../AllProblem';
 import ProblemsPage from '../../ProblemsPage';
+import ProblemDetail from '../../ProblemDetail';
+
 // import AddProblem from '../AddProblem';
 import AddProblem from '../../Professor/Problems/AddProblem';
-import AllLearningPath from '../AllLearningPath';
+
+import LearningPathPage from "../../LearningPathSource/LearningPathPage";
 import AddAndEditLearningPath from '../AddAndEditLearningPath';
-import ListSection from '../ListSection';
+
 import AddSection from '../AddSection';
 import EditSection from '../EditSection';
 import ListModule from '../ListModule';
@@ -64,21 +67,38 @@ const Sidebar = () => {
           )}
         </div>
         {/* Learning Path */}
+        {/* Learning Path */}
         <div className="transform hover:scale-105 transition-transform duration-300">
-          <div className="font-semibold mb-1 text-navy cursor-pointer flex items-center" onClick={() => setLearningPathDropdown((v) => !v)}>
-            <span className="text-blue-600">🗺️</span> <span className="ml-2">Learning Path</span>
-            <span className="ml-2 transition-transform duration-300">{learningPathDropdown ? '▼' : '▶'}</span>
+          <div className="font-semibold mb-1 text-navy cursor-pointer flex items-center">
+            <span className="text-blue-600">🗺️</span>
+            <span className="ml-2">Learning Path</span>
           </div>
-          {learningPathDropdown && (
-            <div className="ml-4 space-y-1 animate-fadeIn">
-              <button onClick={() => navigate('/admin/learning-path/bronze')} className="block hover:text-blue-500 transition-all duration-300">Bronze</button>
-              <button onClick={() => navigate('/admin/learning-path/silver')} className="block hover:text-blue-500 transition-all duration-300">Silver</button>
-              <button onClick={() => navigate('/admin/learning-path/gold')} className="block hover:text-blue-500 transition-all duration-300">Gold</button>
-              <button onClick={() => navigate('/admin/learning-path/platinum')} className="block hover:text-blue-500 transition-all duration-300">Platinum</button>
-              <button onClick={() => navigate('/admin/learning-path/add-edit')} className="block hover:text-blue-500 transition-all duration-300 mt-2">Add and Edit Learning Path</button>
-            </div>
-          )}
+          <div className="ml-4 mt-2">
+            <select
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value !== "") navigate(`/admin/learning-path/${value}`);                  ;
+              }}
+              defaultValue=""
+              className="w-full p-2 rounded bg-white border border-gray-300 shadow-sm cursor-pointer"
+            >
+              <option value="" disabled>Choose Level</option>
+              <option value="bronze">Bronze</option>
+              <option value="silver">Silver</option>
+              <option value="gold">Gold</option>
+              <option value="platinum">Platinum</option>
+            </select>
+
+            <button
+              onClick={() => navigate('/admin/learning-path/add-edit')}
+              className="block w-full mt-2 text-left text-blue-600 hover:underline text-sm"
+            >
+              ➕ Add & Edit Learning Path
+            </button>
+          </div>
         </div>
+
+
         {/* Blog */}
         <div className="transform hover:scale-105 transition-transform duration-300">
           <div className="font-semibold mb-1 text-navy cursor-pointer flex items-center" onClick={() => toggle('blog')}>
@@ -153,12 +173,12 @@ const AdminLayout = () => {
             <Route path="home" element={<AdminHome />} />
             {/* <Route path="problems" element={<AllProblem />} /> */}
             <Route path="problems" element={<ProblemsPage />} />
+            <Route path="problem/:id/details" element={<ProblemDetail />} />
+
             {/* <Route path="problems/add" element={<AddProblem />} /> */}
             <Route path="problems/add" element={<AddProblem />} />
-            <Route path="learning-path/bronze" element={<AllLearningPath section='bronze' />} />
-            <Route path="learning-path/silver" element={<AllLearningPath section='silver' />} />
-            <Route path="learning-path/gold" element={<AllLearningPath section='gold' />} />
-            <Route path="learning-path/platinum" element={<AllLearningPath section='platinum' />} />
+            <Route path="learning-path/:level" element={<LearningPathPage />} />
+
             <Route path="learning-path/add-edit" element={<AddAndEditLearningPath />} />
             <Route path="section/add" element={<AddSection />} />
             <Route path="section/:id/edit" element={<EditSection />} />

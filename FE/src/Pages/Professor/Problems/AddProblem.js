@@ -249,7 +249,7 @@ const AddProblem = () => {
             </div>
 
             {showConstraintForm && (
-              <div className="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <div className="mb-6 bg-white p-4 rounded-lg border border-blue-200">
                 <h3 className="font-semibold text-blue-800 mb-3">New Constraint</h3>
                 
                 <div className="mb-3">

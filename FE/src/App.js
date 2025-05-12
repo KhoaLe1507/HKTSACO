@@ -16,6 +16,7 @@ import LoginPage from "./Pages/Auth/LoginPage";
 import RegisterPage from "./Pages/Auth/RegisterPage";
 
 import LearningPathPage from "./Pages/LearningPathSource/LearningPathPage";
+
 import ModuleContentDetail from "./Pages/LearningPathSource/ModuleContentDetail";
 
 import ProfessorLayout from "./Pages/Professor/Layout/ProfessorLayout";
@@ -54,6 +55,7 @@ const App = () => {
               
               {/* Learning Path Routes */}
               <Route path="/:level" element={<LearningPathPage />} />
+              <Route path="/learning-path/:level" element={<LearningPathPage />} />
               <Route path="/:level/module/:moduleId" element={<ModuleContentDetail />} />
               
               <Route path="/professor/*" element={<ProfessorLayout />} />

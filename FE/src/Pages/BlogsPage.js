@@ -29,6 +29,21 @@ const BlogsPage = () => {
 
   return (
     <div className="text-black px-4 py-6 max-w-3xl mx-auto bg-white">
+
+      {/* Header + Add Blog */}
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold text-indigo-600"></h1>
+        {isLoggedIn && (
+          <button
+            onClick={() => window.location.href = "/blogs/add"}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-all text-sm"
+          >
+            ➕ Add Blog
+          </button>
+        )}
+      </div>
+
+
       {/* Search bar */}
       <input
         type="text"

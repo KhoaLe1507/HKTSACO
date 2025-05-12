@@ -21,7 +21,7 @@ const AddSection = () => {
 
   return (
     <div className="max-w-xl mx-auto bg-white p-6 rounded shadow text-black animate-fadeIn">
-      <h2 className="text-2xl font-bold mb-4">Add Section</h2>
+      <h2 className="text-2xl font-bold mb-4">Add Learning Path</h2>
       <form className="space-y-4">
         <input name="name" value={form.name} onChange={handleChange} placeholder="Name" className="w-full p-2 rounded border bg-gray-50" required />
         <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" className="w-full p-2 rounded border bg-gray-50" />
@@ -35,7 +35,7 @@ const AddSection = () => {
         </div>
         {(form.position === 'behind' || form.position === 'front') && (
           <div>
-            <label className="block mb-1 font-semibold">Section:</label>
+            <label className="block mb-1 font-semibold">Learning Path:</label>
             <select name="relativeSection" value={form.relativeSection} onChange={handleChange} className="w-full p-2 rounded border bg-gray-50">
               <option value="">Select Section</option>
               {mockSections.map(s => <option key={s.id} value={s.id}>{s.name}</option>)}

@@ -13,30 +13,36 @@ const ListModuleContent = () => {
   const contents = mockContents.filter(c => c.moduleId === Number(moduleId));
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md animate-fadeIn">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">Module Contents in Module {moduleId}</h2>
+    <div className="bg-white p-6 rounded-lg shadow-md animate-fadeIn max-w-3xl mx-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-navy">Module Contents in Module {moduleId}</h2>
         <button
-          className="bg-blue-600 text-white px-4 py-2 rounded font-bold hover:bg-blue-700 transition-all"
+          className="bg-blue-600 text-white px-4 py-2 rounded font-semibold hover:bg-blue-700 transition-all"
           onClick={() => navigate('/admin/module-content/add')}
         >
-          Add Module Content
+          ➕ Add Module Content
         </button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+      <div className="space-y-4">
         {contents.map((content) => (
           <div
             key={content.id}
-            className="flex items-center justify-between p-4 rounded shadow border bg-gray-50 cursor-pointer"
-            onClick={() => navigate(`/module-content/${content.id}`)}
+            onClick={() => navigate(`/module-content/${content.id}`)} // đến trang chi tiết
+            className="bg-gradient-to-r from-gray-100 to-gray-200 p-5 rounded-xl shadow hover:scale-[1.02] transition-transform cursor-pointer relative"
           >
-            <span className="font-bold text-lg">{content.title}</span>
-            <button
-              className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500 transition-all"
-              onClick={e => { e.stopPropagation(); navigate(`/admin/module-content/${content.id}/edit`); }}
-            >
-              Edit
-            </button>
+            <div className="absolute top-2 right-4">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/admin/module-content/${content.id}/edit`);
+                }}
+                className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500 font-medium text-sm shadow"
+              >
+                ✏️ Edit
+              </button>
+            </div>
+            <h3 className="text-lg font-bold text-navy">{content.title}</h3>
           </div>
         ))}
       </div>
@@ -44,4 +50,4 @@ const ListModuleContent = () => {
   );
 };
 
-export default ListModuleContent; 
+export default ListModuleContent;
