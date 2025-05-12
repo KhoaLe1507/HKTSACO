@@ -70,24 +70,28 @@ const Sidebar = () => {
 
         {/* Learning Path */}
         <div className="transform hover:scale-105 transition-transform duration-300">
-          <div
-            className="font-semibold mb-1 text-navy cursor-pointer flex items-center"
-            onClick={() => toggle("roadmap")}
-          >
+          <div className="font-semibold mb-1 text-navy cursor-pointer flex items-center">
             <span className="text-blue-600">🗺️</span>
             <span className="ml-2">Learning Path</span>
-            <span className="ml-2 transition-transform duration-300">
-              {open.roadmap ? "▼" : "▶"}
-            </span>
           </div>
-          {open.roadmap && (
-            <div className="ml-4 space-y-1 animate-fadeIn">
-              <NavLink to="/professor/learning-path" className={linkClass}>
-                All Learning Path
-              </NavLink>
-            </div>
-          )}
+          <div className="ml-4 mt-2">
+            <select
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value !== "") navigate(`/professor/learning-path/${value}`);
+              }}
+              defaultValue=""
+              className="w-full p-2 rounded bg-white border border-gray-300 shadow-sm cursor-pointer"
+            >
+              <option value="" disabled>Choose Level</option>
+              <option value="bronze">Bronze</option>
+              <option value="silver">Silver</option>
+              <option value="gold">Gold</option>
+              <option value="platinum">Platinum</option>
+            </select>
+          </div>
         </div>
+
 
         {/* Blog */}
         <div className="transform hover:scale-105 transition-transform duration-300">

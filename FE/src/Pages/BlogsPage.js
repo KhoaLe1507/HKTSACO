@@ -2,9 +2,9 @@ import React, { useState, useContext } from "react";
 import blogs from "../Data/BlogsData";
 import { AuthContext } from "../Context/AuthContext";
 
-const BlogsPage = () => {
-  const { isLoggedIn, role } = useContext(AuthContext);
-  const currentUsername = role || "Guest";
+const BlogsPage = () => { 
+  const { isLoggedIn, role, username } = useContext(AuthContext);
+  const currentUsername = username || "Guest"; // username chính là authorID
 
   const [searchText, setSearchText] = useState("");
   const [filterDate, setFilterDate] = useState("");
@@ -115,6 +115,14 @@ const BlogsPage = () => {
 
             {/* View + Comment Toggle */}
             <div className="flex justify-between text-sm text-gray-600 mt-2">
+              {blog.authorID === currentUsername && (
+                <button
+                  onClick={() => window.location.href = `/blogs/edit/${blog.id}`}
+                  className="text-yellow-600 hover:underline ml-4"
+                >
+                  ✏️ Edit
+                </button>
+              )}
               <span>👁 {blog.views?.toLocaleString() ?? "0"} views</span>
               <button
                 onClick={() =>

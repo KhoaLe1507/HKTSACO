@@ -18,8 +18,10 @@ import EditModule from '../EditModule';
 import ListModuleContent from '../ListModuleContent';
 import AddModuleContent from '../AddModuleContent';
 import EditModuleContent from '../EditModuleContent';
-import AllBlog from '../AllBlog';
+
+import BlogsPage from '../../BlogsPage';
 import AddBlog from '../AddBlog';
+
 import AllAccount from '../AllAccount';
 import AddAccount from '../AddAccount';
 import ProfileDetail from '../ProfileDetail';
@@ -188,8 +190,10 @@ const AdminLayout = () => {
             <Route path="module/:moduleId/contents" element={<ListModuleContent />} />
             <Route path="module-content/add" element={<AddModuleContent />} />
             <Route path="module-content/:id/edit" element={<EditModuleContent />} />
-            <Route path="blogs" element={<AllBlog />} />
+
+            <Route path="blogs" element={<BlogsPage />} />
             <Route path="blogs/add" element={<AddBlog />} />
+
             <Route path="accounts" element={<AllAccount />} />
             <Route path="accounts/add" element={<AddAccount />} />
             <Route path="profile/:id" element={<ProfileDetail />} />

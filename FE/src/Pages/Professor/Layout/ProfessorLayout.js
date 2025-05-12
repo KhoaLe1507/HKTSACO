@@ -14,13 +14,13 @@ import MyProblem from "../Problems/MyProblem";
 import SubmissionOfProblem from "../Problems/SubmissionOfProblem";
 
 // Blogs
-import AllBlog from "../Blogs/AllBlog";
+import BlogsPage from '../../BlogsPage';
 import MyBlog from '../../User/MyBlog';
 import AddBlog from "../Blogs/AddBlog";
 import EditBlog from "../Blogs/EditBlog";
 
 // Learning Path
-import AllLearningPath from "../LearningPath/AllLearningPath";
+import LearningPathPage from '../../LearningPathSource/LearningPathPage';
 import EditModule from "../LearningPath/EditModule";
 import AddModuleContent from "../LearningPath/AddModuleContent";
 import EditMyModuleContent from "../LearningPath/EditMyModuleContent";
@@ -46,13 +46,13 @@ const ProfessorLayout = () => {
           <Route path="my-problems" element={<MyProblem />} />
 
           {/* Blogs */}
-          <Route path="blogs" element={<AllBlog />} />
+          <Route path="blogs" element={<BlogsPage />} />
           <Route path="blogs/add" element={<AddBlog />} />
           <Route path="my-blogs" element={<MyBlog />} />
           <Route path="blogs/:id/edit" element={<EditBlog />} />
 
           {/* Learning Path */}
-          <Route path="sections" element={<AllLearningPath />} />
+          <Route path="learning-path/:level" element={<LearningPathPage />} />
           <Route path="my-module-content" element={<EditMyModuleContent />} />
           <Route path="modules/:id/edit" element={<EditModule />} />
           <Route path="modules/:id/add-content" element={<AddModuleContent />} />

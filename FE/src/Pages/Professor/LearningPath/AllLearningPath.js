@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const currentAuthorID = "profA";
+const sectionNames = ["Bronze", "Silver", "Gold", "Platinum"];
 const allSections = {
   Bronze: [
     {
@@ -173,37 +174,35 @@ const allSections = {
   ]
 };
 
-const sectionNames = ["Bronze", "Silver", "Gold", "Platinum"];
-
 const AllLearningPath = () => {
   const [selectedSection, setSelectedSection] = useState("Bronze");
   const navigate = useNavigate();
   const sections = allSections[selectedSection];
+
   return (
-    <div className="text-white">
-      <h2 className="text-2xl font-bold mb-6">All Learning Path</h2>
-      <div className="flex gap-4 mb-8">
-        {sectionNames.map(name => (
-          <button
-            key={name}
-            onClick={() => setSelectedSection(name)}
-            className={`px-4 py-2 rounded font-bold border-2 ${selectedSection === name ? "bg-yellow-400 text-black border-yellow-400" : "bg-[#22345c] text-white border-[#22345c]"}`}
-          >
-            {name}
-          </button>
-        ))}
+    <div className="text-white px-8 py-6">
+      <div className="mb-6 flex justify-between items-center">
+        <h2 className="text-2xl font-bold">All Learning Path</h2>
+        <select
+          value={selectedSection}
+          onChange={(e) => setSelectedSection(e.target.value)}
+          className="p-2 rounded bg-white text-black border border-gray-300 shadow-sm"
+        >
+          <option value="" disabled>Select Level</option>
+          {sectionNames.map((name) => (
+            <option key={name} value={name}>{name}</option>
+          ))}
+        </select>
       </div>
+
       <div className="px-8">
         {sections.map((section, i) => (
           <div key={i} className="flex justify-center mb-16">
             <div className="flex w-full max-w-5xl">
-              {/* Left column: Category name */}
               <div className="w-1/2 flex justify-end pr-8">
                 <h4 className="text-2xl font-bold text-right">{section.category}</h4>
               </div>
-              {/* Right column: Modules list */}
               <div className="w-1/2 relative pl-8">
-                {/* Vertical line */}
                 <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-gray-600"></div>
                 <div className="space-y-6">
                   {section.modules.map((mod, j) => (
