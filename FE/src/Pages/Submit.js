@@ -44,18 +44,18 @@ const Submit = () => {
       borderColor: "border-red-500"
     },
     {
-        id: "python",
-        name: "Python",
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 255" className="h-6 w-6" fill="none">
-            <path fill="#3776AB" d="M127.9 0c-10.3.1-20.2.9-29.3 2.3-25.9 3.8-30.6 11.7-30.6 26.3v19.3h61.2v7.3H47c-14.8 0-27.8 8.9-31.9 26.1-4.7 19.5-4.9 31.7 0 52.2 3.6 15.4 12.3 26.1 27.1 26.1h17.6v-23.3c0-16.8 14.6-31.5 31.4-31.5h62.5c14.1 0 25.7-11.6 25.7-25.7V30.6c0-13.5-11-24.7-25.7-26.4-10.1-1.1-20.5-1.8-30.8-1.7zM92.2 20.8c5.2 0 9.5 4.3 9.5 9.6s-4.3 9.6-9.5 9.6-9.5-4.3-9.5-9.6 4.2-9.6 9.5-9.6z"/>
-            <path fill="#FFC331" d="M128.1 255c10.3-.1 20.2-.9 29.3-2.3 25.9-3.8 30.6-11.7 30.6-26.3v-19.3h-61.2v-7.3H209c14.8 0 27.8-8.9 31.9-26.1 4.7-19.5 4.9-31.7 0-52.2-3.6-15.4-12.3-26.1-27.1-26.1h-17.6v23.3c0 16.8-14.6 31.5-31.4 31.5h-62.5c-14.1 0-25.7 11.6-25.7 25.7v66.3c0 13.5 11 24.7 25.7 26.4 10.1 1.1 20.5 1.8 30.8 1.7zM163.8 234.2c-5.2 0-9.5-4.3-9.5-9.6s4.3-9.6 9.5-9.6 9.5 4.3 9.5 9.6-4.2 9.6-9.5 9.6z"/>
-          </svg>
-        ),
-        bgColor: "bg-yellow-50",
-        selectedBgColor: "bg-yellow-100",
-        borderColor: "border-yellow-500"
-      }
+      id: "python",
+      name: "Python",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 255" className="h-6 w-6" fill="none">
+          <path fill="#3776AB" d="M127.9 0c-10.3.1-20.2.9-29.3 2.3-25.9 3.8-30.6 11.7-30.6 26.3v19.3h61.2v7.3H47c-14.8 0-27.8 8.9-31.9 26.1-4.7 19.5-4.9 31.7 0 52.2 3.6 15.4 12.3 26.1 27.1 26.1h17.6v-23.3c0-16.8 14.6-31.5 31.4-31.5h62.5c14.1 0 25.7-11.6 25.7-25.7V30.6c0-13.5-11-24.7-25.7-26.4-10.1-1.1-20.5-1.8-30.8-1.7zM92.2 20.8c5.2 0 9.5 4.3 9.5 9.6s-4.3 9.6-9.5 9.6-9.5-4.3-9.5-9.6 4.2-9.6 9.5-9.6z" />
+          <path fill="#FFC331" d="M128.1 255c10.3-.1 20.2-.9 29.3-2.3 25.9-3.8 30.6-11.7 30.6-26.3v-19.3h-61.2v-7.3H209c14.8 0 27.8-8.9 31.9-26.1 4.7-19.5 4.9-31.7 0-52.2-3.6-15.4-12.3-26.1-27.1-26.1h-17.6v23.3c0 16.8-14.6 31.5-31.4 31.5h-62.5c-14.1 0-25.7 11.6-25.7 25.7v66.3c0 13.5 11 24.7 25.7 26.4 10.1 1.1 20.5 1.8 30.8 1.7zM163.8 234.2c-5.2 0-9.5-4.3-9.5-9.6s4.3-9.6 9.5-9.6 9.5 4.3 9.5 9.6-4.2 9.6-9.5 9.6z" />
+        </svg>
+      ),
+      bgColor: "bg-yellow-50",
+      selectedBgColor: "bg-yellow-100",
+      borderColor: "border-yellow-500"
+    }
   ];
 
   // Default starter code templates
@@ -92,23 +92,23 @@ if __name__ == "__main__":
         return "";
     }
   };
-  
+
   // Set initial code and handle clicks outside the dropdown
   useEffect(() => {
     setCode(getStarterCode(language));
-    
+
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setDropdownOpen(false);
       }
     };
-    
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  
+
   // Update code when language changes
   useEffect(() => {
     if (code === getStarterCode("cpp") || code === getStarterCode("java") || code === getStarterCode("python") || code === "") {
@@ -120,15 +120,32 @@ if __name__ == "__main__":
     return <div className="text-black p-4">No problem selected.</div>;
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsSubmitting(true);
-    
-    // Simulate submission delay
-    setTimeout(() => {
-      // Navigate to the submission page
-      navigate("/submission");
-    }, 1000);
+  
+    try {
+      // Load mock testcases from file
+      const response = await fetch('/mock_result.json'); // Ensure file is in /public folder
+      const data = await response.json();
+  
+      const fakeSubmission = {
+        id: 9999,
+        problemTitle: problem.name,
+        language: language,
+        status: "Mixed Results",
+        code: code,
+        testcases: data.testcases // ✅ lấy từ file JSON
+      };
+  
+      localStorage.setItem("lastSubmission", JSON.stringify(fakeSubmission));
+      navigate(`/submission/${fakeSubmission.id}`);
+    } catch (error) {
+      console.error("Error loading mock_result.json:", error);
+      alert("Failed to load mock submission result.");
+      setIsSubmitting(false);
+    }
   };
+  
 
   // Get the selected language object
   const selectedLang = languages.find(lang => lang.id === language);
@@ -152,7 +169,7 @@ if __name__ == "__main__":
             Problem: <span className="font-semibold">{problem.name}</span>
           </div>
         </div>
-        
+
         {/* Main content */}
         <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-6">
           {/* Language Dropdown */}
@@ -163,7 +180,7 @@ if __name__ == "__main__":
               </svg>
               <h2 className="text-lg font-semibold text-gray-800">Select Language</h2>
             </div>
-            
+
             {/* Dropdown language selector */}
             <div className="relative" ref={dropdownRef}>
               <button
@@ -181,7 +198,7 @@ if __name__ == "__main__":
                   </span>
                 </div>
               </button>
-              
+
               {/* Dropdown menu */}
               {dropdownOpen && (
                 <div className="absolute z-10 mt-1 w-full bg-white shadow-lg rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 focus:outline-none">
@@ -203,7 +220,7 @@ if __name__ == "__main__":
                           {lang.name}
                         </span>
                       </div>
-                      
+
                       {lang.id === language && (
                         <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600">
                           <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -217,7 +234,7 @@ if __name__ == "__main__":
               )}
             </div>
           </div>
-          
+
           {/* Code Editor */}
           <div>
             <div className="p-4 flex items-center">
@@ -251,14 +268,13 @@ if __name__ == "__main__":
             </div>
           </div>
         </div>
-        
+
         {/* Action Buttons */}
         <div className="flex justify-between">
           <div className="flex space-x-3">
             <button
-              className={`bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg shadow transition-all duration-200 flex items-center ${
-                isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-              }`}
+              className={`bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg shadow transition-all duration-200 flex items-center ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                }`}
               onClick={handleSubmit}
               disabled={isSubmitting}
             >
@@ -279,9 +295,9 @@ if __name__ == "__main__":
                 </>
               )}
             </button>
-            
+
           </div>
-          
+
           <button
             className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-3 rounded-lg transition-colors flex items-center"
             onClick={() => navigate(-1)}

@@ -18,32 +18,73 @@ const AddModule = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    alert(`Module added: ${form.name}`);
+    setForm({ name: '', position: 'end', relativeModule: '' });
+  };
+
   return (
-    <div className="max-w-xl mx-auto bg-white p-6 rounded shadow text-black animate-fadeIn">
-      <h2 className="text-2xl font-bold mb-4">Add Module</h2>
-      <form className="space-y-4">
-        <input name="name" value={form.name} onChange={handleChange} placeholder="Name" className="w-full p-2 rounded border bg-gray-50" required />
+    <div className="mt-10 max-w-xl mx-auto bg-white p-6 rounded shadow text-black animate-fadeIn">
+      <h2 className="text-2xl font-bold mb-6">Add New Module</h2>
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block mb-1 font-semibold">Position</label>
-          <select name="position" value={form.position} onChange={handleChange} className="w-full p-2 rounded border bg-gray-50">
+          <label className="block font-semibold mb-1">Module Name</label>
+          <input
+            name="name"
+            value={form.name}
+            onChange={handleChange}
+            placeholder="Enter module name"
+            className="w-full p-2 rounded border bg-gray-50"
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block font-semibold mb-1">Position</label>
+          <select
+            name="position"
+            value={form.position}
+            onChange={handleChange}
+            className="w-full p-2 rounded border bg-gray-50"
+          >
             <option value="end">At the end</option>
             <option value="behind">Behind of</option>
             <option value="front">Front of</option>
           </select>
         </div>
+
         {(form.position === 'behind' || form.position === 'front') && (
           <div>
-            <label className="block mb-1 font-semibold">Module:</label>
-            <select name="relativeModule" value={form.relativeModule} onChange={handleChange} className="w-full p-2 rounded border bg-gray-50">
-              <option value="">Select Module</option>
-              {mockModules.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+            <label className="block font-semibold mb-1">Reference Module</label>
+            <select
+              name="relativeModule"
+              value={form.relativeModule}
+              onChange={handleChange}
+              className="w-full p-2 rounded border bg-gray-50"
+              required
+            >
+              <option value="">Choose module</option>
+              {mockModules.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name}
+                </option>
+              ))}
             </select>
           </div>
         )}
-        <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add Module</button>
+
+        <div className="text-right">
+          <button
+            type="submit"
+            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 font-semibold"
+          >
+            Confirm
+          </button>
+        </div>
       </form>
     </div>
   );
 };
 
-export default AddModule; 
+export default AddModule;

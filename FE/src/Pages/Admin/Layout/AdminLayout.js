@@ -20,7 +20,9 @@ import AddModuleContent from '../AddModuleContent';
 import EditModuleContent from '../EditModuleContent';
 
 import BlogsPage from '../../BlogsPage';
-import AddBlog from '../AddBlog';
+// import AddBlog from '../AddBlog';
+import AddBlog from '../../Professor/Blogs/AddBlog';
+
 
 import AllAccount from '../AllAccount';
 import AddAccount from '../AddAccount';
@@ -187,6 +189,7 @@ const AdminLayout = () => {
             <Route path="section/:id/edit" element={<EditSection />} />
             <Route path="section/:sectionId/modules" element={<ListModule />} />
             <Route path="module/add" element={<AddModule />} />
+
             <Route path="module/:id/edit" element={<EditModule />} />
             <Route path="module/:moduleId/contents" element={<ListModuleContent />} />
             <Route path="module-content/add" element={<AddModuleContent />} />

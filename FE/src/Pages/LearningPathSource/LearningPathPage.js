@@ -291,8 +291,7 @@ const LearningPathPage = () => {
                       <div className="absolute left-0 top-1/2 w-5 h-5 rounded-full bg-white border-4 border-blue-500 shadow-lg transform -translate-x-[40px] -translate-y-1/2 z-10"></div>
                       
                       {/* Module card with hover effect */}
-                      <Link
-                        to={`/${level}/module/${id}`}
+                      <Link to={`/learn/${level}/module/${id}`}
                         className="block bg-white rounded-xl p-5 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-102 border-l-4 border-indigo-500"
                       >
                         <h4 className="text-xl font-bold text-indigo-700 mb-2">{title}</h4>

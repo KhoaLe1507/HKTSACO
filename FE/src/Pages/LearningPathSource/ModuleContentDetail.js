@@ -165,7 +165,7 @@ const ModuleContentDetail = () => {
               {section.modules.map(([key, title]) => (
                 <li key={key}>
                   <a
-                    href={`/${level}/module/${key}`}
+                    href={`/learn/${level}/module/${key}`}
                     className={`${
                       key === moduleId ? "text-yellow-400" : "text-blue-400"
                     } hover:underline`}

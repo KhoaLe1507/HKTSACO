@@ -24,25 +24,43 @@ const ListModuleContent = () => {
         </button>
       </div>
 
+      {/* Danh sách module content */}
       <div className="space-y-4">
         {contents.map((content) => (
           <div
             key={content.id}
-            onClick={() => navigate(`/module-content/${content.id}`)} // đến trang chi tiết
-            className="bg-gradient-to-r from-gray-100 to-gray-200 p-5 rounded-xl shadow hover:scale-[1.02] transition-transform cursor-pointer relative"
+            className="bg-gradient-to-r from-gray-100 to-gray-200 px-6 py-4 rounded-xl shadow flex justify-between items-center"
           >
-            <div className="absolute top-2 right-4">
+            {/* Tiêu đề module content */}
+            <div>
+              <h3 className="text-lg font-bold text-navy">{content.title}</h3>
+            </div>
+
+            {/* Nút thao tác */}
+            <div className="flex space-x-2">
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  navigate(`/admin/module-content/${content.id}/edit`);
-                }}
-                className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500 font-medium text-sm shadow"
+                onClick={() => navigate(`/admin/module-content/${content.id}/edit`)}
+                className="bg-white border px-3 py-1 rounded shadow text-sm flex items-center gap-1"
               >
-                ✏️ Edit
+                <span role="img" aria-label="edit">📝</span> Edit
+              </button>
+              <button
+                onClick={() => navigate(`/learn/${content.level}/module/${content.key}`)}
+                className="bg-white border px-3 py-1 rounded shadow text-sm text-blue-600 flex items-center gap-1"
+              >
+                <span role="img" aria-label="detail">🔍</span> Detail
+              </button>
+              <button
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to delete this module content?")) {
+                    alert(`Deleted content ${content.id}`);
+                  }
+                }}
+                className="bg-white border px-3 py-1 rounded shadow text-sm text-red-600 flex items-center gap-1"
+              >
+                <span role="img" aria-label="delete">🗑️</span> Delete
               </button>
             </div>
-            <h3 className="text-lg font-bold text-navy">{content.title}</h3>
           </div>
         ))}
       </div>

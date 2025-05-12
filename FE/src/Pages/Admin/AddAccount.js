@@ -22,6 +22,18 @@ const AddAccount = () => {
     <div className="bg-white max-w-xl mx-auto p-6 rounded-lg shadow-md animate-fadeIn">
       <h2 className="text-2xl font-bold text-navy mb-6">➕ Add Account</h2>
 
+      {/* Full Name */}
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Full Name</label>
+        <input
+          name="fullname"
+          value={form.username}
+          onChange={handleChange}
+          placeholder="Enter Full Name"
+          className="w-full border border-gray-300 px-4 py-2 rounded shadow-sm"
+        />
+      </div>
+
       {/* Username */}
       <div className="mb-4">
         <label className="block font-semibold mb-1">Username</label>
@@ -71,6 +83,60 @@ const AddAccount = () => {
         />
       </div>
 
+      {/* Avatar URL */}
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Avatar URL</label>
+        <input
+          name="avatarUrl"
+          value={form.avatarUrl}
+          onChange={handleChange}
+          placeholder="Enter link to avatar image"
+          className="w-full border border-gray-300 px-4 py-2 rounded shadow-sm"
+        />
+      </div>
+
+      {/* Bio */}
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Bio</label>
+        <textarea
+          name="bio"
+          value={form.bio}
+          onChange={handleChange}
+          placeholder="Write a short description about yourself (max 500 characters)"
+          className="w-full border border-gray-300 px-4 py-2 rounded shadow-sm resize-none"
+          rows={4}
+          maxLength={500}
+        />
+      </div>
+
+      {/* Birth Date */}
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Birth Date</label>
+        <input
+          name="birthDate"
+          type="date"
+          value={form.birthDate}
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-4 py-2 rounded shadow-sm"
+        />
+      </div>
+
+      {/* Gender */}
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">Gender</label>
+        <select
+          name="gender"
+          value={form.gender}
+          onChange={handleChange}
+          className="w-full border border-gray-300 px-4 py-2 rounded shadow-sm"
+        >
+          <option value="">-- Select Gender --</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+
       {/* Role */}
       <div className="mb-6">
         <label className="block font-semibold mb-1">Role</label>
@@ -93,7 +159,7 @@ const AddAccount = () => {
           onClick={handleSave}
           className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700 transition-all font-semibold"
         >
-           Save
+          Save
         </button>
       </div>
     </div>

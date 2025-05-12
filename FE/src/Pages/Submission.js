@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 // Helper functions for status colors
 const getStatusColor = (status) => {
@@ -72,22 +72,29 @@ const USERNAME = "student01";
 
 const Submission = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); 
   const [openIdx, setOpenIdx] = useState(null);
   const [submission, setSubmission] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  // useEffect(() => {
+  //   // Load submission data
+  //   const submissionData = JSON.parse(localStorage.getItem("lastSubmission"));
+  //   setSubmission(submissionData);
+    
+  //   // Animation delay
+  //   setTimeout(() => {
+  //     setIsLoaded(true);
+  //   }, 100);
+  // }, []);
   useEffect(() => {
-    // Load submission data
     const submissionData = JSON.parse(localStorage.getItem("lastSubmission"));
     setSubmission(submissionData);
-    
-    // Animation delay
-    setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
+  
+    setTimeout(() => setIsLoaded(true), 100);
   }, []);
 
-  if (!submission) {
+  if (!submission || submission.id !== Number(id)) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="bg-white p-8 rounded-lg shadow-lg text-center max-w-md">

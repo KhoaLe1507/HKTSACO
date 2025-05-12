@@ -28,6 +28,8 @@ const ListModule = () => {
         <button
           className="bg-blue-600 text-white px-4 py-2 rounded font-semibold hover:bg-blue-700 transition-all"
           onClick={() => navigate('/admin/module/add')}
+          // onClick={() => navigate(`/admin/section/${sectionId}/module/add`)}
+
         >
           ➕ Add Module
         </button>
