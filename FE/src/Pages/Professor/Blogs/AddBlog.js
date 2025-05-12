@@ -24,13 +24,13 @@ const AddBlog = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // TODO: gửi dữ liệu form lên server
+    // TODO: send form data to server
     console.log("Title:", title);
     console.log("Content:", content);
     console.log("Visibility:", visibility);
     console.log("Image File:", imageFile);
 
-    alert(`Đã thêm blog: ${title}`);
+    alert(`Blog added: ${title}`);
     setTitle("");
     setContent("");
     setVisibility("Private");
@@ -40,10 +40,10 @@ const AddBlog = () => {
 
   return (
     <div className="max-w-2xl mx-auto bg-white text-black p-8 rounded shadow mt-8">
-      <h2 className="text-2xl font-bold mb-6">Thêm Blog mới</h2>
+      <h2 className="text-2xl font-bold mb-6">Add New Blog</h2>
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
-          <label className="block mb-1 font-semibold">Tiêu đề</label>
+          <label className="block mb-1 font-semibold">Title</label>
           <input
             type="text"
             className="w-full p-2 border border-gray-300 rounded"
@@ -54,7 +54,7 @@ const AddBlog = () => {
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold">Chế độ hiển thị</label>
+          <label className="block mb-1 font-semibold">Visibility</label>
           <select
             className="w-full p-2 border border-gray-300 rounded"
             value={visibility}
@@ -66,7 +66,7 @@ const AddBlog = () => {
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold">Nội dung</label>
+          <label className="block mb-1 font-semibold">Content</label>
           <textarea
             className="w-full p-2 border border-gray-300 rounded"
             rows={6}
@@ -77,7 +77,7 @@ const AddBlog = () => {
         </div>
 
         <div>
-          <label className="block mb-1 font-semibold">Đính kèm hình ảnh (1 ảnh duy nhất)</label>
+          <label className="block mb-1 font-semibold">Attach Image (only one)</label>
           <input
             type="file"
             accept="image/*"
@@ -98,7 +98,7 @@ const AddBlog = () => {
             type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 font-bold"
           >
-            Thêm Blog
+            Add Blog
           </button>
         </div>
       </form>

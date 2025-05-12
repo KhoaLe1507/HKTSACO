@@ -68,13 +68,14 @@ const Sidebar = () => {
             </div>
           )}
         </div>
-        {/* Learning Path */}
+
         {/* Learning Path */}
         <div className="transform hover:scale-105 transition-transform duration-300">
           <div className="font-semibold mb-1 text-navy cursor-pointer flex items-center">
             <span className="text-blue-600">🗺️</span>
             <span className="ml-2">Learning Path</span>
           </div>
+          <div className="text-sm  font-bold mt-1 mb-2">Learning Path</div>
           <div className="ml-4 mt-2">
             <select
               onChange={(e) => {

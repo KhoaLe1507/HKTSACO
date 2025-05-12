@@ -48,7 +48,7 @@ const ProfessorLayout = () => {
           {/* Blogs */}
           <Route path="blogs" element={<BlogsPage />} />
           <Route path="blogs/add" element={<AddBlog />} />
-          <Route path="my-blogs" element={<MyBlog />} />
+          <Route path="blogs/my" element={<MyBlog />} />
           <Route path="blogs/:id/edit" element={<EditBlog />} />
 
           {/* Learning Path */}

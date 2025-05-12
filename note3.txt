@@ -1,0 +1,21 @@
+- thêm title ở phần sidebar learning path 
+- MyBlog của bên Professor
+
+- check lại hết rồi thêm title vào cho dủ
+- thêm các nút back dể cho quay lại dễ kiểm soát ở các mục add & edit learning path
+-ở phần Module Contents in Module 1 của add & edit, cái này hiện đủ 3 nút như phần phía trước, bấm detail thì hiện ở phần ModuleContentDetail.js của phần mục LearningPathSource
+- phần MySubmission xong bấm detail bị lỗi, dẫn tới file submission.js
+- thêm trang EditProblem.js, ở đây hiện chỉnh sửa các mục của Problem
+- Add Blog của Admin xem lại, so sánh với professor
+- thêm phần add account của admin, thêm các trường
+
+
+
+
+- chỉ quan tâm chỗ navigate(""), hướng
+- liên quan dến dữ liệu mà dược sinh sẵn
+- các nút bấm dể diều hướng
+- dropdown
+- mấy cái onclick dọc kĩ
+- navlink
+- dọc kĩ file Navbar.js

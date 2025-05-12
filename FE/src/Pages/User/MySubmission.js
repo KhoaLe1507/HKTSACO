@@ -48,7 +48,7 @@ const MySubmission = () => {
 
     return (
         <div className="max-w-6xl mx-auto px-6 py-8">
-            <h2 className="text-2xl font-bold mb-6 text-black">📄 Lịch sử nộp bài</h2>
+            <h2 className="text-2xl font-bold mb-6 text-black">📄 Submission History</h2>
 
             <div className="overflow-x-auto">
                 <table className="w-full text-sm text-left border">

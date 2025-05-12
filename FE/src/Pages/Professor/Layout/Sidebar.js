@@ -70,26 +70,28 @@ const Sidebar = () => {
 
         {/* Learning Path */}
         <div className="transform hover:scale-105 transition-transform duration-300">
-          <div className="font-semibold mb-1 text-navy cursor-pointer flex items-center">
-            <span className="text-blue-600">🗺️</span>
-            <span className="ml-2">Learning Path</span>
+          <div className="text-sm font-semibold text-black flex items-center">
+            <span className="mr-1">📘</span>
+            <span>Learning Path</span>
           </div>
-          <div className="ml-4 mt-2">
-            <select
-              onChange={(e) => {
-                const value = e.target.value;
-                if (value !== "") navigate(`/professor/learning-path/${value}`);
-              }}
-              defaultValue=""
-              className="w-full p-2 rounded bg-white border border-gray-300 shadow-sm cursor-pointer"
-            >
-              <option value="" disabled>Choose Level</option>
-              <option value="bronze">Bronze</option>
-              <option value="silver">Silver</option>
-              <option value="gold">Gold</option>
-              <option value="platinum">Platinum</option>
-            </select>
-          </div>
+          <div className="text-sm  font-bold mt-1 mb-2">Learning Path</div>
+
+          {/* Dropdown chọn cấp độ */}
+          <select
+            title="Select a learning level to view its roadmap"
+            onChange={(e) => {
+              const value = e.target.value;
+              if (value !== "") navigate(`/professor/learning-path/${value}`);
+            }}
+            defaultValue=""
+            className="w-full p-2 rounded bg-white border border-gray-300 shadow-sm cursor-pointer"
+          >
+            <option value="" disabled>Choose Level</option>
+            <option value="bronze">Bronze</option>
+            <option value="silver">Silver</option>
+            <option value="gold">Gold</option>
+            <option value="platinum">Platinum</option>
+          </select>
         </div>
 
 
@@ -112,6 +114,9 @@ const Sidebar = () => {
               </NavLink>
               <NavLink to="/professor/blogs/add" className={linkClass}>
                 Add Blog
+              </NavLink>
+              <NavLink to="/professor/blogs/my" className={linkClass}>
+                My Blog
               </NavLink>
             </div>
           )}
