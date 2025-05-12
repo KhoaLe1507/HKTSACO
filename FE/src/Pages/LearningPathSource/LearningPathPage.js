@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Section from "../../Components/Section";
 
 // Custom Section component with animation
@@ -11,8 +11,8 @@ const AnimatedSection = ({ className, children }) => {
   );
 };
 
-const BronzePage = () => {
-  const level = "bronze";
+const LearningPathPage = () => {
+  const { level = "bronze" } = useParams();
   const [activeSection, setActiveSection] = useState(null);
 
   // Animation for counting up stats
@@ -44,69 +44,148 @@ const BronzePage = () => {
 
   // Count-up animation
   useEffect(() => {
-    const modulesTotal = 12;
-    const problemsTotal = 99;
+    const stats = {
+      bronze: { modules: 12, problems: 99 },
+      silver: { modules: 15, problems: 120 },
+      gold: { modules: 18, problems: 150 },
+      platinum: { modules: 20, problems: 180 }
+    };
+
+    const currentStats = stats[level] || stats.bronze;
     
     const interval = setInterval(() => {
       setCounts(prev => ({
-        modulesTotal: prev.modulesTotal < modulesTotal ? prev.modulesTotal + 1 : modulesTotal,
-        problemsTotal: prev.problemsTotal < problemsTotal ? prev.problemsTotal + 4 : problemsTotal
+        modulesTotal: prev.modulesTotal < currentStats.modules ? prev.modulesTotal + 1 : currentStats.modules,
+        problemsTotal: prev.problemsTotal < currentStats.problems ? prev.problemsTotal + 4 : currentStats.problems
       }));
     }, 50);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [level]);
 
-  const sections = [
-    {
-      category: "Getting Started",
-      modules: [
-        ["Time Complexity", "Measuring the number of operations an algorithm performs."],
-        ["Introduction to Data Structures", "What a data structure is, (dynamic) arrays, pairs, and tuples."],
-        ["Simulation", "Directly simulating the problem statement."]
-      ]
-    },
-    {
-      category: "Complete Search",
-      modules: [
-        ["Basic Complete Search", "Problems involving iterating through the entire solution space."],
-        ["Complete Search with Recursion", "Harder problems involving generating subsets and permutations."]
-      ]
-    },
-    {
-      category: "Sorting & Sets",
-      modules: [
-        ["Introduction to Sorting", "Arranging collections in increasing order."],
-        ["(Optional) Introduction to Sets & Maps", "Maintaining collections of distinct elements/keys."]
-      ]
-    },
-    {
-      category: "Additional",
-      modules: [
-        ["Ad Hoc Problems", "Problems that do not fall into standard categories."],
-        ["Introduction to Greedy Algorithms", "Choosing best options at every step."],
-        ["Introduction to Graphs", "What graphs are."],
-        ["Rectangle Geometry", "Problems involving rectangles parallel to axes."]
-      ]
-    },
-    {
-      category: "Conclusion",
-      modules: [
-        ["Additional Practice for USACO Bronze", "Final tips for Bronze and extra practice."]
-      ]
-    }
-  ];
+  const sections = {
+    bronze: [
+      {
+        category: "Getting Started",
+        modules: [
+          ["Time Complexity", "Measuring the number of operations an algorithm performs."],
+          ["Introduction to Data Structures", "What a data structure is, (dynamic) arrays, pairs, and tuples."],
+          ["Simulation", "Directly simulating the problem statement."]
+        ]
+      },
+      {
+        category: "Complete Search",
+        modules: [
+          ["Basic Complete Search", "Problems involving iterating through the entire solution space."],
+          ["Complete Search with Recursion", "Harder problems involving generating subsets and permutations."]
+        ]
+      },
+      {
+        category: "Sorting & Sets",
+        modules: [
+          ["Introduction to Sorting", "Arranging collections in increasing order."],
+          ["(Optional) Introduction to Sets & Maps", "Maintaining collections of distinct elements/keys."]
+        ]
+      },
+      {
+        category: "Additional",
+        modules: [
+          ["Ad Hoc Problems", "Problems that do not fall into standard categories."],
+          ["Introduction to Greedy Algorithms", "Choosing best options at every step."],
+          ["Introduction to Graphs", "What graphs are."],
+          ["Rectangle Geometry", "Problems involving rectangles parallel to axes."]
+        ]
+      },
+      {
+        category: "Conclusion",
+        modules: [
+          ["Additional Practice for USACO Bronze", "Final tips for Bronze and extra practice."]
+        ]
+      }
+    ],
+    silver: [
+      {
+        category: "Advanced Data Structures",
+        modules: [
+          ["Binary Search", "Finding elements in sorted arrays efficiently."],
+          ["Prefix Sums", "Computing range sums efficiently."],
+          ["Two Pointers", "Solving problems with two moving pointers."]
+        ]
+      },
+      {
+        category: "Graph Theory",
+        modules: [
+          ["Graph Traversal", "DFS and BFS algorithms."],
+          ["Shortest Paths", "Finding shortest paths in graphs."],
+          ["Minimum Spanning Trees", "Finding minimum spanning trees."]
+        ]
+      },
+      {
+        category: "Dynamic Programming",
+        modules: [
+          ["Introduction to DP", "Basic dynamic programming concepts."],
+          ["Classic DP Problems", "Common dynamic programming patterns."]
+        ]
+      }
+    ],
+    gold: [
+      {
+        category: "Advanced Algorithms",
+        modules: [
+          ["Advanced Graph Algorithms", "Complex graph algorithms and applications."],
+          ["Advanced DP Techniques", "More sophisticated dynamic programming approaches."],
+          ["Binary Search on Answer", "Using binary search to find optimal solutions."]
+        ]
+      },
+      {
+        category: "Data Structures",
+        modules: [
+          ["Segment Trees", "Efficient range queries and updates."],
+          ["Binary Indexed Trees", "Efficient prefix sum operations."],
+          ["Advanced Tree Structures", "Complex tree data structures."]
+        ]
+      }
+    ],
+    platinum: [
+      {
+        category: "Advanced Topics",
+        modules: [
+          ["Advanced Graph Theory", "Complex graph algorithms and applications."],
+          ["Advanced DP Techniques", "State compression and other advanced techniques."],
+          ["Geometry", "Computational geometry problems."]
+        ]
+      },
+      {
+        category: "Competitive Programming",
+        modules: [
+          ["Problem Solving Strategies", "Advanced problem solving techniques."],
+          ["Contest Preparation", "Tips and strategies for competitions."]
+        ]
+      }
+    ]
+  };
+
+  const currentSections = sections[level] || sections.bronze;
+
+  const levelColors = {
+    bronze: { from: "from-amber-700", to: "to-yellow-600" },
+    silver: { from: "from-gray-400", to: "to-gray-600" },
+    gold: { from: "from-yellow-400", to: "to-yellow-600" },
+    platinum: { from: "from-blue-400", to: "to-blue-600" }
+  };
+
+  const currentColors = levelColors[level] || levelColors.bronze;
 
   return (
     <div className="text-black min-h-screen bg-gradient-to-b from-gray-100 to-gray-200">
       {/* Header with background image */}
-      <div className="relative h-64 bg-gradient-to-r from-amber-700 to-yellow-600 text-white text-center flex flex-col justify-center items-center overflow-hidden animate-fadeIn">
+      <div className={`relative h-64 bg-gradient-to-r ${currentColors.from} ${currentColors.to} text-white text-center flex flex-col justify-center items-center overflow-hidden animate-fadeIn`}>
         <div className="absolute inset-0 z-0 transition-transform duration-1000 ease-out transform scale-100">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1569098644584-210bcd375b59?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80')] bg-cover bg-center opacity-20"></div>
         </div>
         
-        <h1 className="text-6xl font-extrabold mb-4 relative z-10 text-white drop-shadow-lg animate-slideDown">
-          Bronze
+        <h1 className="text-6xl font-extrabold mb-4 relative z-10 text-white drop-shadow-lg animate-slideDown capitalize">
+          {level}
         </h1>
         
         <div className="h-1 w-32 bg-white mb-6 relative z-10 animate-expandWidth"></div>
@@ -125,8 +204,8 @@ const BronzePage = () => {
         
         <div className="flex flex-col md:flex-row justify-center items-stretch gap-8 mb-16">
           {[
-            { title: "Modules Progress", completed: 0, inProgress: 0, skipped: 0, notStarted: 12, total: counts.modulesTotal },
-            { title: "Problems Progress", completed: 0, inProgress: 0, skipped: 0, notStarted: 99, total: counts.problemsTotal },
+            { title: "Modules Progress", completed: 0, inProgress: 0, skipped: 0, notStarted: counts.modulesTotal, total: counts.modulesTotal },
+            { title: "Problems Progress", completed: 0, inProgress: 0, skipped: 0, notStarted: counts.problemsTotal, total: counts.problemsTotal },
           ].map(({ title, completed, inProgress, skipped, notStarted, total }, idx) => (
             <div 
               key={idx} 
@@ -175,7 +254,7 @@ const BronzePage = () => {
         </div>
       </div>
 
-      {/* Course Content Timeline - Phiên bản mới với các module ở một bên */}
+      {/* Course Content Timeline */}
       <div className="container mx-auto pb-20 px-4">
         <h2 className="text-3xl font-bold text-center mb-16 text-gray-800 reveal">
           Course Content
@@ -185,7 +264,7 @@ const BronzePage = () => {
           {/* Main vertical timeline line */}
           <div className="absolute left-10 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-400 to-purple-500 rounded"></div>
           
-          {sections.map((section, i) => (
+          {currentSections.map((section, i) => (
             <div 
               key={i} 
               className="mb-16 reveal"
@@ -237,7 +316,7 @@ const BronzePage = () => {
       <div className="bg-gradient-to-r from-indigo-900 to-purple-800 text-white py-16 text-center reveal">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold mb-6">Ready to start your journey?</h2>
-          <p className="text-lg mb-8 max-w-2xl mx-auto">Begin with the first module and track your progress as you advance through the Bronze level.</p>
+          <p className="text-lg mb-8 max-w-2xl mx-auto">Begin with the first module and track your progress as you advance through the {level} level.</p>
           <button 
             className="bg-white text-indigo-900 px-8 py-3 rounded-full font-bold text-lg shadow-lg hover:bg-indigo-100 transition-colors duration-300 hover:scale-105 transform"
           >
@@ -249,47 +328,4 @@ const BronzePage = () => {
   );
 };
 
-// CSS animations - thêm vào file CSS của bạn
-const cssAnimations = `
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideDown {
-  from { transform: translateY(-50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes expandWidth {
-  from { width: 0; }
-  to { width: 100%; }
-}
-
-.animate-fadeIn {
-  opacity: 0;
-  animation: fadeIn 0.6s ease-out forwards;
-}
-
-.animate-slideDown {
-  animation: slideDown 0.7s ease-out forwards;
-}
-
-.animate-expandWidth {
-  width: 0;
-  animation: expandWidth 0.8s ease-out forwards;
-}
-
-.reveal {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s ease-out;
-}
-
-.reveal.animate-fadeIn {
-  opacity: 1;
-  transform: translateY(0);
-}
-`;
-
-export default BronzePage;
+export default LearningPathPage; 

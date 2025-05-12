@@ -15,10 +15,7 @@ import ContactUsPage from "./Pages/ContactUsPage";
 import LoginPage from "./Pages/Auth/LoginPage";
 import RegisterPage from "./Pages/Auth/RegisterPage";
 
-import BronzePage from "./Pages/LearningPathSource/BronzePage";
-import SilverPage from "./Pages/LearningPathSource/SilverPage";
-import GoldPage from "./Pages/LearningPathSource/GoldPage";
-import PlatinumPage from "./Pages/LearningPathSource/PlatinumPage";
+import LearningPathPage from "./Pages/LearningPathSource/LearningPathPage";
 import ModuleContentDetail from "./Pages/LearningPathSource/ModuleContentDetail";
 
 import ProfessorLayout from "./Pages/Professor/Layout/ProfessorLayout";
@@ -54,11 +51,11 @@ const App = () => {
               <Route path="/contact" element={<ContactUsPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
-              <Route path="/bronze" element={<BronzePage />} />
-              <Route path="/silver" element={<SilverPage />} />
-              <Route path="/gold" element={<GoldPage />} />
-              <Route path="/platinum" element={<PlatinumPage />} />
+              
+              {/* Learning Path Routes */}
+              <Route path="/:level" element={<LearningPathPage />} />
               <Route path="/:level/module/:moduleId" element={<ModuleContentDetail />} />
+              
               <Route path="/professor/*" element={<ProfessorLayout />} />
               <Route path="/admin/*" element={<AdminLayout />} />
 
