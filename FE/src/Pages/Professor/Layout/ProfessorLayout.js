@@ -9,7 +9,6 @@ import ProfessorHomePage from "../Dashboard/ProfessorHomePage";
 import ProblemsPage from '../../ProblemsPage';
 import AddProblem from "../Problems/AddProblem";
 import EditProblem from "../Problems/EditProblem";
-import ProblemDetail from "../Problems/ProblemDetail";
 import MyProblem from "../Problems/MyProblem";
 import SubmissionOfProblem from "../Problems/SubmissionOfProblem";
 
@@ -27,6 +26,10 @@ import EditMyModuleContent from "../LearningPath/EditMyModuleContent";
 import ModuleContentDetail from "../LearningPath/ModuleContentDetail";
 import EditModuleContent from "../LearningPath/EditModuleContent";
 
+import ViewSolution from "../Problems/ViewSolution";
+import AllSubmission from "../Problems/AllSubmission";
+
+
 const ProfessorLayout = () => {
   return (
     <div className="flex bg-white text-white min-h-screen">
@@ -40,7 +43,6 @@ const ProfessorLayout = () => {
           {/* <Route path="problems" element={<AllProblem />} /> */}
           <Route path="problems" element={<ProblemsPage />} />
           <Route path="problems/add" element={<AddProblem />} />
-          <Route path="problems/:id" element={<ProblemDetail />} />
           <Route path="problems/:id/edit" element={<EditProblem />} />
           <Route path="problems/:id/submissions" element={<SubmissionOfProblem />} />
           <Route path="my-problems" element={<MyProblem />} />
@@ -58,6 +60,9 @@ const ProfessorLayout = () => {
           <Route path="modules/:id/add-content" element={<AddModuleContent />} />
           <Route path="modules/content/:id" element={<ModuleContentDetail />} />
           <Route path="modules/content/:id/edit" element={<EditModuleContent />} />
+
+          <Route path="problems/:id/view-solution" element={<ViewSolution />} />
+          <Route path="problems/:id/all-submissions" element={<AllSubmission />} />
 
           {/* Catch-all */}
           <Route path="*" element={<Navigate to="/professor" />} />

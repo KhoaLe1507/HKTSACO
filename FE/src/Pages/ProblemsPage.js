@@ -33,6 +33,7 @@ const ProblemsPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [hoveredTag, setHoveredTag] = useState(null);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [showMyProblems, setShowMyProblems] = useState(false); // New state for My Problem filter
   
   // Count problems by tag
   const tagCounts = problems.reduce((acc, p) => {
@@ -68,12 +69,16 @@ const ProblemsPage = () => {
     }
   };
 
+  // For simulation purposes - normally this would come from an API or auth context
+  const myProblemIds = [1, 3, 5, 7, 9]; // Example: problems created by the current user
+  
   const filteredProblems = problems.filter(p => {
     const matchTag = selectedTag === "All" || p.tag === selectedTag;
     const matchSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                        p.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchDifficulty = difficultyFilter === "" || p.difficulty === difficultyFilter;
-    return matchTag && matchSearch && matchDifficulty;
+    const matchMyProblems = !showMyProblems || myProblemIds.includes(p.id);
+    return matchTag && matchSearch && matchDifficulty && matchMyProblems;
   });
   
   useEffect(() => {
@@ -138,8 +143,7 @@ const ProblemsPage = () => {
   const handleEditClick = (e, problem) => {
     e.stopPropagation(); // Prevent the card's onClick from firing
     localStorage.setItem("problemToEdit", JSON.stringify(problem));
-    navigate(`/professor/problems/${problem.id}/edit`);
-
+    navigate("/edit-problem");
   };
   
   return (
@@ -234,6 +238,19 @@ const ProblemsPage = () => {
                 ▼
               </div>
             </div>
+          </div>
+          
+          {/* My Problem Checkbox Filter */}
+          <div className="mt-4 flex justify-center">
+            <label className="flex items-center space-x-2 cursor-pointer p-2 rounded-lg hover:bg-gray-50 transition-colors">
+              <input 
+                type="checkbox" 
+                checked={showMyProblems}
+                onChange={() => setShowMyProblems(!showMyProblems)}
+                className="form-checkbox h-5 w-5 text-indigo-600 rounded border-gray-300 focus:ring-indigo-500"
+              />
+              <span className="text-gray-700 font-medium">My Problems Only</span>
+            </label>
           </div>
         </div>
 
