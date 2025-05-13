@@ -4,7 +4,7 @@ import React from "react";
 const ViewSolution = () => {
   // Dữ liệu giả (placeholder)
   const problemTitle = "Shortest Path";
-  const studentName = "An";
+  const professorName = "Prof.An";
   const explanation = "We use Dijkstra algorithm to find the shortest path from the source node to all other nodes in a graph with non-negative weights.";
   const language = "C++";
   const code = `
@@ -42,8 +42,8 @@ void dijkstra(int start, vector<vector<pii>>& adj, vector<int>& dist) {
       </div>
 
       <div className="mb-4">
-        <label className="font-semibold text-gray-700">👤 Student:</label>
-        <p className="text-base text-gray-800">{studentName}</p>
+        <label className="font-semibold text-gray-700">👤 Professor:</label>
+        <p className="text-base text-gray-800">{professorName}</p>
       </div>
 
       <div className="mb-4">

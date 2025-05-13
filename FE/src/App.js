@@ -16,7 +16,6 @@ import LoginPage from "./Pages/Auth/LoginPage";
 import RegisterPage from "./Pages/Auth/RegisterPage";
 
 import LearningPathPage from "./Pages/LearningPathSource/LearningPathPage";
-
 import ModuleContentDetail from "./Pages/LearningPathSource/ModuleContentDetail";
 
 import ProfessorLayout from "./Pages/Professor/Layout/ProfessorLayout";
@@ -48,7 +47,9 @@ const App = () => {
               <Route path="/submission" element={<Submission />} />
               <Route path="/submission/:id" element={<Submission />} />
               <Route path="/blogs" element={<BlogsPage />} />
+              
               <Route path="/ranking" element={<RankingPage />} />
+
               <Route path="/contact" element={<ContactUsPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />
