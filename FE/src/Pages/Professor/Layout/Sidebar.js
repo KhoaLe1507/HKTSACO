@@ -74,7 +74,7 @@ const Sidebar = () => {
             <span className="mr-1">📘</span>
             <span>Learning Path</span>
           </div>
-          <div className="text-sm  font-bold mt-1 mb-2">Learning Path</div>
+          <div className="text-sm  font-bold mt-1 mb-2">Sections</div>
 
           {/* Dropdown chọn cấp độ */}
           <select

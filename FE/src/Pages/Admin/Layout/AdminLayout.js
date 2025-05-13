@@ -77,7 +77,7 @@ const Sidebar = () => {
             <span className="text-blue-600">🗺️</span>
             <span className="ml-2">Learning Path</span>
           </div>
-          <div className="text-sm  font-bold mt-1 mb-2">Learning Path</div>
+          <div className="text-sm  font-bold mt-1 mb-2">Sections</div>
           <div className="ml-4 mt-2">
             <select
               onChange={(e) => {

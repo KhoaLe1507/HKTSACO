@@ -32,7 +32,7 @@ const LoginPage = () => {
       setIsLoggedIn(true);
       setRole(role);
 
-      if (role === "Admin") navigate("/admin");
+      if (role === "Admin") navigate("/admin/home");
       else if (role === "Professor") navigate("/professor");
       else navigate("/"); // Student → về Home
     } else {
