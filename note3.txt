@@ -9,7 +9,7 @@
 
 
 
-
+- làm thêm nút edit problem ỏ cho mỗi problem luôn ỏ mọi role ỏ trang ProblemsPage.js
 
 
 - thêm trang viewsolution.js, thêm nút  view solution ngay cạnh nút Submit Solution ỏ trang ProblemDetail.js, thêm nút view all submission ngay cạnh nút view solution
@@ -26,8 +26,6 @@ Language:
 Result:
 Details → ấn vào thì tới trang Submission.js của thằng này
 Thêm 1 trường là username
-- làm thêm nút edit problem ỏ cho mỗi problem luôn ỏ mọi role ỏ trang ProblemsPage.js
-
 
 
 

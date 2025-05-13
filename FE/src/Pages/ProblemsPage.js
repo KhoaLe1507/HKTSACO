@@ -134,6 +134,14 @@ const ProblemsPage = () => {
     navigate("/problem-details");
   };
   
+  // New function to handle edit button click
+  const handleEditClick = (e, problem) => {
+    e.stopPropagation(); // Prevent the card's onClick from firing
+    localStorage.setItem("problemToEdit", JSON.stringify(problem));
+    navigate(`/professor/problems/${problem.id}/edit`);
+
+  };
+  
   return (
     selectedProblem ? (
       <Submit problem={selectedProblem} onBack={() => setSelectedProblem(null)} />
@@ -270,6 +278,8 @@ const ProblemsPage = () => {
                     className="bg-white p-5 rounded-xl cursor-pointer shadow-sm overflow-hidden problem-card animate-fadeIn hover:scale-105 hover:shadow-md transition-all duration-300 border border-gray-100 relative"
                     style={{animationDelay: `${index * 0.1}s`}}
                   >
+                    {/* Removed absolute positioned edit button, will place it at the bottom */}
+                    
                     <div className="flex justify-between items-start mb-3">
                       <h3 className="text-xl font-bold text-gray-800">{p.title}</h3>
                       <span
@@ -286,6 +296,20 @@ const ProblemsPage = () => {
                       <span className="text-xs text-indigo-600 font-medium hover:underline group">
                         Solve Challenge <span className="inline-block transition-transform duration-200 group-hover:translate-x-1">→</span>
                       </span>
+                    </div>
+                    
+                    {/* Added Edit button below, aligned to the right */}
+                    <div className="mt-2 flex justify-end">
+                      <button
+                        onClick={(e) => handleEditClick(e, p)}
+                        className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-1 font-medium text-xs"
+                        title="Edit problem"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                        </svg>
+                        <span>Edit</span>
+                      </button>
                     </div>
                     <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                   </div>
