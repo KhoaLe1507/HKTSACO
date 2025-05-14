@@ -166,15 +166,41 @@ const Submission = () => {
       >
         {/* Header section */}
         <div className="bg-blue-500 rounded-lg shadow-lg mb-6 p-6 text-white">
-          <div className="flex items-center mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            <h1 className="text-2xl font-bold">Submission Results</h1>
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <h1 className="text-2xl font-bold">Submission Results</h1>
+            </div>
+          </div>
 
-            <div className={`ml-auto ${getBadgeStatusColor(submission.result)} text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center`}>
-              {getStatusIcon(submission.result)}
-              <span className="ml-1">{submission.result}</span>
+          {/* Status indicators row - New addition */}
+          <div className="flex items-center justify-between mb-4 bg-white bg-opacity-20 p-3 rounded-lg">
+            <div className={`px-4 py-2 rounded-full ${getBadgeStatusColor(submission.result || 'Accepted')} text-white font-semibold text-sm`}>
+              {submission.result || 'Accepted'}
+            </div>
+
+
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                </svg>
+                <span className="font-medium">Time: {submission.timeExec}</span>
+              </div>
+
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                </svg>
+                <span className="font-medium">Memory: {submission.memory || "N/A"}</span>
+              </div>
+
+              <div className="flex items-center">
+                {getLanguageIcon()}
+                <span className="ml-1 font-medium">{submission.language}</span>
+              </div>
             </div>
           </div>
 
@@ -200,22 +226,6 @@ const Submission = () => {
                   </svg>
                   <span>#{submitCount}</span>
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-4 bg-white bg-opacity-20 p-3 rounded-lg">
-            <div className="text-blue-100 mb-1">Performance</div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-                </svg>
-                <span>{submission.timeExec}</span>
-              </div>
-              <div className="flex items-center">
-                {getLanguageIcon()}
-                <span className="ml-1">{submission.language}</span>
               </div>
             </div>
           </div>
@@ -355,8 +365,8 @@ const Submission = () => {
                                 <p className={`font-bold mb-1 ${tc.status === "Accepted" ? "text-green-700" : "text-red-700"
                                   }`}>Actual Output:</p>
                                 <div className={`font-mono p-2 rounded border overflow-x-auto ${tc.status === "Accepted"
-                                    ? "bg-white border-green-200"
-                                    : "bg-white border-red-200"
+                                  ? "bg-white border-green-200"
+                                  : "bg-white border-red-200"
                                   }`}>
                                   {tc.actual_output || '(no output)'}
                                 </div>
