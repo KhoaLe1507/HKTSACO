@@ -14,11 +14,20 @@ const getStatusColor = (status) => {
 
 const getBgStatusColor = (status) => {
   switch (status) {
-    case "Accepted": return "bg-green-100";
-    case "Wrong Answer": return "bg-red-100";
-    case "Time Limit Exceeded": return "bg-orange-100";
-    case "Memory Limit Exceeded": return "bg-purple-100";
+    case "Accepted": return "bg-green-200";
+    case "Wrong Answer": return "bg-red-200";
+    case "Time Limit Exceeded": return "bg-orange-200";
+    case "Memory Limit Exceeded": return "bg-purple-200";
     default: return "bg-gray-100";
+  }
+};
+
+const getStatusTextColor = (status) => {
+  switch (status) {
+    case "Accepted": return "text-green-600";
+    case "Wrong Answer": return "text-red-600";
+    case "Time Limit Exceeded": return "text-orange-600";
+    default: return "text-gray-600";
   }
 };
 
@@ -74,6 +83,7 @@ const Submission = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const [submission, setSubmission] = useState(null);
+  const [testcases, setTestcases] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -82,10 +92,14 @@ const Submission = () => {
     if (submissionData && submissionData.id === Number(id)) {
       setSubmission(submissionData);
     }
-    
+
     // Animation delay
     setTimeout(() => {
       setIsLoaded(true);
+      fetch('/mock_result.json')
+        .then(res => res.json())
+        .then(data => setTestcases(data.testcases))
+        .catch(err => console.error('Failed to load testcases:', err));
     }, 100);
   }, [id]);
 
@@ -142,9 +156,9 @@ const Submission = () => {
 
   return (
     <div className="min-h-screen bg-white py-6 px-4">
-      <div 
+      <div
         className="max-w-5xl mx-auto"
-        style={{ 
+        style={{
           opacity: isLoaded ? 1 : 0,
           transform: isLoaded ? 'translateY(0)' : 'translateY(20px)',
           transition: 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out'
@@ -157,19 +171,19 @@ const Submission = () => {
               <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
             </svg>
             <h1 className="text-2xl font-bold">Submission Results</h1>
-            
+
             <div className={`ml-auto ${getBadgeStatusColor(submission.result)} text-white px-4 py-1 rounded-full text-sm font-semibold flex items-center`}>
               {getStatusIcon(submission.result)}
               <span className="ml-1">{submission.result}</span>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white bg-opacity-20 p-3 rounded-lg">
               <div className="text-blue-100 mb-1">Problem</div>
               <div className="font-semibold">{submission.problemName}</div>
             </div>
-            
+
             <div className="bg-white bg-opacity-20 p-3 rounded-lg">
               <div className="text-blue-100 mb-1">Submission Info</div>
               <div className="flex items-center space-x-2">
@@ -189,7 +203,7 @@ const Submission = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="mt-4 bg-white bg-opacity-20 p-3 rounded-lg">
             <div className="text-blue-100 mb-1">Performance</div>
             <div className="flex items-center justify-between">
@@ -206,7 +220,7 @@ const Submission = () => {
             </div>
           </div>
         </div>
-        
+
         {/* Source code section */}
         <div className="bg-white rounded-lg shadow-lg mb-6">
           <div className="border-b border-gray-200 p-4 flex items-center">
@@ -221,6 +235,137 @@ const Submission = () => {
             </pre>
           </div>
         </div>
+
+        {/* Testcase Results (with toggle) */}
+        {/* Testcase Results (with animations and better styling) */}
+{testcases.length > 0 && (
+  <div className="bg-white rounded-lg shadow-lg mb-6 overflow-hidden">
+    <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
+      <div className="flex items-center">
+        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+        </svg>
+        <h2 className="text-lg font-semibold">Testcase Results</h2>
+        <span className="ml-2 bg-white text-blue-600 text-xs font-bold px-2 py-1 rounded-full">
+          {testcases.length} cases
+        </span>
+      </div>
+    </div>
+    
+    <div className="divide-y divide-gray-100">
+      {testcases.map((tc, index) => (
+        <div 
+          key={tc.id} 
+          className={`p-4 ${getBgStatusColor(tc.status)} transition-all duration-300 hover:bg-opacity-50`}
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {getStatusIcon(tc.status)}
+              <div className="ml-2">
+                <h3 className="font-semibold text-gray-800">Testcase #{tc.id}</h3>
+                <p className={`${getStatusTextColor(tc.status)} font-medium text-sm`}>
+                  {tc.status}
+                </p>
+              </div>
+            </div>
+            
+            <button
+              onClick={() => {
+                const updated = [...testcases];
+                updated[index]._show = !updated[index]._show;
+                setTestcases([...updated]);
+              }}
+              className={`px-3 py-1 text-white text-sm rounded transition-all duration-200 flex items-center
+                ${tc._show ? 'bg-gray-500 hover:bg-gray-600' : 'bg-blue-500 hover:bg-blue-600'}`}
+            >
+              {tc._show ? (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
+                  </svg>
+                  Hide
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                    <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                  </svg>
+                  View
+                </>
+              )}
+            </button>
+          </div>
+
+          {tc._show && (
+            <div 
+              className="mt-3 bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-all duration-300"
+              style={{
+                maxHeight: tc._show ? '500px' : '0',
+                opacity: tc._show ? 1 : 0,
+              }}
+            >
+              <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x">
+                <div className="p-3">
+                  <div className="text-xs uppercase font-semibold text-gray-500 mb-1">Input</div>
+                  <div className="font-mono text-sm bg-gray-50 p-2 rounded overflow-x-auto">
+                    {tc.input}
+                  </div>
+                </div>
+                <div className="p-3">
+                  <div className="text-xs uppercase font-semibold text-gray-500 mb-1">Expected Output</div>
+                  <div className="font-mono text-sm bg-gray-50 p-2 rounded overflow-x-auto">
+                    {tc.expected_output}
+                  </div>
+                </div>
+                <div className="p-3">
+                  <div className="text-xs uppercase font-semibold text-gray-500 mb-1">Your Output</div>
+                  <div className={`font-mono text-sm p-2 rounded overflow-x-auto `}>
+                    {tc.actual_output || '(no output)'}
+                  </div>
+                </div>
+              </div>
+              
+              {tc.status !== 'Accepted' && (
+                <div className="bg-yellow-50 p-3 border-t border-yellow-100">
+                  <div className="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                    </svg>
+                    <div className="text-sm text-yellow-700">
+                      <strong>Hint:</strong> {tc.status === 'Wrong Answer' ? 'Check your algorithm logic and edge cases.' : tc.status === 'Time Limit Exceeded' ? 'Try to optimize your solution to run more efficiently.' : 'Review your memory usage and algorithm efficiency.'}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+    
+    <div className="bg-gray-50 p-4 border-t border-gray-100">
+      <div className="flex justify-between items-center">
+        <div className="text-sm text-gray-500">
+          Showing all {testcases.length} testcases
+        </div>
+        <button 
+          onClick={() => {
+            const allExpanded = testcases.every(tc => tc._show);
+            const updated = testcases.map(tc => ({...tc, _show: !allExpanded}));
+            setTestcases(updated);
+          }}
+          className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded hover:bg-blue-200 transition"
+        >
+          {testcases.every(tc => tc._show) ? 'Collapse All' : 'Expand All'}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
+
       </div>
     </div>
   );
