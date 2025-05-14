@@ -27,6 +27,25 @@ Thêm 1 trường là username
 
 
 
+- Khi click vào
+- EditMyModuleContent.js bổ sung thêm file này, dể nút này dưới phần chọn Learning Path của Professor
+- Add Problem bên Solution chỉnh màu chữ lại thành màu den phần chọn language sau dó check lại hết
+- Phần Solution thêm 1 nút Add file generate (title là Generate test case)
+EditMyModuleContent.html ( Trên thanh SideBar ) ( 
+Hiển thị những ModuleContent của bản thân Professor dưới dạng list bảng gồm các cột:
+STT
+Section
+Module
+ModuleContent
+Created at 
+Nút details , edit
+Bấm details → tới ModuleContentDetail.html ( Đã tạo nhưng phải thêm nút Edit trong page này luôn )
+Bấm Edit  → Chuyển tới EditModuleContent.html
+
+
+
+
+
 
 
 - chỉ quan tâm chỗ navigate(""), hướng

@@ -5,7 +5,7 @@ const ModuleContentDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   return (
-    <div className="max-w-xl mx-auto bg-[#1a2a47] p-8 rounded shadow mt-8 text-center">
+    <div className="max-w-xl mx-auto bg-white text-black p-8 rounded shadow mt-8 text-center">
       <h2 className="text-2xl font-bold mb-6">Module Content Detail (ID: {id})</h2>
       <div className="flex justify-center gap-4">
         <button

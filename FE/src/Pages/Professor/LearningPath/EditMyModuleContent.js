@@ -13,11 +13,11 @@ const EditMyModuleContent = () => {
   const myContents = mockData.filter(item => item.authorID === currentAuthorID);
 
   return (
-    <div className="max-w-5xl mx-auto bg-[#1a2a47] p-8 rounded shadow mt-6">
+    <div className="max-w-5xl mx-auto bg-white text-black p-8 rounded shadow mt-6">
       <h2 className="text-2xl font-bold mb-6">My Module Contents</h2>
       <table className="w-full text-center border-collapse">
         <thead>
-          <tr className="bg-[#22345c] text-white">
+          <tr className="bg-white text- black border-b border-gray-700">
             <th className="py-2 px-2">#</th>
             <th className="py-2 px-2">Section</th>
             <th className="py-2 px-2">Module</th>
@@ -35,12 +35,14 @@ const EditMyModuleContent = () => {
               <td className="py-2 px-2">{item.content}</td>
               <td className="py-2 px-2">{item.createdAt}</td>
               <td className="py-2 px-2 flex gap-2 justify-center">
+                {/* Nút Details */}
                 <button
                   className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
                   onClick={() => navigate(`/professor/modules/content/${item.id}`)}
                 >
                   Details
                 </button>
+                {/* Nút Edit */}
                 <button
                   className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500"
                   onClick={() => navigate(`/professor/modules/content/${item.id}/edit`)}
@@ -56,4 +58,4 @@ const EditMyModuleContent = () => {
   );
 };
 
-export default EditMyModuleContent; 
+export default EditMyModuleContent;

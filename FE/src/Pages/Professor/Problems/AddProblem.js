@@ -17,6 +17,7 @@ const AddProblem = () => {
     solutionLanguage: "cpp",
     solutionExplanation: "",
     solutionCode: "",
+    generateInputCode: "",
     numTest: 1
   });
 
@@ -440,70 +441,122 @@ const AddProblem = () => {
           <div className="bg-white rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-bold mb-4 text-gray-800">Solution & Testcase Generation</h2>
             
-            <div className="mb-6">
-              <h3 className="font-semibold text-gray-700 mb-3">Solution Details</h3>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                <FormSelect 
-                  label="Solution Language" 
-                  name="solutionLanguage" 
-                  value={form.solutionLanguage} 
-                  onChange={handleFormChange} 
-                  options={[
-                    { value: "cpp", label: "C++" },
-                    { value: "python", label: "Python" },
-                    { value: "java", label: "Java" }
-                  ]}
-                />
-                <FormInput 
-                  label="Number of Test Cases" 
-                  type="number"
-                  name="numTest" 
-                  value={form.numTest} 
-                  onChange={handleFormChange} 
-                  placeholder="e.g., 10"
-                  min="1"
-                />
-              </div>
-              
-              <FormTextarea 
-                label="Solution Explanation" 
-                name="solutionExplanation" 
-                value={form.solutionExplanation} 
-                onChange={handleFormChange} 
-                placeholder="Explain your solution approach, complexity analysis, etc."
-                rows={4}
-              />
-              
-              <div className="mb-4">
-                <label className="block text-gray-700 font-semibold mb-2">Solution Code</label>
-                <div className="relative">
-                  <div className="absolute top-0 left-0 right-0 bg-gray-100 px-4 py-2 border-b border-gray-300 rounded-t-lg flex items-center">
-                    <span className="mr-2 font-medium text-sm">
-                      {form.solutionLanguage === "cpp" ? "C++" : 
-                       form.solutionLanguage === "python" ? "Python" : "Java"}
-                    </span>
-                  </div>
-                  <textarea
-                    name="solutionCode"
-                    value={form.solutionCode}
-                    onChange={handleFormChange}
-                    placeholder={`Enter your ${form.solutionLanguage === "cpp" ? "C++" : form.solutionLanguage === "python" ? "Python" : "Java"} solution here...`}
-                    rows={10}
-                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 font-mono pt-12"
+            <div>
+              {/* Generate Testcase Section - Above Solution Details */}
+              <div className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                <h3 className="font-semibold text-gray-800 mb-3">Generate Testcase</h3>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                  <FormInput 
+                    label="Number of Test Cases" 
+                    type="number"
+                    name="numTest" 
+                    value={form.numTest} 
+                    onChange={handleFormChange} 
+                    placeholder="e.g., 10"
+                    min="1"
                   />
+                  
+                  <FormSelect 
+                    label="Generate Input Code Language" 
+                    name="solutionLanguage" 
+                    value={form.solutionLanguage} 
+                    onChange={handleFormChange} 
+                    options={[
+                      { value: "cpp", label: "C++" },
+                      { value: "python", label: "Python" },
+                      { value: "java", label: "Java" }
+                    ]}
+                  />
+                </div>
+                
+                {/* Generate Input Code Editor */}
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-semibold mb-2">Generate Input Code</label>
+                  <div className="relative">
+                    <div className="absolute top-0 left-0 right-0 bg-gray-100 text-black font-semibold px-4 py-2 border-b border-gray-300 rounded-t-lg flex items-center">
+                      <span className="mr-2 font-medium text-sm">
+                        {form.solutionLanguage === "cpp" ? "C++" : 
+                         form.solutionLanguage === "python" ? "Python" : "Java"}
+                      </span>
+                    </div>
+                    <textarea
+                      name="generateInputCode"
+                      value={form.generateInputCode}
+                      onChange={handleFormChange}
+                      placeholder={`Enter your code to generate test inputs...`}
+                      rows={8}
+                      className="w-full px-4 py-2 rounded-lg border text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 font-mono pt-12"
+                    />
+                  </div>
                 </div>
               </div>
               
-              <button 
-                className="bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-3 rounded-lg flex items-center font-medium shadow-md transition duration-200"
-                onClick={buildTestcases}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-                </svg>
-                Generate Testcases
-              </button>
+              {/* Solution Details Section */}
+              <div className="mb-6">
+                <h3 className="font-semibold text-gray-700 mb-3">Solution Details</h3>
+                
+                {/* Added Language Selector to Solution Details */}
+                <div className="mb-4">
+                  <FormSelect 
+                    label="Solution Language" 
+                    name="solutionLanguage" 
+                    value={form.solutionLanguage} 
+                    onChange={handleFormChange} 
+                    options={[
+                      { value: "cpp", label: "C++" },
+                      { value: "python", label: "Python" },
+                      { value: "java", label: "Java" }
+                    ]}
+                  />
+                </div>
+                
+                {/* Fixed Solution Explanation textarea */}
+                <div className="mb-4 text-black">
+                  <label className="block text-gray-700 font-semibold mb-2">Solution Explanation</label>
+                  <textarea
+                    name="solutionExplanation"
+                    value={form.solutionExplanation}
+                    onChange={handleFormChange}
+                    placeholder="Explain your solution approach, complexity analysis, etc."
+                    rows={4}
+                    className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                  />
+                </div>
+                
+                <div className="mb-4">
+                  <label className="block text-gray-700 font-semibold mb-2">Solution Code</label>
+                  <div className="relative">
+                    <div className="absolute top-0 left-0 right-0 bg-gray-100 text-black font-semibold px-4 py-2 border-b border-gray-300 rounded-t-lg flex items-center">
+                      <span className="mr-2 font-medium text-sm">
+                        {form.solutionLanguage === "cpp" ? "C++" : 
+                         form.solutionLanguage === "python" ? "Python" : "Java"}
+                      </span>
+                    </div>
+                    <textarea
+                      name="solutionCode"
+                      value={form.solutionCode}
+                      onChange={handleFormChange}
+                      placeholder={`Enter your ${form.solutionLanguage === "cpp" ? "C++" : form.solutionLanguage === "python" ? "Python" : "Java"} solution here...`}
+                      rows={10}
+                      className="w-full px-4 py-2 rounded-lg border text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 font-mono pt-12"
+                    />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Generate Testcases Button - Moved to bottom */}
+              <div className="flex justify-center">
+                <button 
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-lg flex items-center font-medium shadow-md transition duration-200"
+                  onClick={buildTestcases}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+                  </svg>
+                  Generate Testcases
+                </button>
+              </div>
             </div>
           </div>
         );

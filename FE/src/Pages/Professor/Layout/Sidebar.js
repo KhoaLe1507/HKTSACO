@@ -74,7 +74,7 @@ const Sidebar = () => {
             <span className="mr-1">📘</span>
             <span>Learning Path</span>
           </div>
-          <div className="text-sm  font-bold mt-1 mb-2">Sections</div>
+          <div className="text-sm font-bold ml-4 space-y-1 animate-fadeIn">Sections</div>
 
           {/* Dropdown chọn cấp độ */}
           <select
@@ -92,6 +92,13 @@ const Sidebar = () => {
             <option value="gold">Gold</option>
             <option value="platinum">Platinum</option>
           </select>
+
+          <button
+            onClick={() => navigate('/professor/my-module-content')}
+            className="block w-full mt-2 text-left text-sm"
+          >
+            ✏️ Edit My Module Content
+          </button>
         </div>
 
 

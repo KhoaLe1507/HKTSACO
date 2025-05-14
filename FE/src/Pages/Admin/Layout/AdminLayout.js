@@ -96,7 +96,7 @@ const Sidebar = () => {
 
             <button
               onClick={() => navigate('/admin/learning-path/add-edit')}
-              className="block w-full mt-2 text-left text-blue-600 hover:underline text-sm"
+              className="block w-full mt-2 text-left text-sm"
             >
               ➕ Add & Edit Learning Path
             </button>
