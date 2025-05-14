@@ -5,7 +5,6 @@
       "status": "Accepted",
       "time": "0.005s",
       "memory": "4.00 MB",
-      "score": "1/1",
       "input": "1 2",
       "expected_output": "3",
       "actual_output": "3"
@@ -15,7 +14,6 @@
       "status": "Wrong Answer",
       "time": "0.007s",
       "memory": "4.00 MB",
-      "score": "0/1",
       "input": "10 20",
       "expected_output": "30",
       "actual_output": "25"
@@ -25,7 +23,6 @@
       "status": "Time Limit Exceeded",
       "time": "2.001s",
       "memory": "4.00 MB",
-      "score": "0/1",
       "input": "1000000 1000000",
       "expected_output": "2000000",
       "actual_output": ""
@@ -35,7 +32,6 @@
       "status": "Accepted",
       "time": "0.003s",
       "memory": "3.80 MB",
-      "score": "1/1",
       "input": "5 5",
       "expected_output": "10",
       "actual_output": "10"
@@ -45,7 +41,6 @@
       "status": "Wrong Answer",
       "time": "0.006s",
       "memory": "4.10 MB",
-      "score": "0/1",
       "input": "2 2",
       "expected_output": "4",
       "actual_output": "5"
@@ -55,7 +50,6 @@
       "status": "Accepted",
       "time": "0.004s",
       "memory": "3.95 MB",
-      "score": "1/1",
       "input": "0 0",
       "expected_output": "0",
       "actual_output": "0"
@@ -65,7 +59,6 @@
       "status": "Time Limit Exceeded",
       "time": "2.500s",
       "memory": "4.00 MB",
-      "score": "0/1",
       "input": "999999 999999",
       "expected_output": "1999998",
       "actual_output": ""
@@ -75,7 +68,6 @@
       "status": "Accepted",
       "time": "0.005s",
       "memory": "3.90 MB",
-      "score": "1/1",
       "input": "-1 -2",
       "expected_output": "-3",
       "actual_output": "-3"
@@ -85,7 +77,6 @@
       "status": "Wrong Answer",
       "time": "0.008s",
       "memory": "4.20 MB",
-      "score": "0/1",
       "input": "50 60",
       "expected_output": "110",
       "actual_output": "100"
@@ -95,7 +86,6 @@
       "status": "Memory Limit Exceeded",
       "time": "0.500s",
       "memory": "128.00 MB",
-      "score": "0/1",
       "input": "allocate_large_array",
       "expected_output": "success",
       "actual_output": ""

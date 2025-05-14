@@ -10,7 +10,6 @@ import ProblemsPage from '../../ProblemsPage';
 import AddProblem from "../Problems/AddProblem";
 import EditProblem from "../Problems/EditProblem";
 import MyProblem from "../Problems/MyProblem";
-import SubmissionOfProblem from "../Problems/SubmissionOfProblem";
 
 // Blogs
 import BlogsPage from '../../BlogsPage';
@@ -45,7 +44,6 @@ const ProfessorLayout = () => {
           <Route path="problems" element={<ProblemsPage />} />
           <Route path="problems/add" element={<AddProblem />} />
           <Route path="problems/:id/edit" element={<EditProblem />} />
-          <Route path="problems/:id/submissions" element={<SubmissionOfProblem />} />
           <Route path="my-problems" element={<MyProblem />} />
 
           {/* Blogs */}

@@ -237,132 +237,175 @@ const Submission = () => {
         </div>
 
         {/* Testcase Results (with toggle) */}
-        {/* Testcase Results (with animations and better styling) */}
-{testcases.length > 0 && (
-  <div className="bg-white rounded-lg shadow-lg mb-6 overflow-hidden">
-    <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-4 text-white">
-      <div className="flex items-center">
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
-        </svg>
-        <h2 className="text-lg font-semibold">Testcase Results</h2>
-        <span className="ml-2 bg-white text-blue-600 text-xs font-bold px-2 py-1 rounded-full">
-          {testcases.length} cases
-        </span>
-      </div>
-    </div>
-    
-    <div className="divide-y divide-gray-100">
-      {testcases.map((tc, index) => (
-        <div 
-          key={tc.id} 
-          className={`p-4 ${getBgStatusColor(tc.status)} transition-all duration-300 hover:bg-opacity-50`}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              {getStatusIcon(tc.status)}
-              <div className="ml-2">
-                <h3 className="font-semibold text-gray-800">Testcase #{tc.id}</h3>
-                <p className={`${getStatusTextColor(tc.status)} font-medium text-sm`}>
-                  {tc.status}
-                </p>
+        {testcases.length > 0 && (
+          <div className="bg-white rounded-lg shadow-lg mb-6 overflow-hidden border-2 border-gray-300">
+            <div className="bg-gradient-to-r from-blue-600 to-blue-800 p-4 text-white">
+              <div className="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clipRule="evenodd" />
+                </svg>
+                <h2 className="text-lg font-bold text-white">Testcase Results</h2>
+                <span className="ml-2 bg-white text-blue-700 text-xs font-extrabold px-2 py-1 rounded-full shadow">
+                  {testcases.length} cases
+                </span>
               </div>
             </div>
-            
-            <button
-              onClick={() => {
-                const updated = [...testcases];
-                updated[index]._show = !updated[index]._show;
-                setTestcases([...updated]);
-              }}
-              className={`px-3 py-1 text-white text-sm rounded transition-all duration-200 flex items-center
-                ${tc._show ? 'bg-gray-500 hover:bg-gray-600' : 'bg-blue-500 hover:bg-blue-600'}`}
-            >
-              {tc._show ? (
-                <>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
-                  </svg>
-                  Hide
-                </>
-              ) : (
-                <>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                    <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-                  </svg>
-                  View
-                </>
-              )}
-            </button>
-          </div>
+            <div className="divide-y divide-gray-300">
+              {testcases.map((tc, index) => {
+                // Define background color based on status
+                let bgColor;
+                switch (tc.status) {
+                  case "Accepted": bgColor = "bg-green-100"; break;
+                  case "Wrong Answer": bgColor = "bg-red-100"; break;
+                  case "Time Limit Exceeded": bgColor = "bg-orange-100"; break;
+                  case "Memory Limit Exceeded": bgColor = "bg-purple-100"; break;
+                  default: bgColor = "bg-gray-100";
+                }
 
-          {tc._show && (
-            <div 
-              className="mt-3 bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm transition-all duration-300"
-              style={{
-                maxHeight: tc._show ? '500px' : '0',
-                opacity: tc._show ? 1 : 0,
-              }}
-            >
-              <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x">
-                <div className="p-3">
-                  <div className="text-xs uppercase font-semibold text-gray-500 mb-1">Input</div>
-                  <div className="font-mono text-sm bg-gray-50 p-2 rounded overflow-x-auto">
-                    {tc.input}
-                  </div>
-                </div>
-                <div className="p-3">
-                  <div className="text-xs uppercase font-semibold text-gray-500 mb-1">Expected Output</div>
-                  <div className="font-mono text-sm bg-gray-50 p-2 rounded overflow-x-auto">
-                    {tc.expected_output}
-                  </div>
-                </div>
-                <div className="p-3">
-                  <div className="text-xs uppercase font-semibold text-gray-500 mb-1">Your Output</div>
-                  <div className={`font-mono text-sm p-2 rounded overflow-x-auto `}>
-                    {tc.actual_output || '(no output)'}
-                  </div>
-                </div>
-              </div>
-              
-              {tc.status !== 'Accepted' && (
-                <div className="bg-yellow-50 p-3 border-t border-yellow-100">
-                  <div className="flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500 mr-2 flex-shrink-0 mt-0.5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                    </svg>
-                    <div className="text-sm text-yellow-700">
-                      <strong>Hint:</strong> {tc.status === 'Wrong Answer' ? 'Check your algorithm logic and edge cases.' : tc.status === 'Time Limit Exceeded' ? 'Try to optimize your solution to run more efficiently.' : 'Review your memory usage and algorithm efficiency.'}
+                return (
+                  <div key={tc.id} className={`${bgColor} transition-all duration-300`}>
+                    <div className="p-4">
+                      <div className="flex items-center justify-between flex-wrap">
+                        <div className="flex items-start">
+                          {getStatusIcon(tc.status)}
+                          <div className="ml-2">
+                            <h3 className="font-bold text-gray-900">Testcase #{tc.id}</h3>
+                            <p className={`${getStatusTextColor(tc.status)} font-bold`}>
+                              {tc.status}
+                            </p>
+                            <p className="text-sm text-gray-700 font-medium mt-1">
+                              <span className="inline-flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-blue-600 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                                </svg>
+                                Time: <span className={`font-bold ml-1 ${tc.status === "Time Limit Exceeded" ? "text-red-600" : ""}`}>{tc.time}</span>
+                              </span>
+                              <span className="mx-2 text-gray-400">|</span>
+                              <span className="inline-flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-purple-600 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                  <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                                </svg>
+                                Memory: <span className={`font-bold ml-1 ${tc.status === "Memory Limit Exceeded" ? "text-red-600" : ""}`}>{tc.memory}</span>
+                              </span>
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            const updated = [...testcases];
+                            updated[index]._show = !updated[index]._show;
+                            setTestcases(updated);
+                          }}
+                          className={`px-4 py-2 text-white text-sm rounded-md transition-all duration-200 flex items-center font-bold shadow-md
+                    ${tc._show
+                              ? 'bg-gray-700 hover:bg-gray-800'
+                              : tc.status === 'Accepted'
+                                ? 'bg-green-600 hover:bg-green-700'
+                                : tc.status === 'Wrong Answer'
+                                  ? 'bg-red-600 hover:bg-red-700'
+                                  : tc.status === 'Time Limit Exceeded'
+                                    ? 'bg-orange-600 hover:bg-orange-700'
+                                    : 'bg-blue-600 hover:bg-blue-700'
+                            }`}
+                        >
+                          {tc._show ? (
+                            <>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M5 10a1 1 0 011-1h8a1 1 0 110 2H6a1 1 0 01-1-1z" clipRule="evenodd" />
+                              </svg>
+                              Hide
+                            </>
+                          ) : (
+                            <>
+                              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                              </svg>
+                              View
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                      {tc._show && (
+                        <div className="mt-3 bg-white rounded-lg border-2 border-gray-300 overflow-hidden shadow-md">
+                          <div className="bg-gray-800 text-white py-2 px-4 font-bold flex justify-between items-center">
+                            <span>Details</span>
+                            <span className={`px-2 py-0.5 rounded text-xs font-bold ${tc.status === "Accepted" ? "bg-green-500 text-white" : "bg-red-500 text-white"
+                              }`}>
+                              {tc.status === "Accepted" ? "PASSED" : "FAILED"}
+                            </span>
+                          </div>
+                          <div className="p-4 text-sm space-y-3">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                              <div className="bg-gray-100 p-3 rounded border border-gray-300">
+                                <p className="font-bold text-gray-700 mb-1">Input:</p>
+                                <div className="font-mono bg-white p-2 rounded border border-gray-200 overflow-x-auto">
+                                  {tc.input}
+                                </div>
+                              </div>
+                              <div className="bg-gray-100 p-3 rounded border border-gray-300">
+                                <p className="font-bold text-gray-700 mb-1">Expected Output:</p>
+                                <div className="font-mono bg-white p-2 rounded border border-gray-200 overflow-x-auto">
+                                  {tc.expected_output}
+                                </div>
+                              </div>
+                              <div className={`p-3 rounded border ${tc.status === "Accepted" ? "bg-green-50 border-green-300" : "bg-red-50 border-red-300"
+                                }`}>
+                                <p className={`font-bold mb-1 ${tc.status === "Accepted" ? "text-green-700" : "text-red-700"
+                                  }`}>Actual Output:</p>
+                                <div className={`font-mono p-2 rounded border overflow-x-auto ${tc.status === "Accepted"
+                                    ? "bg-white border-green-200"
+                                    : "bg-white border-red-200"
+                                  }`}>
+                                  {tc.actual_output || '(no output)'}
+                                </div>
+                              </div>
+                            </div>
+
+                            {tc.status !== 'Accepted' && (
+                              <div className="bg-yellow-50 p-3 rounded border border-yellow-300">
+                                <div className="flex items-start">
+                                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-600 mr-2 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                                  </svg>
+                                  <div className="text-yellow-800">
+                                    <strong>Hint:</strong> {
+                                      tc.status === 'Wrong Answer'
+                                        ? 'Check your algorithm logic and edge cases.'
+                                        : tc.status === 'Time Limit Exceeded'
+                                          ? 'Try to optimize your solution to run more efficiently.'
+                                          : 'Review your memory usage and algorithm efficiency.'
+                                    }
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
-                </div>
-              )}
+                );
+              })}
             </div>
-          )}
-        </div>
-      ))}
-    </div>
-    
-    <div className="bg-gray-50 p-4 border-t border-gray-100">
-      <div className="flex justify-between items-center">
-        <div className="text-sm text-gray-500">
-          Showing all {testcases.length} testcases
-        </div>
-        <button 
-          onClick={() => {
-            const allExpanded = testcases.every(tc => tc._show);
-            const updated = testcases.map(tc => ({...tc, _show: !allExpanded}));
-            setTestcases(updated);
-          }}
-          className="px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded hover:bg-blue-200 transition"
-        >
-          {testcases.every(tc => tc._show) ? 'Collapse All' : 'Expand All'}
-        </button>
-      </div>
-    </div>
-  </div>
-)}
+
+            <div className="bg-gray-800 p-4 text-white">
+              <div className="flex justify-end">
+                <button
+                  onClick={() => {
+                    const allExpanded = testcases.every(tc => tc._show);
+                    const updated = testcases.map(tc => ({ ...tc, _show: !allExpanded }));
+                    setTestcases(updated);
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white font-bold text-sm rounded-md hover:bg-blue-700 transition shadow"
+                >
+                  {testcases.every(tc => tc._show) ? 'Collapse All' : 'Expand All'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
 
 
