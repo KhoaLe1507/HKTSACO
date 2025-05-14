@@ -20,8 +20,9 @@ import EditBlog from "../Blogs/EditBlog";
 
 // Learning Path
 import LearningPathPage from '../../LearningPathSource/LearningPathPage';
+
 import EditModule from "../LearningPath/EditModule";
-import AddModuleContent from "../LearningPath/AddModuleContent";
+// import AddModuleContent from "../LearningPath/AddModuleContent";
 import EditMyModuleContent from "../LearningPath/EditMyModuleContent";
 import ModuleContentDetail from "../LearningPath/ModuleContentDetail";
 import EditModuleContent from "../LearningPath/EditModuleContent";
@@ -57,7 +58,7 @@ const ProfessorLayout = () => {
           <Route path="learning-path/:level" element={<LearningPathPage />} />
           <Route path="my-module-content" element={<EditMyModuleContent />} />
           <Route path="modules/:id/edit" element={<EditModule />} />
-          <Route path="modules/:id/add-content" element={<AddModuleContent />} />
+          {/* <Route path="modules/:id/add-content" element={<AddModuleContent />} /> */}
           <Route path="modules/content/:id" element={<ModuleContentDetail />} />
           <Route path="modules/content/:id/edit" element={<EditModuleContent />} />
 
