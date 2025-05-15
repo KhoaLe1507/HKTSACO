@@ -1,12 +1,19 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState ,useEffect} from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
-
+import axios from "axios";
 const Navbar = () => {
   const navigate = useNavigate();
   const { isLoggedIn, setIsLoggedIn, role, setRole } = useContext(AuthContext);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [sections, setSections] = useState([]);
 
+  useEffect(() => {
+    axios.get("https://localhost:7157/api/roadmap/ListAllSectionsDropdown")
+      .then(res => setSections(res.data))
+      .catch(err => console.error("Failed to fetch sections:", err));
+  }, []);
+  
   const handleProfileMenu = (action) => {
     setDropdownOpen(false);
     if (action === "logout") {
@@ -33,7 +40,6 @@ const Navbar = () => {
       <div className="flex items-center gap-2 h-16">
         <img src="/Image/Logo.jpg" alt="HKTOJ logo" className="h-14 object-contain ml-0" />
       </div>
-
       {/* Chỉ hiển thị menu cho Student hoặc chưa login */}
       {(!role || role === "0") && (
         <div className="flex gap-6 items-center">
@@ -41,15 +47,20 @@ const Navbar = () => {
           <div className="relative">
             <select
               className="font-bold bg-white text-black px-2 py-1 rounded border border-gray-300"
-              defaultValue=""
-              onChange={e => navigate(`/${e.target.value}`)}
-              style={{ minWidth: 120 }}
+              value=""
+              onChange={e => navigate(`/learning-path/${e.target.value}`)}
+              style={{ minWidth: 160 }}
             >
               <option value="" disabled hidden>Learning Path</option>
-              <option value="bronze">Bronze</option>
-              <option value="silver">Silver</option>
-              <option value="gold">Gold</option>
-              <option value="platinum">Platinum</option>
+              {sections.length === 0 ? (
+                <option disabled>Loading...</option>
+              ) : (
+                sections.map(sec => (
+                  <option key={sec.id} value={sec.id}>
+                    {sec.name}
+                  </option>
+                ))
+              )}
             </select>
           </div>
           <NavLink to="/problems" className={({ isActive }) => `font-bold px-2 text-black ${isActive ? 'underline' : 'hover:text-blue-600'}`}>Problems</NavLink>

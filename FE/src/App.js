@@ -58,7 +58,7 @@ const App = () => {
               
               {/* Learning Path Routes */}
               <Route path="/:level" element={<LearningPathPage />} />
-              <Route path="/learning-path/:level" element={<LearningPathPage />} />
+              <Route path="/learning-path/:sectionId" element={<LearningPathPage />} />
 
               <Route path="/admin/*" element={<AdminLayout />} />
               
