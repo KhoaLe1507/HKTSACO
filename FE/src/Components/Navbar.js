@@ -10,6 +10,9 @@ const Navbar = () => {
   const handleProfileMenu = (action) => {
     setDropdownOpen(false);
     if (action === "logout") {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("userId");
+      localStorage.removeItem("role");
       setIsLoggedIn(false);
       setRole("");
       navigate("/");
@@ -30,7 +33,9 @@ const Navbar = () => {
       <div className="flex items-center gap-2 h-16">
         <img src="/Image/Logo.jpg" alt="HKTOJ logo" className="h-14 object-contain ml-0" />
       </div>
-      {(!role || role === "Student") && (
+
+      {/* Chỉ hiển thị menu cho Student hoặc chưa login */}
+      {(!role || role === "0") && (
         <div className="flex gap-6 items-center">
           <NavLink to="/" className={({ isActive }) => `font-bold px-2 text-black ${isActive ? 'underline' : 'hover:text-blue-600'}`}>Home</NavLink>
           <div className="relative">
@@ -66,13 +71,16 @@ const Navbar = () => {
             {dropdownOpen && (
               <div className="absolute right-0 mt-2 w-40 bg-white text-black rounded shadow z-20">
                 <div onClick={() => handleProfileMenu("profile")} className="px-4 py-2 hover:bg-gray-200 cursor-pointer font-bold">My Profile</div>
-                {role === "Student" && (
+
+                {/* Chỉ Student mới có các mục sau */}
+                {role === "0" && (
                   <>
                     <div onClick={() => handleProfileMenu("my-blog")} className="px-4 py-2 hover:bg-gray-200 cursor-pointer font-bold">My Blog</div>
                     <div onClick={() => handleProfileMenu("my-progress")} className="px-4 py-2 hover:bg-gray-200 cursor-pointer font-bold">My Progress</div>
                     <div onClick={() => handleProfileMenu("my-submission")} className="px-4 py-2 hover:bg-gray-200 cursor-pointer font-bold">My Submission</div>
                   </>
                 )}
+
                 <div onClick={() => handleProfileMenu("logout")} className="px-4 py-2 hover:bg-red-100 cursor-pointer font-bold text-red-600">Log Out</div>
               </div>
             )}

@@ -203,7 +203,7 @@ const AddProblem = () => {
 
       case "description":
         return (
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-white text-black rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-bold mb-4 text-gray-800">Problem Description</h2>
             
             <FormTextarea 
@@ -235,7 +235,7 @@ const AddProblem = () => {
 
       case "constraints":
         return (
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-white text-black rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Constraints</h2>
               <button 
@@ -438,7 +438,7 @@ const AddProblem = () => {
 
       case "solution":
         return (
-          <div className="bg-white rounded-lg shadow-lg p-6">
+          <div className="bg-white text-black rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-bold mb-4 text-gray-800">Solution & Testcase Generation</h2>
             
             <div>

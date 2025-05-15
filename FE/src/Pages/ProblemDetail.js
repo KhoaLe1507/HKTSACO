@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { useParams } from "react-router-dom";
 // Helper function for status color
 const getStatusColor = (status) => {
   switch (status) {
@@ -18,16 +18,63 @@ const ProblemDetails = () => {
   const [problem, setProblem] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
 
+  const { id } = useParams();
+
   useEffect(() => {
-    // Load problem data
-    const loadedProblem = JSON.parse(localStorage.getItem("selectedProblem"));
-    setProblem(loadedProblem);
-    
-    // Animation delay for content appearance
-    setTimeout(() => {
-      setIsLoaded(true);
-    }, 100);
-  }, []);
+    const fetchProblem = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+  
+        const response = await fetch(`https://localhost:7157/api/Problem/Details/${id}`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+  
+        if (!response.ok) {
+          throw new Error("Không thể tải bài toán.");
+        }
+  
+        const data = await response.json();
+  
+        setProblem({
+          id: id,
+          name: data.name,
+          frequency: data.frequent,
+          moduleContentName: data.moduleContentName,
+          sectionName: data.sectionName,
+          difficulty: data.difficulty,
+          timelimit: data.timeLimit,
+          memorylimit: data.memoryLimit,
+          status: data.status,
+          description: data.problemStatement,
+          inputFormat: data.formatInput,
+          outputFormat: data.formatOutput,
+          constraints: data.constraints.map(c => ({
+            variable: c.variable,
+            min: c.minValue,
+            max: c.maxValue
+          })),
+          samples: data.sampleTestcases.map(s => ({
+            input: s.input,
+            output: s.output,
+            explanation: s.explanation,
+            isSample: true
+          }))
+        });
+  
+        setIsLoaded(true);
+      } catch (error) {
+        console.error("Lỗi khi tải chi tiết bài toán:", error);
+      }
+    };
+  
+    fetchProblem();
+  }, [id]);
+  
+  
 
   if (!problem) return (
     <div className="min-h-screen flex items-center justify-center bg-white">
@@ -209,7 +256,7 @@ const ProblemDetails = () => {
           <div className="flex space-x-3">
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition-colors flex items-center"
-              onClick={() => navigate("/submit")}
+              onClick={() => navigate(`/submit/${problem.id}`)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -219,7 +266,7 @@ const ProblemDetails = () => {
             
             <button
               className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow transition-colors flex items-center"
-              onClick={() => navigate(`/professor/problems/${problem.id}/view-solution`)}
+              onClick={() => navigate(`/viewsolution/${problem.id}`)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z" />
@@ -229,7 +276,7 @@ const ProblemDetails = () => {
             
             <button
               className="bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg shadow transition-colors flex items-center"
-              onClick={() => navigate(`/professor/problems/${problem.id}/all-submissions`)}
+              onClick={() => navigate(`/all-submission/${problem.id}`)}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z" />

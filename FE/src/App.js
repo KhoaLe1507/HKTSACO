@@ -30,7 +30,9 @@ import AddBlog from "./Pages/Professor/Blogs/AddBlog";
 import EditBlog from "./Pages/Professor/Blogs/EditBlog";
 import MyProgress from "./Pages/User/MyProgress";
 import MySubmission from "./Pages/User/MySubmission";
+import ViewSolution from "./Pages/ViewSolution";
 
+import AllSubmission from "./Pages/AllSubmission";
 const App = () => {
   return (
     <AuthProvider>
@@ -42,14 +44,14 @@ const App = () => {
             <Routes>
               <Route path="/" element={<HomePage />} />
               <Route path="/problems" element={<ProblemsPage />} />
-              <Route path="/problem-details" element={<ProblemDetails />} />
-              <Route path="/submit" element={<Submit />} />
+              <Route path="/problem-details/:id" element={<ProblemDetails />} />
+              <Route path="/submit/:id" element={<Submit />} />
               <Route path="/submission" element={<Submission />} />
               <Route path="/submission/:id" element={<Submission />} />
               <Route path="/blogs" element={<BlogsPage />} />
-              
+              <Route path="/viewsolution/:id" element={<ViewSolution />} />
               <Route path="/ranking" element={<RankingPage />} />
-
+              <Route path="/all-submission/:id" element={<AllSubmission />} />
               <Route path="/contact" element={<ContactUsPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/register" element={<RegisterPage />} />

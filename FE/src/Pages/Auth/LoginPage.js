@@ -16,29 +16,47 @@ const LoginPage = () => {
     setMounted(true);
   }, []);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-
-    const usernameLower = username.trim().toLowerCase();
-    const passwordLower = password.trim().toLowerCase();
-
-    if (
-      (usernameLower === "admin" && passwordLower === "admin") ||
-      (usernameLower === "professor" && passwordLower === "professor") ||
-      (usernameLower === "student" && passwordLower === "student")
-    ) {
-      const role = usernameLower.charAt(0).toUpperCase() + usernameLower.slice(1); // viết hoa chữ đầu
-
+  
+    try {
+      const response = await fetch("https://localhost:7157/api/auth/Login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          userName: username,
+          password: password
+        })
+      });
+  
+      if (!response.ok) {
+        alert("Login failed!");
+        return;
+      }
+  
+      const data = await response.json();
+  
+      // Lưu token vào localStorage
+      localStorage.setItem("accessToken", data.accessToken);
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("role", data.role);
+  
       setIsLoggedIn(true);
-      setRole(role);
-
-      if (role === "Admin") navigate("/admin/home");
-      else if (role === "Professor") navigate("/professor");
-      else navigate("/"); // Student → về Home
-    } else {
-      alert("Please enter username and password!");
+      setRole(data.role);
+  
+      // Chuyển hướng theo role
+      if (data.role === "2") navigate("/admin/home");
+      else if (data.role === "1") navigate("/professor");
+      else navigate("/"); // role === "0" → student
+  
+    } catch (error) {
+      console.error("Login error:", error);
+      alert("Login failed due to network or server issue!");
     }
   };
+  
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-white text-gray-800 relative overflow-hidden">

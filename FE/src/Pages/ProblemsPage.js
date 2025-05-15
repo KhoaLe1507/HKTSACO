@@ -3,20 +3,7 @@ import React, { useState, useEffect } from "react";
 import Section from "../Components/Section";
 import Submit from "./Submit";
 
-const problems = [
-  { id: 1, title: "Sum of Two Numbers", description: "Given two integers a and b, return their sum.", difficulty: "Easy", tag: "Math", input: "The first line contains two integers a and b.", output: "Print the sum of a and b.", samples: [{input: "1 2", output: "3"}] },
-  { id: 2, title: "Binary Search", description: "Implement binary search on a sorted array.", difficulty: "Normal", tag: "Binary Search", input: "First line n, then n sorted integers, then integer x.", output: "Print index of x or -1.", samples: [{input: "5\n1 3 5 7 9\n5", output: "2"}] },
-  { id: 3, title: "Factorial", description: "Compute the factorial of a given number n.", difficulty: "Easy", tag: "Math", input: "One integer n.", output: "Print n!.", samples: [{input: "5", output: "120"}] },
-  { id: 4, title: "Fibonacci", description: "Print the nth Fibonacci number.", difficulty: "Normal", tag: "String", input: "One integer n.", output: "Print the nth Fibonacci number.", samples: [{input: "7", output: "13"}] },
-  { id: 5, title: "Palindrome Check", description: "Check if a given string is a palindrome.", difficulty: "Easy", tag: "String", input: "A string s.", output: "Print YES if s is palindrome, else NO.", samples: [{input: "abba", output: "YES"}] },
-  { id: 6, title: "Maximum Subarray", description: "Find the subarray with the largest sum.", difficulty: "Hard", tag: "String", input: "First line n, then n integers.", output: "Print the largest sum.", samples: [{input: "5\n-2 1 -3 4 -1", output: "4"}] },
-  { id: 7, title: "GCD", description: "Find the greatest common divisor.", difficulty: "Normal", tag: "String", input: "Two integers a and b.", output: "Print gcd(a, b).", samples: [{input: "12 18", output: "6"}] },
-  { id: 8, title: "Reverse String", description: "Reverse a given string.", difficulty: "Easy", tag: "String", input: "A string s.", output: "Print reversed s.", samples: [{input: "hello", output: "olleh"}] },
-  { id: 9, title: "Anagram Check", description: "Check if two strings are anagrams.", difficulty: "Normal", tag: "String", input: "Two strings a and b.", output: "Print YES if a and b are anagrams, else NO.", samples: [{input: "listen silent", output: "YES"}] },
-  { id: 10, title: "Matrix Multiplication", description: "Multiply two matrices.", difficulty: "Hard", tag: "Matrix", input: "First line n m, then n rows of m integers, then m p, then m rows of p integers.", output: "Print the resulting n x p matrix.", samples: [{input: "2 2\n1 2\n3 4\n2 2\n5 6\n7 8", output: "19 22\n43 50"}] }
-];
 
-const tags = [...new Set(problems.map(p => p.tag))]; // Lấy các tag duy nhất
 
 const ProblemsPage = () => {
   const navigate = useNavigate();
@@ -35,6 +22,39 @@ const ProblemsPage = () => {
   const [isSearchFocused, setIsSearchFocused] = useState(false);
   const [showMyProblems, setShowMyProblems] = useState(false); // New state for My Problem filter
   
+  const [problems, setProblems] = useState([]);
+  const [tags, setTags] = useState([]);
+  
+  useEffect(() => {
+    const fetchProblems = async () => {
+      try {
+        const response = await fetch("https://localhost:7157/api/Problem/GetAllProblems");
+        const data = await response.json();
+  
+        const mappedProblems = data.map(p => ({
+          id: p.problemId,
+          title: p.name,
+          difficulty: p.difficulty,
+          tag: p.moduleContentTitle,
+          authorId: p.authorId,
+          description: "",
+          input: "",
+          output: "",
+          samples: []
+        }));
+  
+        setProblems(mappedProblems);
+        setTags([...new Set(mappedProblems.map(p => p.tag))]);
+      } catch (error) {
+        console.error("Lỗi khi gọi API GetAllProblems:", error);
+      }
+    };
+  
+    fetchProblems();
+  }, []);
+  
+
+
   // Count problems by tag
   const tagCounts = problems.reduce((acc, p) => {
     acc[p.tag] = (acc[p.tag] || 0) + 1;
@@ -42,7 +62,9 @@ const ProblemsPage = () => {
   }, {});
   
   const allTags = Object.keys(tagCounts);
-
+  const userId = parseInt(localStorage.getItem("userId"));
+  const role = localStorage.getItem("role");
+  
   const getDifficultyColor = (difficulty) => {
     switch (difficulty) {
       case "Easy":
@@ -135,8 +157,7 @@ const ProblemsPage = () => {
   };
 
   const handleProblemClick = (problem) => {
-    localStorage.setItem("selectedProblem", JSON.stringify(problem));
-    navigate("/problem-details");
+    navigate(`/problem-details/${problem.id}`);
   };
   
   // New function to handle edit button click
@@ -317,16 +338,18 @@ const ProblemsPage = () => {
                     
                     {/* Added Edit button below, aligned to the right */}
                     <div className="mt-2 flex justify-end">
-                      <button
-                        onClick={(e) => handleEditClick(e, p)}
-                        className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-1 font-medium text-xs"
-                        title="Edit problem"
-                      >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                        </svg>
-                        <span>Edit</span>
-                      </button>
+                    {(role === "2") || (role === "1" && p.authorId === userId) ? (
+                        <button
+                          onClick={(e) => handleEditClick(e, p)}
+                          className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-1 font-medium text-xs"
+                          title="Edit problem"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                          </svg>
+                          <span>Edit</span>
+                        </button>
+                      ) : null}
                     </div>
                     <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                   </div>

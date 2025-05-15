@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 
+const languageMap = {
+
+  "54" : "C++" ,
+  "62": "Java" ,
+  "71": "Python"
+
+};
 // Helper functions for status colors
 const getStatusColor = (status) => {
   switch (status) {
@@ -87,21 +94,56 @@ const Submission = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Load submission data from localStorage
-    const submissionData = JSON.parse(localStorage.getItem("lastSubmission"));
-    if (submissionData && submissionData.id === Number(id)) {
-      setSubmission(submissionData);
-    }
-
-    // Animation delay
-    setTimeout(() => {
-      setIsLoaded(true);
-      fetch('/mock_result.json')
-        .then(res => res.json())
-        .then(data => setTestcases(data.testcases))
-        .catch(err => console.error('Failed to load testcases:', err));
-    }, 100);
+    const fetchSubmission = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+  
+        const response = await fetch(`https://localhost:7157/api/problem/submissiondetails/${id}`, {
+          method: "GET",
+          headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json"
+          }
+        });
+  
+        if (!response.ok) throw new Error("Failed to fetch submission details");
+  
+        const data = await response.json();
+  
+        setSubmission({
+          id: data.submissionNumber,
+          result: data.finalResult,
+          code: data.sourceCode,
+          timeExec: data.maxTime,
+          memory: data.maxMemory,
+          language: data.language,
+          problemName: data.problemTitle,
+          userName: data.userName
+        });
+  
+        // Gán testcases
+        const mappedTestcases = data.results.map(tc => ({
+          id: tc.index,
+          status: tc.result,
+          time: tc.executedTime + " ms",
+          memory: tc.memory + " KB",
+          input: tc.input,
+          expected_output: tc.expectedOutput,
+          actual_output: tc.userOutput,
+          _show: false
+        }));
+  
+        setTestcases(mappedTestcases);
+        setIsLoaded(true);
+      } catch (err) {
+        console.error("Lỗi khi tải chi tiết submission:", err);
+      }
+    };
+  
+    fetchSubmission();
   }, [id]);
+  
+  
 
   if (!submission) {
     return (
@@ -187,19 +229,19 @@ const Submission = () => {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
                 </svg>
-                <span className="font-medium">Time: {submission.timeExec}</span>
+                <span className="font-medium">Time: {submission.timeExec} ms </span>
               </div>
 
               <div className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
                 </svg>
-                <span className="font-medium">Memory: {submission.memory || "N/A"}</span>
+                <span className="font-medium">Memory: {submission.memory || "N/A"} KB </span>
               </div>
 
               <div className="flex items-center">
                 {getLanguageIcon()}
-                <span className="ml-1 font-medium">{submission.language}</span>
+                <span className="ml-1 font-medium">{languageMap[submission.language]}</span>
               </div>
             </div>
           </div>
@@ -217,7 +259,7 @@ const Submission = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                   </svg>
-                  <span>{USERNAME}</span>
+                  <span>{submission.userName}</span>
                 </div>
                 <span>•</span>
                 <div className="flex items-center">

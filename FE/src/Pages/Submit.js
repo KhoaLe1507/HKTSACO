@@ -1,19 +1,23 @@
 import React, { useState, useEffect, useRef } from "react";
 import Editor from "@monaco-editor/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+const languageMap = {
+  cpp: "54",
+  java: "62",
+  python: "71"
+};
 
 const Submit = () => {
   const navigate = useNavigate();
-  const stored = localStorage.getItem("selectedProblem");
-  const problem = stored ? JSON.parse(stored) : null;
-
+  const { id } = useParams();
+  const [problem, setProblem] = useState(null);
   const [code, setCode] = useState("");
-  const [language, setLanguage] = useState("python"); // Default to Python as shown in your screenshot
+  const [language, setLanguage] = useState("python");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Languages configuration with icons and styles
   const languages = [
     {
       id: "cpp",
@@ -93,7 +97,28 @@ if __name__ == "__main__":
     }
   };
 
-  // Set initial code and handle clicks outside the dropdown
+  // 👇 Lấy thông tin bài toán từ API để lấy problem.name
+  useEffect(() => {
+    const fetchProblem = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const res = await fetch(`https://localhost:7157/api/problem/details/${id}`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        const data = await res.json();
+        setProblem({ id, name: data.name });
+      } catch (err) {
+        console.error("Lỗi khi lấy bài toán:", err);
+      }
+    };
+
+    fetchProblem();
+  }, [id]);
+
   useEffect(() => {
     setCode(getStarterCode(language));
 
@@ -109,7 +134,6 @@ if __name__ == "__main__":
     };
   }, []);
 
-  // Update code when language changes
   useEffect(() => {
     if (code === getStarterCode("cpp") || code === getStarterCode("java") || code === getStarterCode("python") || code === "") {
       setCode(getStarterCode(language));
@@ -117,37 +141,37 @@ if __name__ == "__main__":
   }, [language]);
 
   if (!problem) {
-    return <div className="text-black p-4">No problem selected.</div>;
+    return <div className="text-black p-4">Loading problem...</div>;
   }
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-  
     try {
-      // Load mock testcases from file
-      const response = await fetch('/mock_result.json'); // Ensure file is in /public folder
-      const data = await response.json();
-  
-      const fakeSubmission = {
-        id: 9999,
-        problemTitle: problem.name,
-        language: language,
-        status: "Mixed Results",
-        code: code,
-        testcases: data.testcases // ✅ lấy từ file JSON
-      };
-  
-      localStorage.setItem("lastSubmission", JSON.stringify(fakeSubmission));
-      navigate(`/submission/${fakeSubmission.id}`);
-    } catch (error) {
-      console.error("Error loading mock_result.json:", error);
-      alert("Failed to load mock submission result.");
-      setIsSubmitting(false);
-    }
-  };
-  
+      const token = localStorage.getItem("accessToken");
 
-  // Get the selected language object
+      const response = await fetch(`https://localhost:7157/api/problem/submit/${id}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          sourceCode: code,
+          languageId: languageMap[language]
+        })
+      });
+
+      if (!response.ok) throw new Error("Submit failed");
+
+      const data = await response.json();
+      navigate(`/submission/${data.submissionId}`);
+    } catch (error) {
+      console.error("Error submitting:", error);
+      alert("Submission failed.");
+    }
+    setIsSubmitting(false);
+  };
+
   const selectedLang = languages.find(lang => lang.id === language);
 
   return (
