@@ -26,21 +26,21 @@ const ContactUsPage = () => {
         {/* Contact Info */}
         <div className="space-y-6">
           <div className="flex items-center space-x-4">
-            <div className="bg-blue-100 p-3 rounded-full">
+            <div className="bg-blue-200 p-3 rounded-full">
               <i className="fas fa-map-marker-alt text-blue-600"></i>
             </div>
             <p>Da Nang City</p>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="bg-blue-100 p-3 rounded-full">
+            <div className="bg-blue-300 p-3 rounded-full">
               <i className="fas fa-phone text-blue-600"></i>
             </div>
             <p>0934 807 226</p>
           </div>
 
           <div className="flex items-center space-x-4">
-            <div className="bg-blue-100 p-3 rounded-full">
+            <div className="bg-blue-400 p-3 rounded-full">
               <i className="fas fa-envelope text-blue-600"></i>
             </div>
             <p>tunghbdtsc@gmail.com</p>

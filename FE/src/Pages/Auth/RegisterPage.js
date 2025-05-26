@@ -8,6 +8,13 @@ const UserIcon = () => (
   </svg>
 );
 
+const DocumentIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M7 2h8l5 5v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" />
+    <path strokeLinecap="round" strokeLinejoin="round" d="M14 2v6h6" />
+  </svg>
+);
+
 const MailIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -27,6 +34,31 @@ const CalendarIcon = () => (
     <line x1="16" y1="2" x2="16" y2="6" />
     <line x1="8" y1="2" x2="8" y2="6" />
     <line x1="3" y1="10" x2="21" y2="10" />
+  </svg>
+);
+
+const PencilIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 20h9" />
+    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+  </svg>
+);
+
+const SchoolIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M3 10l9-6 9 6" />
+    <path d="M4 10v10h16V10" />
+    <path d="M12 14v6" />
+    <path d="M8 10v4" />
+    <path d="M16 10v4" />
+  </svg>
+);;
+
+const GenderIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <circle cx="12" cy="10" r="4" />
+    <line x1="12" y1="14" x2="12" y2="22" />
+    <line x1="9" y1="19" x2="15" y2="19" />
   </svg>
 );
 
@@ -65,6 +97,25 @@ const RegisterPage = () => {
     e.preventDefault();
     // Form submission logic would go here
   };
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    phone: "",
+    dob: "",
+    bio: "",
+    username: "",
+    password: "",
+    gender: "",
+    school: "",
+  });
+
+  const handleFormChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-white text-gray-800 relative overflow-hidden">
@@ -74,14 +125,14 @@ const RegisterPage = () => {
         <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-b from-green-50 to-transparent rounded-full opacity-30 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 w-96 h-96 bg-gradient-to-t from-gray-50 to-transparent rounded-full opacity-30 blur-3xl"></div>
       </div>
-      
+
       <div className="relative z-10 flex flex-col md:flex-row w-full max-w-6xl mx-4 bg-white rounded-2xl shadow-2xl overflow-hidden">
         {/* Left side decorative panel */}
         <div className="w-full md:w-5/12 bg-gradient-to-br from-gray-50 to-green-50 p-12 hidden md:flex flex-col justify-between relative overflow-hidden">
           <div className={`relative z-10 transform transition-all duration-700 delay-300 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
             <h1 className="text-3xl font-bold text-gray-800 mb-2">Join Our Community</h1>
             <p className="text-gray-600 mb-6">Create an account to access all features and begin your journey with us.</p>
-            
+
             <div className="space-y-4 mt-8">
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
@@ -93,7 +144,7 @@ const RegisterPage = () => {
                 </div>
                 <p className="text-gray-600 text-sm">Access to all platform features</p>
               </div>
-              
+
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
                   <div className="w-4 h-4 text-green-500">
@@ -104,7 +155,7 @@ const RegisterPage = () => {
                 </div>
                 <p className="text-gray-600 text-sm">Track your progress seamlessly</p>
               </div>
-              
+
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center mr-3">
                   <div className="w-4 h-4 text-green-500">
@@ -117,11 +168,11 @@ const RegisterPage = () => {
               </div>
             </div>
           </div>
-          
+
           {/* Abstract shapes for decoration */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-green-100 rounded-full opacity-40 transform translate-x-1/2 -translate-y-1/2"></div>
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-gray-100 rounded-full opacity-60 transform -translate-x-1/2 translate-y-1/2"></div>
-          
+
           <div className={`relative z-10 transform transition-all duration-700 delay-500 ${mounted ? "translate-y-0 opacity-100" : "translate-y-8 opacity-0"}`}>
             <div className="flex items-center space-x-2 mb-2">
               <div className="w-12 h-1 bg-gray-200 rounded"></div>
@@ -131,7 +182,7 @@ const RegisterPage = () => {
             <div className="text-xs text-gray-500 text-center">&copy; {new Date().getFullYear()} Your Company. All rights reserved.</div>
           </div>
         </div>
-        
+
         {/* Right side registration form */}
         <div className="w-full md:w-7/12 p-8 md:p-12">
           {/* Mobile header (visible only on small screens) */}
@@ -139,7 +190,7 @@ const RegisterPage = () => {
             <h1 className="text-2xl font-bold text-gray-800 mb-2">Create Account</h1>
             <p className="text-gray-600 text-sm">Join our community today</p>
           </div>
-          
+
           {/* Logo/Brand section */}
           <div className="flex justify-center mb-6">
             <div className={`w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-md transform transition-all duration-500 ${mounted ? "translate-y-0 opacity-100 rotate-0" : "-translate-y-8 opacity-0 -rotate-90"}`}>
@@ -150,68 +201,140 @@ const RegisterPage = () => {
               </div>
             </div>
           </div>
-          
+
           <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Create Your Account</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Full Name input */}
-            <div className={`relative transform transition-all duration-500 delay-100 ${mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"}`}>
-              <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 w-5 h-5 ${focused === 'name' ? 'text-green-500' : 'text-gray-400'}`}>
-                <UserIcon />
+
+          <div className="mt-4 border border-gray-200 rounded-xl p-4 shadow-sm bg-white">
+
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 text-green-500">
+                <DocumentIcon />
               </div>
-              <input
-                type="text"
-                placeholder="Full Name"
-                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === 'name' ? 'border-green-300 ring-4 ring-green-50' : 'border-gray-200'} outline-none transition-all duration-300 text-gray-700`}
-                onFocus={() => setFocused('name')}
+              <h3 className="text-base font-semibold text-gray-800 tracking-wide">Information</h3>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Full Name */}
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5">
+                  <UserIcon />
+                </div>
+                <input
+                  type="text"
+                  name="fullName"
+                  value={form.fullName}
+                  onChange={handleFormChange}
+                  placeholder="Full Name"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700"
+                />
+              </div>
+
+              {/* Email */}
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5">
+                  <MailIcon />
+                </div>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleFormChange}
+                  placeholder="Email"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Phone Number */}
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5">
+                  <PhoneIcon />
+                </div>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={form.phone}
+                  onChange={handleFormChange}
+                  placeholder="Phone Number"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700"
+                />
+              </div>
+
+              {/* Birthdate */}
+              <div className="relative">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5">
+                  <CalendarIcon />
+                </div>
+                <input
+                  type="date"
+                  name="dob"
+                  value={form.dob}
+                  onChange={handleFormChange}
+                  placeholder="mm/dd/yyyy"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700"
+                />
+              </div>
+            </div>
+            {/* Bio input */}
+            <div className={`relative mb-4 transform transition-all duration-500 delay-300 ${mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"}`}>
+              <div className={`absolute left-3 top-4 transition-colors duration-200 w-5 h-5 ${focused === "bio" ? "text-green-500" : "text-gray-400"}`}>
+                <PencilIcon />
+              </div>
+              <textarea
+                name="bio"
+                placeholder="Tell us a bit about yourself..."
+                rows={4}
+                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === "bio"
+                  ? "border-green-300 ring-4 ring-green-50"
+                  : "border-gray-200"
+                  } outline-none transition-all duration-300 text-gray-700 resize-none`}
+                onFocus={() => setFocused("bio")}
                 onBlur={() => setFocused(null)}
               />
             </div>
-            
-            {/* Email input */}
-            <div className={`relative transform transition-all duration-500 delay-150 ${mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"}`}>
-              <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 w-5 h-5 ${focused === 'email' ? 'text-green-500' : 'text-gray-400'}`}>
-                <MailIcon />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              {/* Gender */}
+              <div className="relative">
+                <div className={`absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5`}>
+                  <GenderIcon />
+                </div>
+                <input
+                  type="text"
+                  name="gender"
+                  placeholder="Gender"
+                  value={form.gender}
+                  onChange={handleFormChange}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700"
+                />
               </div>
-              <input
-                type="email"
-                placeholder="Email"
-                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === 'email' ? 'border-green-300 ring-4 ring-green-50' : 'border-gray-200'} outline-none transition-all duration-300 text-gray-700`}
-                onFocus={() => setFocused('email')}
-                onBlur={() => setFocused(null)}
-              />
-            </div>
-            
-            {/* Phone Number input */}
-            <div className={`relative transform transition-all duration-500 delay-200 ${mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"}`}>
-              <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 w-5 h-5 ${focused === 'phone' ? 'text-green-500' : 'text-gray-400'}`}>
-                <PhoneIcon />
+
+              {/* School */}
+              <div className="relative">
+                <div className={`absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5`}>
+                  <SchoolIcon />
+                </div>
+                <input
+                  type="text"
+                  name="school"
+                  placeholder="School"
+                  value={form.school}
+                  onChange={handleFormChange}
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700"
+                />
               </div>
-              <input
-                type="tel"
-                placeholder="Phone Number"
-                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === 'phone' ? 'border-green-300 ring-4 ring-green-50' : 'border-gray-200'} outline-none transition-all duration-300 text-gray-700`}
-                onFocus={() => setFocused('phone')}
-                onBlur={() => setFocused(null)}
-              />
-            </div>
-            
-            {/* Birthdate input */}
-            <div className={`relative transform transition-all duration-500 delay-250 ${mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"}`}>
-              <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 w-5 h-5 ${focused === 'birthdate' ? 'text-green-500' : 'text-gray-400'}`}>
-                <CalendarIcon />
-              </div>
-              <input
-                type="date"
-                placeholder="Birthdate"
-                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === 'birthdate' ? 'border-green-300 ring-4 ring-green-50' : 'border-gray-200'} outline-none transition-all duration-300 text-gray-700`}
-                onFocus={() => setFocused('birthdate')}
-                onBlur={() => setFocused(null)}
-              />
             </div>
           </div>
-          
-          <div className="mt-4">
+
+          <div className="mt-4 border border-gray-200 rounded-xl p-4 shadow-sm bg-white">
+
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-6 h-6 text-green-500">
+                <UserIcon />
+              </div>
+              <h3 className="text-base font-semibold text-gray-800 tracking-wide">Account</h3>
+            </div>
+
             {/* Username input */}
             <div className={`relative mb-4 transform transition-all duration-500 delay-300 ${mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"}`}>
               <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 w-5 h-5 ${focused === 'username' ? 'text-green-500' : 'text-gray-400'}`}>
@@ -225,7 +348,7 @@ const RegisterPage = () => {
                 onBlur={() => setFocused(null)}
               />
             </div>
-            
+
             {/* Password input */}
             <div className={`relative mb-6 transform transition-all duration-500 delay-350 ${mounted ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"}`}>
               <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 w-5 h-5 ${focused === 'password' ? 'text-green-500' : 'text-gray-400'}`}>
@@ -239,7 +362,9 @@ const RegisterPage = () => {
                 onBlur={() => setFocused(null)}
               />
             </div>
-            
+          </div>
+
+          <div className="mt-4">
             {/* Terms & conditions */}
             <div className={`flex items-start mb-6 transform transition-all duration-500 delay-400 ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
               <div className="flex items-center h-5">
@@ -253,7 +378,7 @@ const RegisterPage = () => {
                 I agree to the <a href="#" className="text-green-500 hover:text-green-700">Terms and Conditions</a> and <a href="#" className="text-green-500 hover:text-green-700">Privacy Policy</a>
               </label>
             </div>
-            
+
             {/* Register button with animation */}
             <div className={`transform transition-all duration-500 delay-450 ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
               <button
@@ -269,10 +394,10 @@ const RegisterPage = () => {
               </button>
             </div>
           </div>
-          
+
           {/* Sign in link */}
           <div className={`text-center mt-6 text-gray-600 transform transition-all duration-500 delay-500 ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
-            Already have an account? 
+            Already have an account?
             <a href="#" className="text-green-500 hover:text-green-700 ml-1 transition-colors duration-300 font-medium">
               Sign in
             </a>

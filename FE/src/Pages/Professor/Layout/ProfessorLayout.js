@@ -7,6 +7,9 @@ import ProfessorHomePage from "../Dashboard/ProfessorHomePage";
 // Problems
 // import AllProblem from "../Problems/AllProblem";
 import ProblemsPage from '../../ProblemsPage';
+import ProblemDetails from "../../ProblemDetail";
+import Submit from "../../Submit";
+import Submission from "../../Submission";
 import AddProblem from "../Problems/AddProblem";
 import EditProblem from "../Problems/EditProblem";
 import MyProblem from "../Problems/MyProblem";

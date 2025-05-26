@@ -118,11 +118,10 @@ const AddProblem = () => {
   const TabButton = ({ id, label, active, onClick }) => (
     <button
       onClick={() => onClick(id)}
-      className={`px-5 py-3 font-medium rounded-t-lg transition-colors duration-200 ${
-        active 
-          ? "bg-white text-blue-600 border-t border-l border-r border-gray-200"
-          : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-      }`}
+      className={`px-5 py-3 font-medium rounded-t-lg transition-colors duration-200 ${active
+        ? "bg-white text-blue-600 border-t border-l border-r border-gray-200"
+        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+        }`}
     >
       {label}
     </button>
@@ -135,69 +134,89 @@ const AddProblem = () => {
           <div className="bg-white text-black rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-bold mb-4 text-gray-800">Problem Details</h2>
 
-            <FormInput 
+            {/* <FormInput 
               label="Problem Name" 
               name="name" 
               value={form.name} 
               onChange={handleFormChange} 
               placeholder="Enter a descriptive name for the problem"
-            />
+            /> */}
+            <div className="mb-4 text-black">
+              <label className="block text-gray-700 font-semibold mb-2">Problem Name</label>
+              <textarea
+                name="name"
+                value={form.name}
+                onChange={handleFormChange}
+                placeholder="Enter a descriptive name for the problem"
+                rows={1}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormSelect 
-                label="Frequency" 
-                name="frequency" 
-                value={form.frequency} 
-                onChange={handleFormChange} 
+              <FormSelect
+                label="Frequency"
+                name="frequency"
+                value={form.frequency}
+                onChange={handleFormChange}
                 options={["Very Frequent", "Frequent", "Rare"]}
               />
-              <FormSelect 
-                label="Difficulty" 
-                name="difficulty" 
-                value={form.difficulty} 
-                onChange={handleFormChange} 
+              <FormSelect
+                label="Difficulty"
+                name="difficulty"
+                value={form.difficulty}
+                onChange={handleFormChange}
                 options={["Easy", "Medium", "Hard"]}
               />
-              <FormSelect 
-                label="Section" 
-                name="section" 
-                value={form.section} 
-                onChange={handleFormChange} 
+              <FormSelect
+                label="Section"
+                name="section"
+                value={form.section}
+                onChange={handleFormChange}
                 options={["Math", "Graph", "DP"]}
               />
-              <FormSelect 
-                label="Module" 
-                name="module" 
-                value={form.module} 
-                onChange={handleFormChange} 
+              <FormSelect
+                label="Module"
+                name="module"
+                value={form.module}
+                onChange={handleFormChange}
                 options={["Module 1", "Module 2"]}
               />
             </div>
 
-            <FormSelect 
-              label="Module Content" 
-              name="moduleContent" 
-              value={form.moduleContent} 
-              onChange={handleFormChange} 
+            <FormSelect
+              label="Module Content"
+              name="moduleContent"
+              value={form.moduleContent}
+              onChange={handleFormChange}
               options={["Content 1", "Content 2"]}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <FormInput 
-                label="Time Limit (s)" 
-                name="timelimit" 
-                value={form.timelimit} 
-                onChange={handleFormChange} 
-                placeholder="e.g., 1.0"
-              />
-              <FormInput 
-                label="Memory Limit (KB)" 
-                name="memorylimit" 
-                value={form.memorylimit} 
-                onChange={handleFormChange} 
-                placeholder="e.g., 256000"
-              />
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">Time Limit (s)</label>
+                <textarea
+                  name="timelimit"
+                  value={form.timelimit}
+                  onChange={handleFormChange}
+                  placeholder="e.g., 1.0"
+                  rows={1}
+                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-700 font-semibold mb-2">Memory Limit (KB)</label>
+                <textarea
+                  name="memorylimit"
+                  value={form.memorylimit}
+                  onChange={handleFormChange}
+                  placeholder="e.g., 256000"
+                  rows={1}
+                  className="w-full px-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                />
+              </div>
             </div>
+
           </div>
         );
 
@@ -205,31 +224,43 @@ const AddProblem = () => {
         return (
           <div className="bg-white text-black rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-bold mb-4 text-gray-800">Problem Description</h2>
-            
-            <FormTextarea 
-              label="Problem Statement" 
-              name="statement" 
-              value={form.statement} 
-              onChange={handleFormChange} 
-              placeholder="Describe the problem requirements clearly..."
-              rows={6}
-            />
-            
-            <FormTextarea 
-              label="Input Format" 
-              name="inputFormat" 
-              value={form.inputFormat} 
-              onChange={handleFormChange} 
-              placeholder="e.g., Line 1: number of tests..."
-            />
-            
-            <FormTextarea 
-              label="Output Format" 
-              name="outputFormat" 
-              value={form.outputFormat} 
-              onChange={handleFormChange} 
-              placeholder="e.g., Line 1: number of outputs..."
-            />
+
+            <div className="mb-4 text-black">
+              <label className="block text-gray-700 font-semibold mb-2">Problem Statement</label>
+              <textarea
+                name="statement"
+                value={form.statement}
+                onChange={handleFormChange}
+                placeholder="Describe the problem requirements clearly..."
+                rows={6}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+            </div>
+
+            <div className="mb-4 text-black">
+              <label className="block text-gray-700 font-semibold mb-2">Input Format</label>
+              <textarea
+                name="inputFormat"
+                value={form.inputFormat}
+                onChange={handleFormChange}
+                placeholder="e.g., Line 1: number of tests..."
+                rows={4}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+            </div>
+
+            <div className="mb-4 text-black">
+              <label className="block text-gray-700 font-semibold mb-2">Output Format</label>
+              <textarea
+                name="outputFormat"
+                value={form.outputFormat}
+                onChange={handleFormChange}
+                placeholder="e.g., Line 1: number of outputs..."
+                rows={4}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+            </div>
+
           </div>
         );
 
@@ -238,7 +269,7 @@ const AddProblem = () => {
           <div className="bg-white text-black rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Constraints</h2>
-              <button 
+              <button
                 className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg flex items-center transition duration-200"
                 onClick={() => setShowConstraintForm(true)}
               >
@@ -252,7 +283,7 @@ const AddProblem = () => {
             {showConstraintForm && (
               <div className="mb-6 bg-white p-4 rounded-lg border border-blue-200">
                 <h3 className="font-semibold text-blue-800 mb-3">New Constraint</h3>
-                
+
                 <div className="mb-3">
                   <label className="block text-gray-700 mb-1">Variable Name</label>
                   <input
@@ -317,7 +348,7 @@ const AddProblem = () => {
                         <td className="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{constraint.variable}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{constraint.min} ≤ {constraint.variable} ≤ {constraint.max}</td>
                         <td className="px-4 py-3 whitespace-nowrap text-right text-sm font-medium">
-                          <button 
+                          <button
                             onClick={() => removeConstraint(index)}
                             className="text-red-600 hover:text-red-800"
                           >
@@ -345,7 +376,7 @@ const AddProblem = () => {
           <div className="bg-white text-black rounded-lg shadow-lg p-6">
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-xl font-bold text-gray-800">Sample Testcases</h2>
-              <button 
+              <button
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center transition duration-200"
                 onClick={() => setShowSampleForm(true)}
               >
@@ -359,7 +390,7 @@ const AddProblem = () => {
             {showSampleForm && (
               <div className="mb-6 bg-green-50 p-4 rounded-lg border border-green-200">
                 <h3 className="font-semibold text-green-800 mb-3">New Sample Testcase</h3>
-                
+
                 <div className="mb-3">
                   <label className="block text-gray-700 mb-1">Input</label>
                   <textarea
@@ -405,7 +436,7 @@ const AddProblem = () => {
                   <div key={index} className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow">
                     <div className="bg-gray-50 px-4 py-2 border-b border-gray-200 flex justify-between items-center">
                       <h3 className="font-medium text-gray-700">Sample Testcase #{index + 1}</h3>
-                      <button 
+                      <button
                         onClick={() => removeSample(index)}
                         className="text-red-600 hover:text-red-800 text-sm"
                       >
@@ -440,28 +471,28 @@ const AddProblem = () => {
         return (
           <div className="bg-white text-black rounded-lg shadow-lg p-6">
             <h2 className="text-xl font-bold mb-4 text-gray-800">Solution & Testcase Generation</h2>
-            
+
             <div>
               {/* Generate Testcase Section - Above Solution Details */}
               <div className="mb-6 bg-gray-50 p-4 rounded-lg border border-gray-200">
                 <h3 className="font-semibold text-gray-800 mb-3">Generate Testcase</h3>
-                
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <FormInput 
-                    label="Number of Test Cases" 
+                  <FormInput
+                    label="Number of Test Cases"
                     type="number"
-                    name="numTest" 
-                    value={form.numTest} 
-                    onChange={handleFormChange} 
+                    name="numTest"
+                    value={form.numTest}
+                    onChange={handleFormChange}
                     placeholder="e.g., 10"
                     min="1"
                   />
-                  
-                  <FormSelect 
-                    label="Generate Input Code Language" 
-                    name="solutionLanguage" 
-                    value={form.solutionLanguage} 
-                    onChange={handleFormChange} 
+
+                  <FormSelect
+                    label="Generate Input Code Language"
+                    name="solutionLanguage"
+                    value={form.solutionLanguage}
+                    onChange={handleFormChange}
                     options={[
                       { value: "cpp", label: "C++" },
                       { value: "python", label: "Python" },
@@ -469,15 +500,15 @@ const AddProblem = () => {
                     ]}
                   />
                 </div>
-                
+
                 {/* Generate Input Code Editor */}
                 <div className="mb-4">
                   <label className="block text-gray-700 font-semibold mb-2">Generate Input Code</label>
                   <div className="relative">
                     <div className="absolute top-0 left-0 right-0 bg-gray-100 text-black font-semibold px-4 py-2 border-b border-gray-300 rounded-t-lg flex items-center">
                       <span className="mr-2 font-medium text-sm">
-                        {form.solutionLanguage === "cpp" ? "C++" : 
-                         form.solutionLanguage === "python" ? "Python" : "Java"}
+                        {form.solutionLanguage === "cpp" ? "C++" :
+                          form.solutionLanguage === "python" ? "Python" : "Java"}
                       </span>
                     </div>
                     <textarea
@@ -491,18 +522,18 @@ const AddProblem = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Solution Details Section */}
               <div className="mb-6">
                 <h3 className="font-semibold text-gray-700 mb-3">Solution Details</h3>
-                
+
                 {/* Added Language Selector to Solution Details */}
                 <div className="mb-4">
-                  <FormSelect 
-                    label="Solution Language" 
-                    name="solutionLanguage" 
-                    value={form.solutionLanguage} 
-                    onChange={handleFormChange} 
+                  <FormSelect
+                    label="Solution Language"
+                    name="solutionLanguage"
+                    value={form.solutionLanguage}
+                    onChange={handleFormChange}
                     options={[
                       { value: "cpp", label: "C++" },
                       { value: "python", label: "Python" },
@@ -510,7 +541,7 @@ const AddProblem = () => {
                     ]}
                   />
                 </div>
-                
+
                 {/* Fixed Solution Explanation textarea */}
                 <div className="mb-4 text-black">
                   <label className="block text-gray-700 font-semibold mb-2">Solution Explanation</label>
@@ -523,14 +554,14 @@ const AddProblem = () => {
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
                   />
                 </div>
-                
+
                 <div className="mb-4">
                   <label className="block text-gray-700 font-semibold mb-2">Solution Code</label>
                   <div className="relative">
                     <div className="absolute top-0 left-0 right-0 bg-gray-100 text-black font-semibold px-4 py-2 border-b border-gray-300 rounded-t-lg flex items-center">
                       <span className="mr-2 font-medium text-sm">
-                        {form.solutionLanguage === "cpp" ? "C++" : 
-                         form.solutionLanguage === "python" ? "Python" : "Java"}
+                        {form.solutionLanguage === "cpp" ? "C++" :
+                          form.solutionLanguage === "python" ? "Python" : "Java"}
                       </span>
                     </div>
                     <textarea
@@ -544,10 +575,10 @@ const AddProblem = () => {
                   </div>
                 </div>
               </div>
-              
+
               {/* Generate Testcases Button - Moved to bottom */}
               <div className="flex justify-center">
-                <button 
+                <button
                   className="bg-yellow-500 hover:bg-yellow-600 text-white px-8 py-3 rounded-lg flex items-center font-medium shadow-md transition duration-200"
                   onClick={buildTestcases}
                 >
@@ -577,7 +608,7 @@ const AddProblem = () => {
             <h1 className="text-3xl font-bold text-gray-800">Add New Problem</h1>
           </div>
           <p className="text-gray-600 mb-6">Create a new programming problem with details, constraints, and test cases</p>
-          
+
           <div className="border-b border-gray-200 mb-4">
             <div className="flex flex-wrap gap-1">
               <TabButton id="details" label="Details" active={activeTab === "details"} onClick={setActiveTab} />
@@ -587,9 +618,9 @@ const AddProblem = () => {
               <TabButton id="solution" label="Solution" active={activeTab === "solution"} onClick={setActiveTab} />
             </div>
           </div>
-          
+
           {renderTabContent()}
-          
+
           <div className="flex justify-between mt-6">
             <button
               className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-lg transition duration-200"
@@ -603,7 +634,7 @@ const AddProblem = () => {
             >
               Previous
             </button>
-            
+
             <button
               className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md transition duration-200"
               onClick={() => {
