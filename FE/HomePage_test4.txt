@@ -1,0 +1,647 @@
+import React, { useState, useEffect } from "react";
+
+const HomePage = () => {
+  // Thay thế useNavigate với giả lập hàm điều hướng
+  const handleGetStarted = () => {
+    console.log("Navigating to login page");
+    // Trong ứng dụng thực, bạn sẽ sử dụng: navigate("/login");
+  };
+  
+  const handleExplore = () => {
+    console.log("Navigating to explore page");
+    // Trong ứng dụng thực, bạn sẽ sử dụng: navigate("/explore");
+  };
+  
+  // State cho animations
+  const [isVisible, setIsVisible] = useState(false);
+  const [featureIndex, setFeatureIndex] = useState(0);
+  const [typedText, setTypedText] = useState("");
+  const [isTyping, setIsTyping] = useState(true);
+  const [scrollY, setScrollY] = useState(0);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [particleAnimation, setParticleAnimation] = useState(0);
+  
+  const features = [
+    "Solve algorithmic challenges",
+    "Compete in real-time contests", 
+    "Track your progress with analytics",
+    "Learn from expert tutorials"
+  ];
+  
+  const targetText = features[featureIndex];
+  
+  // Scroll animation
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+  
+  // Mouse tracking for interactive effects
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+  
+  // Particle animation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setParticleAnimation(prev => prev + 1);
+    }, 100);
+    return () => clearInterval(interval);
+  }, []);
+  
+  // Text typing animation
+  useEffect(() => {
+    setIsVisible(true);
+    
+    let timeout;
+    if (isTyping) {
+      if (typedText.length < targetText.length) {
+        timeout = setTimeout(() => {
+          setTypedText(targetText.slice(0, typedText.length + 1));
+        }, 100);
+      } else {
+        timeout = setTimeout(() => {
+          setIsTyping(false);
+        }, 1500);
+      }
+    } else {
+      if (typedText.length > 0) {
+        timeout = setTimeout(() => {
+          setTypedText(typedText.slice(0, typedText.length - 1));
+        }, 50);
+      } else {
+        setFeatureIndex((featureIndex + 1) % features.length);
+        setIsTyping(true);
+      }
+    }
+    
+    return () => clearTimeout(timeout);
+  }, [typedText, isTyping, featureIndex, targetText]);
+  
+  // Stats for countup animations
+  const [stats] = useState({
+    problems: 1200,
+    users: 50000,
+    contests: 120,
+    countries: 75
+  });
+  
+  // Testimonials
+  const testimonials = [
+    {
+      text: "HKTOJ transformed how I approach algorithmic problems. I went from barely solving easy problems to acing competitive coding interviews.",
+      author: "Alex Chen, Software Engineer"
+    },
+    {
+      text: "The structured learning path and real-time contests prepared me perfectly for coding competitions. HKTOJ is simply the best platform out there.",
+      author: "Maria Rodriguez, CS Student"
+    },
+    {
+      text: "As an educator, I've found HKTOJ to be invaluable for my students. The analytics help me understand where they need guidance.",
+      author: "Dr. James Wilson, University Professor"
+    }
+  ];
+  
+  // Floating particles component
+  const FloatingParticles = () => (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {[...Array(20)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute w-2 h-2 bg-blue-400 rounded-full opacity-20 animate-pulse"
+          style={{
+            left: `${(i * 7 + particleAnimation) % 100}%`,
+            top: `${(i * 11 + Math.sin(particleAnimation / 10 + i) * 20 + 50) % 100}%`,
+            animationDelay: `${i * 0.1}s`,
+            transform: `scale(${0.5 + Math.sin(particleAnimation / 15 + i) * 0.5})`
+          }}
+        />
+      ))}
+    </div>
+  );
+  
+  // Code floating animation
+  const FloatingCode = () => {
+    const codeSnippets = ['{}', '[]', '()', '<>', '++', '--', '&&', '||', '==', '!='];
+    return (
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {codeSnippets.map((code, i) => (
+          <div
+            key={i}
+            className="absolute text-gray-300 opacity-10 font-mono text-lg animate-bounce"
+            style={{
+              left: `${(i * 15 + scrollY * 0.1) % 100}%`,
+              top: `${(i * 20 + Math.sin(Date.now() / 1000 + i) * 10 + 30) % 80}%`,
+              animationDelay: `${i * 0.3}s`,
+              animationDuration: `${3 + i * 0.2}s`
+            }}
+          >
+            {code}
+          </div>
+        ))}
+      </div>
+    );
+  };
+  
+  return (
+    <div className="min-h-screen bg-white text-gray-800 relative overflow-hidden">
+      {/* Animated Background Pattern */}
+      <div className="fixed inset-0 opacity-5">
+        <div className="absolute inset-0" style={{
+          backgroundImage: `radial-gradient(circle at ${mousePosition.x}px ${mousePosition.y}px, rgba(59, 130, 246, 0.15) 0%, transparent 50%)`
+        }}></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-transparent to-purple-50"></div>
+      </div>
+      
+      <FloatingParticles />
+      <FloatingCode />
+      
+      {/* Hero Section */}
+      <div className="relative min-h-screen flex items-center justify-center">
+        {/* Dynamic grid background */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="w-full h-full" style={{
+            backgroundImage: `linear-gradient(rgba(59, 130, 246, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(59, 130, 246, 0.1) 1px, transparent 1px)`,
+            backgroundSize: '50px 50px',
+            transform: `translate(${scrollY * 0.5}px, ${scrollY * 0.3}px)`
+          }}></div>
+        </div>
+        
+        <div className="container mx-auto px-4 py-24 md:py-32 relative z-10">
+          <div className={`transition-all duration-1000 transform ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'} flex flex-col items-center text-center space-y-8`}>
+            
+            {/* Logo siêu thu hút học sinh với gaming effects */}
+            <div className="relative group mb-12 perspective-1000">
+              {/* Multi-layer aurora glow */}
+              <div className="absolute -inset-12 bg-gradient-to-r from-pink-500 via-cyan-400 via-yellow-400 via-green-400 to-purple-500 rounded-[3rem] blur-3xl opacity-40 group-hover:opacity-70 animate-pulse transition-all duration-1000" style={{animation: 'aurora 8s ease-in-out infinite'}}></div>
+              <div className="absolute -inset-10 bg-gradient-to-l from-red-500 via-blue-400 via-green-400 to-pink-500 rounded-[2.5rem] blur-2xl opacity-30 animate-pulse" style={{animationDelay: '1s', animation: 'aurora-reverse 6s ease-in-out infinite'}}></div>
+              <div className="absolute -inset-8 bg-gradient-to-r from-yellow-400 via-purple-500 to-cyan-400 rounded-2xl blur-xl opacity-35 animate-pulse" style={{animationDelay: '2s'}}></div>
+              
+              {/* Gaming-style container với neon borders */}
+              <div className="relative bg-gradient-to-br from-gray-900/80 via-black/90 to-gray-900/80 backdrop-blur-xl rounded-3xl p-10 border-2 border-cyan-400/50 shadow-2xl shadow-cyan-500/25 hover:shadow-cyan-500/50 transition-all duration-500 hover:scale-[1.02]">
+                
+                {/* Neon grid overlay */}
+                <div className="absolute inset-0 opacity-20 rounded-3xl" style={{
+                  backgroundImage: `linear-gradient(cyan 1px, transparent 1px), linear-gradient(90deg, cyan 1px, transparent 1px)`,
+                  backgroundSize: '30px 30px'
+                }}></div>
+                
+                {/* Circuit board pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  {[...Array(8)].map((_, i) => (
+                    <div key={i} className="absolute w-px h-8 bg-green-400 animate-pulse" style={{
+                      left: `${15 + i * 10}%`,
+                      top: `${20 + i * 8}%`,
+                      animationDelay: `${i * 0.3}s`
+                    }}></div>
+                  ))}
+                </div>
+                
+                {/* Holographic scanning effects */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cyan-300/40 to-transparent -skew-x-12 animate-pulse opacity-60" style={{animation: 'hologram-scan 4s linear infinite'}}></div>
+                <div className="absolute inset-0 bg-gradient-to-l from-transparent via-pink-300/40 to-transparent skew-x-12 animate-pulse opacity-60" style={{animationDelay: '2s', animation: 'hologram-scan-reverse 4s linear infinite'}}></div>
+                
+                {/* Glitch effects */}
+                <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-green-500/10 to-blue-500/10 animate-pulse rounded-3xl" style={{animation: 'glitch 0.3s infinite'}}></div>
+                
+                {/* EPIC Main Title */}
+                <h1 className="text-6xl md:text-8xl lg:text-9xl xl:text-[10rem] font-black tracking-tight relative transform-gpu transition-all duration-700 hover:scale-110 cursor-pointer">
+                  
+                  {/* Multiple 3D shadow layers */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent transform translate-x-3 translate-y-3 blur-sm opacity-40">
+                    HKT ONLINE JUDGE
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-gray-600 to-gray-400 bg-clip-text text-transparent transform translate-x-2 translate-y-2 opacity-60">
+                    HKT ONLINE JUDGE
+                  </span>
+                  <span className="absolute inset-0 bg-gradient-to-r from-gray-500 to-gray-300 bg-clip-text text-transparent transform translate-x-1 translate-y-1 opacity-80">
+                    HKT ONLINE JUDGE
+                  </span>
+                  
+                  {/* Gaming RGB text effect */}
+                  <span className="relative bg-gradient-to-r from-cyan-400 via-pink-400 via-yellow-400 via-green-400 via-purple-400 to-red-400 bg-clip-text text-transparent bg-size-400 animate-gradient-gaming font-black">
+                    HKT ONLINE JUDGE
+                  </span>
+                  
+                  {/* Neon glow outline */}
+                  <span className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent opacity-90 animate-ping font-black" style={{animationDuration: '2s'}}>
+                    HKT ONLINE JUDGE
+                  </span>
+                  
+                  {/* Laser scanning lines */}
+                  <div className="absolute inset-0 overflow-hidden rounded-lg">
+                    <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-80 blur-sm" style={{animation: 'laser-scan 2s linear infinite'}}></div>
+                    <div className="absolute bottom-0 left-0 w-full h-2 bg-gradient-to-r from-transparent via-pink-400 to-transparent opacity-80 blur-sm" style={{animation: 'laser-scan-reverse 2.5s linear infinite'}}></div>
+                  </div>
+                  
+                  {/* Gaming particles storm */}
+                  <div className="absolute -inset-16 pointer-events-none">
+                    {[...Array(24)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute rounded-full animate-ping shadow-lg"
+                        style={{
+                          width: `${4 + (i % 3) * 2}px`,
+                          height: `${4 + (i % 3) * 2}px`,
+                          background: `linear-gradient(45deg, hsl(${i * 15 + particleAnimation * 3}, 90%, 60%), hsl(${i * 15 + particleAnimation * 3 + 60}, 90%, 80%))`,
+                          left: `${10 + i * 4}%`,
+                          top: `${20 + Math.sin(Date.now() / 200 + i) * 40}%`,
+                          animationDelay: `${i * 0.05}s`,
+                          animationDuration: `${1 + i * 0.05}s`,
+                          transform: `scale(${0.5 + Math.sin(Date.now() / 150 + i) * 0.8}) rotate(${Date.now() / 50 + i * 30}deg)`,
+                          boxShadow: `0 0 20px hsl(${i * 15 + particleAnimation * 3}, 90%, 60%)`
+                        }}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* Electric lightning bolts */}
+                  <div className="absolute -inset-12 pointer-events-none">
+                    {[...Array(10)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute bg-gradient-to-b from-cyan-400 via-white to-purple-400 animate-ping opacity-80 shadow-lg shadow-cyan-400"
+                        style={{
+                          width: '2px',
+                          height: `${8 + Math.sin(Date.now() / 300 + i) * 12}px`,
+                          left: `${5 + i * 9}%`,
+                          top: `${Math.sin(Date.now() / 250 + i) * 50 + 25}%`,
+                          animationDelay: `${i * 0.2}s`,
+                          animationDuration: `${1.5 + i * 0.1}s`,
+                          transform: `rotate(${Math.sin(Date.now() / 300 + i) * 45}deg) scale(${0.5 + Math.sin(Date.now() / 200 + i) * 1.5})`,
+                          filter: 'drop-shadow(0 0 10px currentColor)'
+                        }}
+                      />
+                    ))}
+                  </div>
+                  
+                  {/* DNA helix effect */}
+                  <div className="absolute -inset-8 pointer-events-none">
+                    {[...Array(20)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="absolute w-1 h-1 bg-green-400 rounded-full animate-pulse shadow-lg shadow-green-400"
+                        style={{
+                          left: `${50 + Math.sin(Date.now() / 500 + i * 0.3) * 40}%`,
+                          top: `${30 + i * 2}%`,
+                          animationDelay: `${i * 0.1}s`,
+                          transform: `scale(${1 + Math.sin(Date.now() / 300 + i) * 0.5})`
+                        }}
+                      />
+                    ))}
+                  </div>
+                </h1>
+                
+                {/* Code matrix rain effect */}
+                <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-3xl">
+                  {[...Array(20)].map((_, i) => (
+                    <div
+                      key={i}
+                      className="absolute font-mono text-xs font-bold animate-pulse"
+                      style={{
+                        color: `hsl(${120 + i * 10}, 80%, 60%)`,
+                        left: `${i * 5}%`,
+                        top: `${(Date.now() / 80 + i * 40) % 500}%`,
+                        animationDelay: `${i * 0.1}s`,
+                        textShadow: `0 0 10px hsl(${120 + i * 10}, 80%, 60%)`,
+                        transform: `scale(${0.8 + Math.sin(Date.now() / 200 + i) * 0.4})`
+                      }}
+                    >
+                      {['if', 'for', 'int', '{}', '[]', '()', '++', '--', '&&', '||', '==', '!=', 'dp', 'bfs'][i % 14]}
+                    </div>
+                  ))}
+                </div>
+                
+                {/* Gaming-style subtitle */}
+                <div className="mt-10 text-center relative z-10">
+                  <div className="inline-block relative group">
+                    {/* Glow effect */}
+                    <div className="absolute -inset-4 bg-gradient-to-r from-pink-500 via-cyan-500 to-purple-500 rounded-2xl blur-lg opacity-40 group-hover:opacity-70 animate-pulse transition-all duration-500"></div>
+                    
+                    {/* Main container */}
+                    <div className="relative px-8 py-4 bg-gradient-to-r from-gray-900/95 via-black/95 to-gray-900/95 backdrop-blur-xl border-2 border-cyan-400/60 rounded-2xl shadow-2xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300">
+                      <span className="text-base md:text-xl font-black bg-gradient-to-r from-cyan-400 via-pink-400 to-purple-400 bg-clip-text text-transparent tracking-wider uppercase animate-pulse">
+                        🚀 LEVEL UP YOUR CODING SKILLS 🚀
+                      </span>
+                      
+                      {/* Gaming badge */}
+                      <div className="mt-2 text-xs md:text-sm text-green-400 font-bold animate-bounce">
+                        ⭐ UNLOCK ACHIEVEMENTS • CLIMB LEADERBOARDS • BECOME A LEGEND ⭐
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            {/* Enhanced CSS animations for gaming feel */}
+            <style jsx>{`
+              .perspective-1000 { perspective: 1000px; }
+              
+              @keyframes aurora {
+                0%, 100% { 
+                  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+                  transform: rotate(0deg) scale(1);
+                }
+                25% { 
+                  background: linear-gradient(45deg, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff6b6b);
+                  transform: rotate(90deg) scale(1.1);
+                }
+                50% { 
+                  background: linear-gradient(45deg, #45b7d1, #96ceb4, #feca57, #ff6b6b, #4ecdc4);
+                  transform: rotate(180deg) scale(1);
+                }
+                75% { 
+                  background: linear-gradient(45deg, #96ceb4, #feca57, #ff6b6b, #4ecdc4, #45b7d1);
+                  transform: rotate(270deg) scale(1.1);
+                }
+              }
+              
+              @keyframes aurora-reverse {
+                0%, 100% { 
+                  background: linear-gradient(-45deg, #feca57, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+                  transform: rotate(0deg) scale(1.05);
+                }
+                50% { 
+                  background: linear-gradient(-45deg, #45b7d1, #96ceb4, #feca57, #ff6b6b, #4ecdc4);
+                  transform: rotate(-180deg) scale(0.95);
+                }
+              }
+              
+              @keyframes hologram-scan {
+                0% { transform: translateX(-100%) skewX(-15deg); opacity: 0; }
+                5% { opacity: 1; }
+                95% { opacity: 1; }
+                100% { transform: translateX(100vw) skewX(-15deg); opacity: 0; }
+              }
+              
+              @keyframes hologram-scan-reverse {
+                0% { transform: translateX(100vw) skewX(15deg); opacity: 0; }
+                5% { opacity: 1; }
+                95% { opacity: 1; }
+                100% { transform: translateX(-100%) skewX(15deg); opacity: 0; }
+              }
+              
+              @keyframes laser-scan {
+                0% { transform: translateY(-100%); }
+                100% { transform: translateY(5000%); }
+              }
+              
+              @keyframes laser-scan-reverse {
+                0% { transform: translateY(5000%); }
+                100% { transform: translateY(-100%); }
+              }
+              
+              @keyframes gradient-gaming {
+                0%, 100% { background-position: 0% 50%; }
+                25% { background-position: 100% 50%; }
+                50% { background-position: 200% 50%; }
+                75% { background-position: 300% 50%; }
+              }
+              
+              @keyframes glitch {
+                0%, 100% { transform: translate(0); }
+                20% { transform: translate(-1px, 1px); }
+                40% { transform: translate(-1px, -1px); }
+                60% { transform: translate(1px, 1px); }
+                80% { transform: translate(1px, -1px); }
+              }
+              
+              .bg-size-400 { background-size: 400% 400%; }
+              .animate-gradient-gaming { animation: gradient-gaming 3s ease infinite; }
+            `}</style>
+            
+            {/* Animated description */}
+            <div className="max-w-3xl">
+              <p className="text-xl md:text-2xl text-gray-600 leading-relaxed mb-4">
+                <span className="font-bold text-blue-700 inline-block animate-pulse">Master algorithms.</span> 
+                <span className="font-bold text-purple-700 inline-block animate-pulse" style={{animationDelay: '0.5s'}}>Elevate your code.</span>
+              </p>
+              <div className="h-12 flex items-center justify-center">
+                <span className="text-lg md:text-xl text-gray-500 font-mono bg-gray-100 px-4 py-2 rounded-lg shadow-inner">
+                  {typedText}<span className="animate-ping text-blue-500">|</span>
+                </span>
+              </div>
+            </div>
+            
+            {/* CTA Buttons với advanced hover effects */}
+            <div className="flex flex-wrap gap-6 justify-center mt-12">
+              <button
+                onClick={handleGetStarted}
+                className="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-lg font-bold rounded-xl shadow-lg hover:shadow-2xl transform transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-105 focus:ring-4 focus:ring-blue-300 focus:outline-none overflow-hidden"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-purple-600 to-blue-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
+                <span className="relative flex items-center">
+                  Get Started Now
+                  <svg className="ml-2 w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                  </svg>
+                </span>
+              </button>
+              
+              <button
+                onClick={handleExplore}
+                className="group px-8 py-4 bg-white border-2 border-blue-300 text-blue-700 text-lg font-bold rounded-xl shadow-lg hover:shadow-2xl hover:bg-blue-50 transform transition-all duration-300 ease-out hover:-translate-y-2 hover:scale-105 focus:ring-4 focus:ring-blue-300 focus:outline-none"
+              >
+                <span className="flex items-center">
+                  Explore Problems
+                  <svg className="ml-2 w-5 h-5 transform group-hover:rotate-12 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+        
+        {/* Scroll indicator */}
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+          <svg className="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+          </svg>
+        </div>
+      </div>
+      
+      {/* Stats Section */}
+      <div className="py-20 bg-gradient-to-br from-blue-50 to-purple-50 relative">
+        <div className="absolute inset-0 bg-white/80"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {Object.entries(stats).map(([key, value], index) => (
+              <div 
+                key={key}
+                className="group text-center transform transition-all duration-500 hover:scale-110"
+                style={{
+                  opacity: isVisible ? 1 : 0,
+                  transform: isVisible ? 'translateY(0)' : 'translateY(20px)',
+                  transitionDelay: `${index * 200}ms`
+                }}
+              >
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur opacity-20 group-hover:opacity-40 transition-opacity"></div>
+                  <div className="relative bg-white rounded-2xl p-6 shadow-lg group-hover:shadow-2xl transition-shadow">
+                    <div className="text-4xl md:text-6xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+                      {value.toLocaleString()}+
+                    </div>
+                    <div className="text-gray-600 font-semibold capitalize text-sm md:text-base">
+                      {key}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Features Section */}
+      <div className="py-20 md:py-28 bg-white relative">
+        <div className="container mx-auto px-4">
+          <div className="mb-16 text-center">
+            <h2 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Why Choose HKTOJ?
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-10">
+            {[
+              {
+                icon: "01",
+                title: "Curated Problem Set",
+                description: "Over 1,200 carefully selected algorithmic challenges across all difficulty levels, from basic to IOI/ICPC competition standard."
+              },
+              {
+                icon: "02", 
+                title: "Real-time Contests",
+                description: "Participate in weekly competitions with live leaderboards. Test your skills against coders from around the world."
+              },
+              {
+                icon: "03",
+                title: "Advanced Analytics", 
+                description: "Track your progress with detailed performance metrics. Identify your strengths and areas for improvement."
+              }
+            ].map((feature, index) => (
+              <div 
+                key={index}
+                className="group relative bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-4 border border-gray-100 hover:border-blue-200"
+              >
+                {/* Animated background */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                
+                <div className="relative z-10">
+                  <div className="w-20 h-20 mb-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center text-2xl font-black text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    {feature.icon}
+                  </div>
+                  <h3 className="text-2xl font-bold mb-4 text-gray-800">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+                </div>
+                
+                {/* Hover effect overlay */}
+                <div className="absolute top-4 right-4 w-6 h-6 bg-blue-500 rounded-full opacity-0 group-hover:opacity-100 animate-ping transition-opacity"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Testimonials */}
+      <div className="py-20 bg-gradient-to-br from-gray-50 to-blue-50 relative">
+        <div className="absolute inset-0 bg-white/90"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="mb-16 text-center">
+            <h2 className="text-4xl md:text-5xl font-black mb-4 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              Success Stories
+            </h2>
+            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full"></div>
+          </div>
+          
+          <div className="grid md:grid-cols-3 gap-8">
+            {testimonials.map((testimonial, index) => (
+              <div 
+                key={index}
+                className="group bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100 hover:border-blue-200 relative overflow-hidden"
+              >
+                {/* Quote icon với animation */}
+                <div className="text-blue-500 text-6xl font-serif mb-4 transform group-hover:scale-110 transition-transform duration-300 opacity-20">
+                  "
+                </div>
+                
+                <p className="text-gray-700 mb-6 italic leading-relaxed text-lg relative z-10">
+                  {testimonial.text}
+                </p>
+                
+                <div className="flex items-center relative z-10">
+                  <div className="w-3 h-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mr-3"></div>
+                  <div className="text-blue-600 font-bold">{testimonial.author}</div>
+                </div>
+                
+                {/* Animated background effect */}
+                <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full opacity-5 transform translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-700"></div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* CTA Section */}
+      <div className="py-20 md:py-28 bg-gradient-to-br from-blue-600 to-purple-700 relative overflow-hidden">
+        {/* Animated background patterns */}
+        <div className="absolute inset-0">
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 animate-pulse"></div>
+          {[...Array(15)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-2 h-2 bg-white/20 rounded-full animate-bounce"
+              style={{
+                left: `${i * 7}%`,
+                top: `${Math.sin(i) * 50 + 50}%`,
+                animationDelay: `${i * 0.1}s`,
+                animationDuration: `${2 + i * 0.1}s`
+              }}
+            />
+          ))}
+        </div>
+        
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto text-center text-white">
+            <h2 className="text-4xl md:text-6xl font-black mb-6 leading-tight">
+              Ready to elevate your 
+              <span className="block bg-gradient-to-r from-yellow-300 to-pink-300 bg-clip-text text-transparent animate-pulse">
+                coding skills?
+              </span>
+            </h2>
+            
+            <p className="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed">
+              Join over 50,000 programmers who have transformed their algorithmic thinking with HKTOJ.
+            </p>
+            
+            <button
+              onClick={handleGetStarted}
+              className="group relative px-12 py-6 bg-white text-blue-700 text-xl font-black rounded-2xl shadow-2xl hover:shadow-3xl transform transition-all duration-300 ease-out hover:-translate-y-3 hover:scale-105 focus:ring-4 focus:ring-white/50 focus:outline-none overflow-hidden"
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-yellow-300 to-pink-300 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"></span>
+              <span className="relative flex items-center justify-center">
+                Start Your Journey Today
+                <svg className="ml-3 w-6 h-6 transform group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                </svg>
+              </span>
+            </button>
+            
+            <p className="mt-8 text-blue-200 text-lg">
+              No credit card required • Free tier available
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HomePage;

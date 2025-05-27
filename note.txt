@@ -5,3 +5,5 @@ ranking chưa cần hỉnh gì
 contact us bỏ cái QR donate
 
 bg-[#0f1f3b]
+
+Giữ lại toàn bộ những kết nối api và logic cũ , chỉ upgrade phần hiệu ứng , animation , trang trí về mặt giao diện Web lên sao cho thật đẹp và thật bắt mắt người xem, càng đẹp càng tốt, tone màu chủ đạo là màu trắng, hãy thêm chút màu neon cho đẹp và phần chứa chữ HKT Online Judge ở đầu phải thật bắt mắt người xem, người sử dụng web, nó phải chuyên nghiệp và phù hợp vì đây là web chấm bài lập trình thuật toán. Hãy đặt bạn vào vị trí người đang đi kiếm web học thuật toán, khi bạn thấy giao diện này, bạn sẽ muốn sử dụng nó để học thuật toán. Phần chữ HKT Online Judge phải nằm trên một hàng và nó phải chiếm toàn bộ spotlight của trang web, các phần khác là phù họa
