@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 
 const EditBlog = () => {
-  // Mock params for demo
-  const id = "123";
-  
-  // Mock navigation function
-  const navigate = (path) => {
-    window.location.href = path;
-  };
+  const { id } = useParams();
+  const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
