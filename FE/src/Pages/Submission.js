@@ -392,13 +392,13 @@ const Submission = () => {
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                               <div className="bg-gray-100 p-3 rounded border border-gray-300">
                                 <p className="font-bold text-gray-700 mb-1">Input:</p>
-                                <div className="font-mono bg-white p-2 rounded border border-gray-200 overflow-x-auto">
+                                <div className="font-mono bg-white p-2 rounded border border-gray-200 overflow-x-auto whitespace-pre-wrap">
                                   {tc.input}
                                 </div>
                               </div>
                               <div className="bg-gray-100 p-3 rounded border border-gray-300">
                                 <p className="font-bold text-gray-700 mb-1">Expected Output:</p>
-                                <div className="font-mono bg-white p-2 rounded border border-gray-200 overflow-x-auto">
+                                <div className="font-mono bg-white p-2 rounded border border-gray-200 overflow-x-auto whitespace-pre-wrap">
                                   {tc.expected_output}
                                 </div>
                               </div>
@@ -406,10 +406,10 @@ const Submission = () => {
                                 }`}>
                                 <p className={`font-bold mb-1 ${tc.status === "Accepted" ? "text-green-700" : "text-red-700"
                                   }`}>Actual Output:</p>
-                                <div className={`font-mono p-2 rounded border overflow-x-auto ${tc.status === "Accepted"
+                                <div className={`font-mono p-2 rounded border overflow-x-auto whitespace-pre-wrap ${tc.status === "Accepted"
                                   ? "bg-white border-green-200"
                                   : "bg-white border-red-200"
-                                  }`}>
+                                }`}>
                                   {tc.actual_output || '(no output)'}
                                 </div>
                               </div>

@@ -1,107 +1,136 @@
-import React, { useState } from 'react';
-
-const mockAccounts = [
-  { username: 'Khoa Le', password: '123', email: 'yeunhamvoban@gmail.com', phone: '01923092123', role: 'Student' },
-  { username: 'admin', password: '123123', email: 'lequang@gmail.com', phone: '09123891237', role: 'Admin' },
-  { username: 'Khoano1', password: '123', email: 'lehoangvu@gmail.com', phone: '0905126376', role: 'Student' },
-  { username: 'admin2', password: '123123', email: 'levi@gmail.com', phone: '01234888999', role: 'Admin' },
-  { username: 'admin3', password: '123123', email: 'lequang3222@gmail.com', phone: '21323123123123', role: 'Admin' },
-  { username: 'admin5', password: '123', email: 'nguyensonghao@gmail.com', phone: '0988222333', role: 'Student' },
-  { username: 'Valorant123', password: '123', email: 'levuxuan@gmail.com', phone: '0908777666', role: 'Student' },
-  { username: 'Ronaldo123', password: '123', email: 'ronal@gmail.com', phone: '0983333666', role: 'Student' },
-  { username: 'Vantung', password: '123', email: 'vantung@gmail.com', phone: '0905126378', role: 'Student' },
-];
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AllAccount = () => {
-  const [filters, setFilters] = useState({ username: '', email: '', phone: '', role: '' });
-  const [accounts, setAccounts] = useState(mockAccounts);
+  const [filters, setFilters] = useState({ keyword: '', role: '' });
+  const [accounts, setAccounts] = useState([]);
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+  useEffect(() => {
+    const fetchAccounts = async () => {
+      const token = localStorage.getItem("accessToken");
+      const res = await fetch("https://localhost:7157/api/auth/all", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const data = await res.json();
+      setAccounts(data);
+    };
+    fetchAccounts();
+  }, []);
+
+  const handleDelete = async (id) => {
+    const confirm = window.confirm("Are you sure you want to delete this account?");
+    if (!confirm) return;
+
+    const token = localStorage.getItem("accessToken");
+    const res = await fetch(`https://localhost:7157/api/auth/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    if (res.ok) {
+      alert("Deleted successfully");
+      setAccounts(accounts.filter(a => a.userId !== id));
+    } else {
+      alert("Delete failed");
+    }
   };
 
-  const handleFilter = () => {
-    setAccounts(
-      mockAccounts.filter(acc =>
-        acc.username.toLowerCase().includes(filters.username.toLowerCase()) &&
-        acc.email.toLowerCase().includes(filters.email.toLowerCase()) &&
-        acc.phone.toLowerCase().includes(filters.phone.toLowerCase()) &&
-        (filters.role === '' || acc.role === filters.role)
-      )
-    );
+  const renderRole = (role) => {
+    switch (role) {
+      case 0: return "Student";
+      case 1: return "Professor";
+      case 2: return "Admin";
+      default: return "Unknown";
+    }
   };
+
+  const filteredAccounts = accounts.filter(acc => {
+    const keyword = filters.keyword.toLowerCase();
+    const matchKeyword = acc.userName.toLowerCase().includes(keyword)
+      || acc.email.toLowerCase().includes(keyword)
+      || acc.phoneNumber.toLowerCase().includes(keyword);
+    const matchRole = filters.role === '' || acc.role.toString() === filters.role;
+    return matchKeyword && matchRole;
+  });
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md animate-fadeIn">
-      <div className="flex flex-wrap gap-4 mb-4">
+    <div className="w-full p-6 overflow-x-auto">
+      <h2 className="text-2xl font-bold mb-4 text-navy">📋 All Accounts</h2>
+
+      <div className="flex flex-wrap items-center gap-4 mb-4">
         <input
           type="text"
-          name="username"
-          placeholder="Username"
-          value={filters.username}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 min-w-[160px]"
-        />
-        <input
-          type="text"
-          name="email"
-          placeholder="Email"
-          value={filters.email}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 min-w-[160px]"
-        />
-        <input
-          type="text"
-          name="phone"
-          placeholder="Phone"
-          value={filters.phone}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 min-w-[160px]"
+          placeholder="Search by username, email or phone..."
+          className="border px-3 py-2 rounded w-64"
+          value={filters.keyword}
+          onChange={(e) => setFilters(prev => ({ ...prev, keyword: e.target.value }))}
         />
         <select
-          name="role"
+          className="border px-3 py-2 rounded"
           value={filters.role}
-          onChange={handleChange}
-          className="border rounded px-3 py-2 min-w-[160px]"
+          onChange={(e) => setFilters(prev => ({ ...prev, role: e.target.value }))}
         >
-          <option value="">-- Role --</option>
-          <option value="Student">Student</option>
-          <option value="Admin">Admin</option>
+          <option value="">All Roles</option>
+          <option value="0">Student</option>
+          <option value="1">Professor</option>
+          <option value="2">Admin</option>
         </select>
-        <button
-          onClick={handleFilter}
-          className="bg-blue-600 text-white px-6 py-2 rounded font-bold hover:bg-blue-700 transition-all"
-        >
-          🔍 Lọc
-        </button>
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 rounded-lg">
+
+      <div className="min-w-[1000px]">
+        <table className="w-full bg-white border border-gray-300">
           <thead>
-            <tr className="bg-gray-100 text-black">
-              <th className="px-4 py-2 border">Username</th>
-              <th className="px-4 py-2 border">Password</th>
-              <th className="px-4 py-2 border">Email</th>
-              <th className="px-4 py-2 border">Phone</th>
-              <th className="px-4 py-2 border">Role</th>
-              <th className="px-4 py-2 border">Actions</th>
+            <tr className="bg-gray-100">
+              <th className="py-2 px-4 border">#</th>
+              <th className="py-2 px-4 border">Username</th>
+              <th className="py-2 px-4 border">Full Name</th>
+              <th className="py-2 px-4 border">Email</th>
+              <th className="py-2 px-4 border">Phone</th>
+              <th className="py-2 px-4 border">Role</th>
+              <th className="py-2 px-4 border">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {accounts.map((acc, idx) => (
-              <tr key={idx} className="text-center border-b hover:bg-gray-50">
-                <td className="px-4 py-2 border">{acc.username}</td>
-                <td className="px-4 py-2 border">{acc.password}</td>
-                <td className="px-4 py-2 border">{acc.email}</td>
-                <td className="px-4 py-2 border">{acc.phone}</td>
-                <td className="px-4 py-2 border">{acc.role}</td>
-                <td className="px-4 py-2 border flex gap-2 justify-center">
-                  <button className="bg-cyan-500 text-white px-3 py-1 rounded hover:bg-cyan-600 transition-all">Details</button>
-                  <button className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500 transition-all">Edit</button>
-                  <button className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-all">Delete</button>
+            {filteredAccounts.map((acc, index) => (
+              <tr key={acc.userId} className="hover:bg-gray-50">
+                <td className="py-2 px-4 border text-center">{index + 1}</td>
+                <td className="py-2 px-4 border">{acc.userName}</td>
+                <td className="py-2 px-4 border">{acc.fullName}</td>
+                <td className="py-2 px-4 border">{acc.email}</td>
+                <td className="py-2 px-4 border">{acc.phoneNumber}</td>
+                <td className="py-2 px-4 border text-center">{renderRole(acc.role)}</td>
+                <td className="py-2 px-4 border">
+                  <div className="flex justify-center space-x-2">
+                    <button
+                      onClick={() => navigate(`/profile/${acc.userId}`)}
+                      className="bg-cyan-500 text-white px-3 py-1 rounded hover:bg-cyan-600 transition-all"
+                    >
+                      Detail
+                    </button>
+                    <button
+                      onClick={() => navigate(`/profile/${acc.userId}/edit`)}
+                      className="bg-yellow-400 text-black px-3 py-1 rounded hover:bg-yellow-500 transition-all"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(acc.userId)}
+                      className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 transition-all"
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}
+            {filteredAccounts.length === 0 && (
+              <tr>
+                <td colSpan="7" className="text-center py-4 text-gray-500">
+                  No accounts found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -109,4 +138,4 @@ const AllAccount = () => {
   );
 };
 
-export default AllAccount; 
+export default AllAccount;

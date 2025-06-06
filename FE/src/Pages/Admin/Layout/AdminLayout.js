@@ -23,6 +23,7 @@ import BlogsPage from '../../BlogsPage';
 // import AddBlog from '../AddBlog';
 import AddBlog from '../../Professor/Blogs/AddBlog';
 
+import ApprovedBlogPage from '../ApprovedBlogPage';
 
 import AllAccount from '../AllAccount';
 import AddAccount from '../AddAccount';
@@ -114,6 +115,7 @@ const Sidebar = () => {
             <div className="ml-4 space-y-1 animate-fadeIn">
               <button onClick={() => navigate('/admin/blogs')} className="block hover:text-blue-500 transition-all duration-300">All Blog</button>
               <button onClick={() => navigate('/admin/blogs/add')} className="block hover:text-blue-500 transition-all duration-300">Add Blog</button>
+              <button onClick={() => navigate('/admin/blogs/pending')} className="block hover:text-blue-500 transition-all duration-300">Approved Blog</button>
             </div>
           )}
         </div>
@@ -140,8 +142,14 @@ const Topbar = () => {
   const navigate = useNavigate();
   const handleProfileMenu = (action) => {
     setDropdownOpen(false);
-    if (action === "profile") navigate("/admin/profile");
-    else if (action === "edit") navigate("/admin/profile/edit");
+    if (action === "profile") {
+      const userId = localStorage.getItem("userId");
+      navigate(`/admin/profile/${userId}`);
+    }
+    else if (action === "edit") {
+      const userId = localStorage.getItem("userId");
+      navigate(`/admin/profile/${userId}/edit`);
+    }
     else if (action === "logout") navigate("/logout");
   };
   return (
@@ -198,6 +206,7 @@ const AdminLayout = () => {
             <Route path="blogs" element={<BlogsPage />} />
             <Route path="blogs/add" element={<AddBlog />} />
 
+            <Route path="blogs/pending" element={<ApprovedBlogPage />} />
             <Route path="accounts" element={<AllAccount />} />
             <Route path="accounts/add" element={<AddAccount />} />
             <Route path="profile/:id" element={<ProfileDetail />} />

@@ -37,7 +37,8 @@ const Navbar = () => {
       navigate("/");
     }
     else if (action === "profile") {
-      navigate("/profile");
+      const userId = localStorage.getItem("userId");
+      navigate(`/profile/${userId}`);
     }
     else if (action === "my-blog") {
       navigate("/my-blog");

@@ -1,11 +1,11 @@
-import React, { useState, useContext } from "react";
-import blogs from "../Data/BlogsData";
+import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../Context/AuthContext";
 
-const BlogsPage = () => { 
+const BlogsPage = () => {
   const { isLoggedIn, role, username } = useContext(AuthContext);
-  const currentUsername = username || "Guest"; // username chính là authorID
+  const currentUsername = username || "Guest";
 
+  const [blogs, setBlogs] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [filterDate, setFilterDate] = useState("");
   const [filterRole, setFilterRole] = useState("");
@@ -13,26 +13,146 @@ const BlogsPage = () => {
 
   const [showingCommentFor, setShowingCommentFor] = useState(null);
   const [commentText, setCommentText] = useState("");
-  const [commentsData, setCommentsData] = useState({}); // { blogId: [comments] }
+  const [commentsData, setCommentsData] = useState({});
+
+  const [activeReply, setActiveReply] = useState(null);
+
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        const res = await fetch("https://localhost:7157/api/blog/list-all");
+        const data = await res.json();
+        setBlogs(data);
+      } catch (err) {
+        console.error("Lỗi khi tải blog:", err);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+const fetchComments = async (postId, idx) => {
+  const res = await fetch(`https://localhost:7157/api/blog/comments/${postId}`);
+    //console.log("Fetched comment data:", data);
+    const raw = await res.json();
+
+    const data = Array.isArray(raw) ? raw : raw.data || [];
+
+  const buildTree = (parentId = null) =>
+    data
+      .filter((c) => c.parentCommentId === parentId)
+      .map((c) => ({
+        ...c,
+        children: buildTree(c.blogCommentId)
+      }));
+
+  setCommentsData((prev) => ({
+    ...prev,
+    [idx]: buildTree()
+  }));
+};
+
+const renderComments = (comments, idx, postId, level = 0) =>
+  comments.map((c) => (
+    <div key={c.blogCommentId} className={`ml-[${level * 20}px] border-l border-gray-300 pl-3 mt-2`}>
+      <div className="bg-gray-100 rounded px-3 py-2">
+        <p className="text-sm font-medium">
+          👤 {c.user}{" "}
+          <span className="text-gray-500 italic text-xs ml-1">
+            • {c.role } • {new Date(c.createdAt).toLocaleString()}
+          </span>
+        </p>
+        <p className="text-sm">{c.content}</p>
+
+        {isLoggedIn && (
+          <button
+            className="text-blue-500 text-xs mt-1"
+            onClick={() => {
+              setActiveReply({ idx, parentId: c.blogCommentId });
+              setCommentText("");
+            }}
+          >
+            ↩️ Reply
+          </button>
+        )}
+      </div>
+
+      {/* Nếu đang reply comment này thì hiển thị input tại đây */}
+      {activeReply?.idx === idx && activeReply.parentId === c.blogCommentId && (
+        <div className="mt-2 space-y-2">
+          <div className="text-sm text-gray-500">
+            ↪️ Replying to comment of {c.user}
+            <button
+              onClick={() => setActiveReply(null)}
+              className="text-red-500 ml-2 underline"
+            >
+              Cancel
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <input
+              type="text"
+              placeholder="Write a reply..."
+              className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm"
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+            />
+            <button
+              className="bg-blue-500 text-white px-4 py-2 rounded text-sm"
+              onClick={async () => {
+                if (!commentText.trim()) return;
+
+                const payload = {
+                  postId: postId,
+                  content: commentText.trim(),
+                  parentCommentId: c.blogCommentId
+                };
+
+                await fetch("https://localhost:7157/api/blog/comment", {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+                  },
+                  body: JSON.stringify(payload)
+                });
+
+                await fetchComments(postId, idx);
+                setCommentText("");
+                setActiveReply(null);
+              }}
+            >
+              Post
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Đệ quy comment con */}
+      {c.children && renderComments(c.children, idx, postId, level + 1)}
+    </div>
+  ));
+
+
+
+
 
   const filteredBlogs = blogs
     .filter((b) =>
       b.content.toLowerCase().includes(searchText.toLowerCase())
     )
-    .filter((b) => !filterDate || b.date >= filterDate)
+    .filter((b) => !filterDate || new Date(b.createdAt) >= new Date(filterDate))
     .filter((b) => !filterRole || b.role === filterRole)
     .sort((a, b) => {
-      if (sortBy === "Latest") return new Date(b.date) - new Date(a.date);
-      if (sortBy === "Top Views") return b.views - a.views;
-      return 0;
+      if (sortBy === "Latest") return new Date(b.createdAt) - new Date(a.createdAt);
+      return 0; // chưa có views nên để 0
     });
 
   return (
     <div className="text-black px-4 py-6 max-w-3xl mx-auto bg-white">
-
       {/* Header + Add Blog */}
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-indigo-600"></h1>
+        <h1 className="text-2xl font-bold text-indigo-600">📚 Blogs</h1>
         {isLoggedIn && (
           <button
             onClick={() => window.location.href = "/blogs/add"}
@@ -42,7 +162,6 @@ const BlogsPage = () => {
           </button>
         )}
       </div>
-
 
       {/* Search bar */}
       <input
@@ -83,39 +202,40 @@ const BlogsPage = () => {
 
       {/* Blog list */}
       <div className="space-y-6">
-        {filteredBlogs.map((blog) => (
+        {filteredBlogs.map((blog, idx) => (
           <div
-            key={blog.id}
+            key={idx}
             className="bg-gray-50 border border-gray-200 p-4 rounded shadow hover:shadow-md transition"
           >
             {/* Header: Avatar + Author */}
             <div className="flex items-center mb-3">
               <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-sm">
-                {blog.author[0]}
+                {blog.authorName?.[0] || "?"}
               </div>
               <div className="ml-3">
-                <div className="font-semibold">{blog.author}</div>
+                <div className="font-semibold">{blog.authorName}</div>
                 <div className="text-sm text-gray-600">
-                  {blog.role} • {blog.date}
+                  {blog.role} • {new Date(blog.createdAt).toLocaleString()}
                 </div>
               </div>
             </div>
 
             {/* Content */}
-            <p className="mb-3">{blog.content}</p>
+            <p className="mb-3 whitespace-pre-line">{blog.content}</p>
 
             {/* Image */}
-            {blog.image && (
+            {blog.imageUrl && (
               <img
-                src={blog.image}
+                src={`https://localhost:7157${blog.imageUrl}`}
                 alt="Blog visual"
                 className="rounded w-full object-cover mb-3"
               />
+
             )}
 
-            {/* View + Comment Toggle */}
+            {/* Actions */}
             <div className="flex justify-between text-sm text-gray-600 mt-2">
-              {blog.authorID === currentUsername && (
+              {blog.authorName === currentUsername && (
                 <button
                   onClick={() => window.location.href = `/blogs/edit/${blog.id}`}
                   className="text-yellow-600 hover:underline ml-4"
@@ -123,11 +243,15 @@ const BlogsPage = () => {
                   ✏️ Edit
                 </button>
               )}
-              <span>👁 {blog.views?.toLocaleString() ?? "0"} views</span>
+              <span>👁 0 views</span>
               <button
-                onClick={() =>
-                  setShowingCommentFor(showingCommentFor === blog.id ? null : blog.id)
-                }
+                onClick={() => {
+                console.log("Blog object:", blog.postId);
+                  if (showingCommentFor !== idx) {
+                    fetchComments(blog.postId, idx); // gọi API khi mở khối comment
+                  }
+                  setShowingCommentFor(showingCommentFor === idx ? null : idx);
+                }}
                 className="text-blue-600 hover:underline"
               >
                 💬 Comment
@@ -135,42 +259,12 @@ const BlogsPage = () => {
             </div>
 
             {/* Comment Section */}
-            {showingCommentFor === blog.id && (
+            {showingCommentFor === idx && (
               <div className="mt-4 space-y-2">
-                {/* Comment List */}
-                <div className="space-y-2">
-                  {(commentsData[blog.id] || []).map((c, i) => (
-                    <div
-                      key={i}
-                      className="border border-gray-200 rounded px-3 py-2 flex justify-between items-start"
-                    >
-                      <div>
-                        <p className="text-sm font-medium">👤 {c.user}</p>
-                        <p className="text-sm">{c.text}</p>
-                      </div>
-                      {c.user === currentUsername && (
-                        <button
-                          onClick={() => {
-                            if (window.confirm("Delete this comment?")) {
-                              setCommentsData((prev) => ({
-                                ...prev,
-                                [blog.id]: prev[blog.id].filter((_, idx) => idx !== i)
-                              }));
-                            }
-                          }}
-                          className="text-red-500 hover:underline text-xs ml-2"
-                          title="Delete"
-                        >
-                          ❌
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                </div>
 
-                {/* Comment Input */}
+                {/* ✅ Bình luận gốc */}
                 {isLoggedIn && (
-                  <div className="flex gap-2 mt-2">
+                  <div className="flex gap-2">
                     <input
                       type="text"
                       placeholder="Write a comment..."
@@ -180,19 +274,25 @@ const BlogsPage = () => {
                     />
                     <button
                       className="bg-blue-500 text-white px-4 py-2 rounded text-sm"
-                      onClick={() => {
+                      onClick={async () => {
                         if (!commentText.trim()) return;
 
-                        const newComment = {
-                          user: currentUsername,
-                          text: commentText.trim()
+                        const payload = {
+                          postId: blog.postId,
+                          content: commentText.trim(),
+                          parentCommentId: null
                         };
 
-                        setCommentsData((prev) => ({
-                          ...prev,
-                          [blog.id]: [...(prev[blog.id] || []), newComment]
-                        }));
+                        await fetch("https://localhost:7157/api/blog/comment", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+                          },
+                          body: JSON.stringify(payload)
+                        });
 
+                        await fetchComments(blog.postId, idx);
                         setCommentText("");
                       }}
                     >
@@ -200,8 +300,18 @@ const BlogsPage = () => {
                     </button>
                   </div>
                 )}
+
+                {/* ✅ Hiển thị danh sách comment phân cấp */}
+                <div className="space-y-2">
+                  {commentsData[idx]
+                    ? renderComments(commentsData[idx], idx, blog.postId)
+                    : null}
+                </div>
               </div>
             )}
+
+
+
           </div>
         ))}
       </div>

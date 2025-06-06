@@ -66,8 +66,8 @@ const App = () => {
               
               <Route path="/professor/*" element={<ProfessorLayout />} />
 
-              <Route path="/profile" element={<MyProfile />} />
-              <Route path="/profile/edit" element={<EditProfile />} />
+              <Route path="/profile/:id" element={<MyProfile />} />
+              <Route path="/profile/:id/edit" element={<EditProfile />} />
               <Route path="/my-blog" element={<MyBlog />} />
               <Route path="/blogs/add" element={<AddBlog />} />
               <Route path="/blogs/edit/:id" element={<EditBlog />} />

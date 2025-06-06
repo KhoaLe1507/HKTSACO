@@ -164,7 +164,7 @@ const ProblemsPage = () => {
   const handleEditClick = (e, problem) => {
     e.stopPropagation(); // Prevent the card's onClick from firing
     localStorage.setItem("problemToEdit", JSON.stringify(problem));
-    navigate("/professor/problems/${problem.id}/edit");
+    navigate(`/professor/problems/${problem.id}/edit`);
   };
   
   return (

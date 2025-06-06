@@ -2,21 +2,76 @@ import React, { useState } from 'react';
 
 const AddAccount = () => {
   const [form, setForm] = useState({
+    fullname: '',
     username: '',
     password: '',
     email: '',
     phone: '',
     role: '',
+    gender: '',
+    birthDate: '',
+    school: '',
+    avatarFile: null,
+    bio: '',
   });
+
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSave = () => {
-    alert("Account created (UI only).");
-    console.log(form);
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+
+      const formData = new FormData();
+      formData.append("FullName", form.fullname);
+      formData.append("UserName", form.username);
+      formData.append("Password", form.password);
+      formData.append("Email", form.email);
+      formData.append("PhoneNumber", form.phone);
+      formData.append("Role", roleToInt(form.role));
+      formData.append("BirthDate", form.birthDate);
+      formData.append("Gender", form.gender);
+      formData.append("School", form.school || "");
+      formData.append("Bio", form.bio || "");
+      if (form.avatarFile) {
+        formData.append("AvatarFile", form.avatarFile); // key cần trùng backend
+      }
+
+      const res = await fetch("https://localhost:7157/api/auth/register-by-admin", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      if (res.ok) {
+        alert("Tạo tài khoản thành công!");
+      } else {
+        const text = await res.text();
+        alert("Tạo tài khoản thất bại: " + text);
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Có lỗi xảy ra khi gửi dữ liệu.");
+    }
   };
+
+  const roleToInt = (role) => {
+  switch (role) {
+    case "Student":
+      return 0;
+    case "Professor":
+      return 1;
+    case "Admin":
+      return 2;
+    default:
+      return 0;
+  }
+};
+
 
   return (
     <div className="bg-white max-w-xl mx-auto p-6 rounded-lg shadow-md animate-fadeIn">
@@ -27,12 +82,13 @@ const AddAccount = () => {
         <label className="block font-semibold mb-1">Full Name</label>
         <input
           name="fullname"
-          value={form.username}
+          value={form.fullname}
           onChange={handleChange}
           placeholder="Enter Full Name"
           className="w-full border border-gray-300 px-4 py-2 rounded shadow-sm"
         />
       </div>
+
 
       {/* Username */}
       <div className="mb-4">
@@ -83,17 +139,17 @@ const AddAccount = () => {
         />
       </div>
 
-      {/* Avatar URL */}
+      {/* Avatar Upload */}
       <div className="mb-4">
-        <label className="block font-semibold mb-1">Avatar URL</label>
+        <label className="block font-semibold mb-1">Avatar</label>
         <input
-          name="avatarUrl"
-          value={form.avatarUrl}
-          onChange={handleChange}
-          placeholder="Enter link to avatar image"
+          type="file"
+          accept="image/*"
+          onChange={(e) => setForm({ ...form, avatarFile: e.target.files[0] })}
           className="w-full border border-gray-300 px-4 py-2 rounded shadow-sm"
         />
       </div>
+
 
       {/* Bio */}
       <div className="mb-4">
@@ -152,7 +208,17 @@ const AddAccount = () => {
           <option value="Professor">Professor</option>
         </select>
       </div>
-
+      {/* School */}
+      <div className="mb-4">
+        <label className="block font-semibold mb-1">School</label>
+        <input
+          name="school"
+          value={form.school || ""}
+          onChange={handleChange}
+          placeholder="Enter school name"
+          className="w-full border border-gray-300 px-4 py-2 rounded shadow-sm"
+        />
+      </div>
       {/* Save Button */}
       <div className="text-right">
         <button

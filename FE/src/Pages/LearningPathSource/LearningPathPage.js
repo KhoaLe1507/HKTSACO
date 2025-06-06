@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
 const LearningPathPage = () => {
-  const { sectionId, level = "bronze" } = useParams(); // giữ level để sử dụng trong Link
+  const { sectionId, level } = useParams(); // giữ level để sử dụng trong Link
   const [counts, setCounts] = useState({ modulesTotal: 0, problemsTotal: 0 });
   const [sectionName, setSectionName] = useState("");
   const [sectionDescription, setSectionDescription] = useState("");
@@ -46,6 +46,8 @@ const LearningPathPage = () => {
     return () => clearInterval(interval);
   }, [level]);
 
+
+
   // Fetch section data
   useEffect(() => {
     console.log("sectionId:", sectionId);
@@ -57,10 +59,14 @@ const LearningPathPage = () => {
         const data = res.data;
         setSectionName(data.sectionName);
         setSectionDescription(data.sectionDescription);
-
+        console.log("📋 Dữ liệu modules từ API:", data.modules);
         const formatted = data.modules.map((mod) => ({
           category: mod.moduleName,
-          modules: mod.contents.map((c) => [c.title, c.description])
+          modules: mod.contents.map((c) => ({
+            id: c.id,                     // ID từ backend
+            title: c.title,
+            description: c.description
+          }))
         }));
         setMappedSections(formatted);
       })
@@ -150,14 +156,16 @@ const LearningPathPage = () => {
                 </div>
               </div>
               <div className="space-y-4 ml-16">
-                {section.modules.map(([title, desc], j) => {
-                  const id = title.toLowerCase().replaceAll(" ", "-").replace(/[()]/g, "");
+                {section.modules.map((mc, j) => {
                   return (
                     <div key={j} className="relative reveal" style={{ animationDelay: `${0.2 + j * 0.1}s` }}>
                       <div className="absolute left-0 top-1/2 w-5 h-5 rounded-full bg-white border-4 border-blue-500 shadow-lg transform -translate-x-[40px] -translate-y-1/2 z-10"></div>
-                      <Link to={`/learn/${level}/module/${id}`} className="block bg-white rounded-xl p-5 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-102 border-l-4 border-indigo-500">
-                        <h4 className="text-xl font-bold text-indigo-700 mb-2">{title}</h4>
-                        <p className="text-gray-600 text-sm">{desc}</p>
+                      <Link
+                        to={`/learn/${sectionName.toLowerCase()}/module/${mc.id}`}
+                        className="block bg-white rounded-xl p-5 shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-102 border-l-4 border-indigo-500"
+                      >
+                        <h4 className="text-xl font-bold text-indigo-700 mb-2">{mc.title}</h4>
+                        <p className="text-gray-600 text-sm">{mc.description}</p>
                         <div className="mt-3 flex justify-between items-center">
                           <span className="text-xs text-gray-400">Module {i + 1}.{j + 1}</span>
                           <span className="text-indigo-600 font-medium text-sm">Start Learning →</span>
@@ -166,6 +174,7 @@ const LearningPathPage = () => {
                     </div>
                   );
                 })}
+
               </div>
             </div>
           ))}

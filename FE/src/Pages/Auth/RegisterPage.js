@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 // SVG icons as components
 const UserIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -86,36 +87,73 @@ const ArrowRightIcon = () => (
 const RegisterPage = () => {
   const [mounted, setMounted] = useState(false);
   const [focused, setFocused] = useState(null);
+  const [form, setForm] = useState({
+  fullName: "",
+  email: "",
+  phone: "",
+  dob: "",
+  bio: "",
+  username: "",
+  password: "",
+  gender: "",
+  school: "",
+  avatarFile: null
+});
 
+const handleFormChange = (e) => {
+  const { name, value } = e.target;
+  setForm((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
+  const navigate = useNavigate();
   // Animation on mount
   useEffect(() => {
     setMounted(true);
   }, []);
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Form submission logic would go here
-  };
-  const [form, setForm] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    dob: "",
-    bio: "",
-    username: "",
-    password: "",
-    gender: "",
-    school: "",
-  });
 
-  const handleFormChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    try {
+      const formData = new FormData();
+      formData.append("FullName", form.fullName);
+      formData.append("UserName", form.username);
+      formData.append("Email", form.email);
+      formData.append("Password", form.password);
+      formData.append("Role", 0); // luôn là Student
+      formData.append("Gender", form.gender);
+      formData.append("PhoneNumber", form.phone);
+      formData.append("BirthDate", form.dob);
+      formData.append("School", form.school);
+      formData.append("Bio", form.bio || "");
+
+      if (form.avatarFile) {
+        formData.append("AvatarFile", form.avatarFile); // key trùng với backend
+      }
+
+      const res = await fetch("https://localhost:7157/api/auth/register", {
+        method: "POST",
+        body: formData
+      });
+
+      if (res.ok) {
+        alert("Đăng ký thành công!");
+        navigate("/login");
+      } else {
+        const text = await res.text();
+        alert("Đăng ký thất bại: " + text);
+      }
+    } catch (error) {
+      console.error("Lỗi đăng ký:", error);
+      alert("Có lỗi khi xử lý đăng ký.");
+    }
   };
+
+
 
   return (
     <div className="min-h-screen flex justify-center items-center bg-white text-gray-800 relative overflow-hidden">
@@ -283,12 +321,15 @@ const RegisterPage = () => {
               </div>
               <textarea
                 name="bio"
+                value={form.bio}
+                onChange={handleFormChange}
                 placeholder="Tell us a bit about yourself..."
                 rows={4}
-                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === "bio"
-                  ? "border-green-300 ring-4 ring-green-50"
-                  : "border-gray-200"
-                  } outline-none transition-all duration-300 text-gray-700 resize-none`}
+                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${
+                  focused === "bio"
+                    ? "border-green-300 ring-4 ring-green-50"
+                    : "border-gray-200"
+                } outline-none transition-all duration-300 text-gray-700 resize-none`}
                 onFocus={() => setFocused("bio")}
                 onBlur={() => setFocused(null)}
               />
@@ -299,14 +340,17 @@ const RegisterPage = () => {
                 <div className={`absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5`}>
                   <GenderIcon />
                 </div>
-                <input
-                  type="text"
+                <select
                   name="gender"
-                  placeholder="Gender"
                   value={form.gender}
                   onChange={handleFormChange}
-                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700"
-                />
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700 appearance-none"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
               </div>
 
               {/* School */}
@@ -321,6 +365,20 @@ const RegisterPage = () => {
                   value={form.school}
                   onChange={handleFormChange}
                   className="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700"
+                />
+              </div>
+              {/* Upload Avatar */}
+              <div className="md:col-span-2 relative mb-4">
+                <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1M12 12V4m0 0L8 8m4-4l4 4" />
+                  </svg>
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setForm({ ...form, avatarFile: e.target.files[0] })}
+                  className="w-full pl-10 pr-4 py-3 h-[52px] rounded-xl bg-gray-50 border border-gray-200 outline-none transition-all duration-300 text-gray-700 cursor-pointer"
                 />
               </div>
             </div>
@@ -340,13 +398,16 @@ const RegisterPage = () => {
               <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 w-5 h-5 ${focused === 'username' ? 'text-green-500' : 'text-gray-400'}`}>
                 <TagIcon />
               </div>
-              <input
-                type="text"
-                placeholder="Username"
-                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === 'username' ? 'border-green-300 ring-4 ring-green-50' : 'border-gray-200'} outline-none transition-all duration-300 text-gray-700`}
-                onFocus={() => setFocused('username')}
-                onBlur={() => setFocused(null)}
-              />
+                <input
+                  type="text"
+                  name="username"
+                  value={form.username}
+                  onChange={handleFormChange}
+                  placeholder="Username"
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === 'username' ? 'border-green-300 ring-4 ring-green-50' : 'border-gray-200'} outline-none transition-all duration-300 text-gray-700`}
+                  onFocus={() => setFocused('username')}
+                  onBlur={() => setFocused(null)}
+                />
             </div>
 
             {/* Password input */}
@@ -354,13 +415,16 @@ const RegisterPage = () => {
               <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors duration-200 w-5 h-5 ${focused === 'password' ? 'text-green-500' : 'text-gray-400'}`}>
                 <LockIcon />
               </div>
-              <input
-                type="password"
-                placeholder="Password"
-                className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === 'password' ? 'border-green-300 ring-4 ring-green-50' : 'border-gray-200'} outline-none transition-all duration-300 text-gray-700`}
-                onFocus={() => setFocused('password')}
-                onBlur={() => setFocused(null)}
-              />
+                <input
+                  type="password"
+                  name="password"
+                  value={form.password}
+                  onChange={handleFormChange}
+                  placeholder="Password"
+                  className={`w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border ${focused === 'password' ? 'border-green-300 ring-4 ring-green-50' : 'border-gray-200'} outline-none transition-all duration-300 text-gray-700`}
+                  onFocus={() => setFocused('password')}
+                  onBlur={() => setFocused(null)}
+                />
             </div>
           </div>
 
@@ -395,13 +459,17 @@ const RegisterPage = () => {
             </div>
           </div>
 
-          {/* Sign in link */}
-          <div className={`text-center mt-6 text-gray-600 transform transition-all duration-500 delay-500 ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
-            Already have an account?
-            <a href="#" className="text-green-500 hover:text-green-700 ml-1 transition-colors duration-300 font-medium">
-              Sign in
-            </a>
-          </div>
+            {/* Sign in link */}
+            <div className={`text-center mt-6 text-gray-600 transform transition-all duration-500 delay-500 ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
+              Already have an account?
+              <button
+                onClick={() => navigate("/login")}
+                className="text-green-500 hover:text-green-700 ml-1 transition-colors duration-300 font-medium underline"
+              >
+                Sign in
+              </button>
+            </div>
+
         </div>
       </div>
     </div>

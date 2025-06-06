@@ -6,6 +6,7 @@ const AddBlog = () => {
   const [visibility, setVisibility] = useState("Private");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [imageUrl, setImageUrl] = useState("");
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -21,21 +22,60 @@ const AddBlog = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // TODO: send form data to server
-    console.log("Title:", title);
-    console.log("Content:", content);
-    console.log("Visibility:", visibility);
-    console.log("Image File:", imageFile);
+    let uploadedImageUrl = "";
 
-    alert(`Blog added: ${title}`);
-    setTitle("");
-    setContent("");
-    setVisibility("Private");
-    setImageFile(null);
-    setImagePreview(null);
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("file", imageFile);
+
+      try {
+        const res = await fetch("https://localhost:7157/api/upload/image", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        uploadedImageUrl = data.url;
+      } catch (err) {
+        console.error("Image upload failed", err);
+        alert("Image upload failed.");
+        return;
+      }
+    }
+
+    const blogPayload = {
+      title,
+      content,
+      visibility,
+      imageUrl: uploadedImageUrl,
+    };
+
+    try {
+      const token = localStorage.getItem("accessToken"); // hoặc sessionStorage tùy cách bạn lưu
+
+      await fetch("https://localhost:7157/api/blog/add", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(blogPayload),
+      });
+
+
+      alert("Blog added successfully!");
+      setTitle("");
+      setContent("");
+      setVisibility("Private");
+      setImageFile(null);
+      setImagePreview(null);
+      setImageUrl("");
+    } catch (err) {
+      console.error("Blog submit failed", err);
+      alert("Blog submission failed.");
+    }
   };
 
   return (

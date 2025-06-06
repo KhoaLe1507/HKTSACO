@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 const AddProblem = () => {
   const [form, setForm] = useState({
@@ -21,6 +22,13 @@ const AddProblem = () => {
     numTest: 1
   });
 
+  const [sections, setSections] = useState([]);
+  const [modules, setModules] = useState([]);
+  const [moduleContents, setModuleContents] = useState([]);
+  const [selectedSectionId, setSelectedSectionId] = useState("");
+  const [selectedModuleId, setSelectedModuleId] = useState(null);
+
+
   const [constraintInput, setConstraintInput] = useState({ variable: "", min: "", max: "" });
   const [testcases, setTestcases] = useState([]);
   const [sampleInput, setSampleInput] = useState({ input: "", output: "", expected: "" });
@@ -28,9 +36,163 @@ const AddProblem = () => {
   const [showSampleForm, setShowSampleForm] = useState(false);
   const [activeTab, setActiveTab] = useState("details");
 
-  const handleFormChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const location = useLocation();
+
+const fetchModulesBySection = (sectionId) => {
+  const token = localStorage.getItem("accessToken");
+  fetch(`https://localhost:7157/api/Roadmap/GetModulesBySection/${sectionId}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(res => res.json())
+    .then(data => setModules(data))
+    .catch(err => console.error("Error loading modules:", err));
+
+  setSelectedModuleId(null);
+  setModuleContents([]);
+};
+
+const loadSections = () => {
+  const token = localStorage.getItem("accessToken");
+  console.log("🔑 Token being sent:", token);
+
+  fetch("https://localhost:7157/api/Roadmap/GetAllSections", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("📦 Sections from API:", data);
+      setSections(data);
+      // ❌ Đừng setSelectedSectionId(data[0].id);
+      // ✅ Để selectedSectionId là "" để ép người dùng chọn
+    })
+    .catch(err => console.error("❌ Error loading sections:", err));
+};
+
+
+useEffect(() => {
+  loadSections();
+  window.addEventListener("focus", loadSections);
+  return () => window.removeEventListener("focus", loadSections);
+}, []);
+
+useEffect(() => {
+  if (sections.length > 0 && !selectedSectionId) {
+    const defaultSectionId = sections[0].id || sections[0].sectionId;
+    setSelectedSectionId(defaultSectionId);
+    setForm(prev => ({ ...prev, section: defaultSectionId }));
+    fetchModulesBySection(defaultSectionId);
+  }
+}, [sections]);
+
+const handleFormChange = (e) => {
+  setForm({ ...form, [e.target.name]: e.target.value });
+};
+
+const handleSectionChange = (e) => {
+  const sectionId = e.target.value;
+  console.log("🟦 Section selected:", sectionId);
+
+  if (!sectionId) {
+    console.log("⚠️ Invalid section selected. Skipping.");
+    setModules([]);
+    setModuleContents([]);
+    setSelectedSectionId("");
+    setSelectedModuleId("");
+    setForm(prev => ({ ...prev, section: "", module: "", moduleContent: "" }));
+    return;
+  }
+
+  setSelectedSectionId(sectionId);
+  setForm(prev => ({ ...prev, section: sectionId, module: "", moduleContent: "" }));
+  setModules([]);
+  setModuleContents([]);
+  setSelectedModuleId("");
+
+  const token = localStorage.getItem("accessToken");
+  console.log("🔑 Token being sent for GetModulesBySection:", token);
+
+  const url = `https://localhost:7157/api/Roadmap/GetModulesBySection/${sectionId}`;
+  console.log("🌐 Calling API:", url);
+
+  fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(res => {
+      console.log("📡 Module API Status:", res.status);
+      return res.json();
+    })
+    .then(data => {
+      console.log("📦 Modules returned from API:", data);
+      setModules(data);
+    })
+    .catch(err => console.error("❌ Error loading modules:", err));
+};
+
+
+
+const handleModuleChange = (e) => {
+  const moduleId = e.target.value;
+  console.log("🔹 Module selected:", moduleId);
+
+  if (!moduleId) {
+    console.log("⚠️ Invalid module selected. Skipping.");
+    setModuleContents([]);
+    setSelectedModuleId("");
+    setForm(prev => ({ ...prev, module: "", moduleContent: "" }));
+    return;
+  }
+
+  setSelectedModuleId(moduleId);
+  setForm(prev => ({ ...prev, module: moduleId, moduleContent: "" }));
+  setModuleContents([]);
+
+  const token = localStorage.getItem("accessToken");
+  console.log("🔑 Token being sent:", token);
+
+  const url = `https://localhost:7157/api/Roadmap/GetModuleContentsByModule/${moduleId}`;
+  console.log("🌐 API URL:", url);
+
+  fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(res => {
+      console.log("📡 Status:", res.status);
+      return res.json();
+    })
+    .then(data => {
+      console.log("📦 ModuleContents returned from API:", data);
+      setModuleContents(data);
+    })
+    .catch(err => console.error("❌ Error loading module contents:", err));
+};
+
+
+
+const handleModuleContentChange = (e) => {
+  const moduleContentId = e.target.value;
+  console.log("📘 ModuleContent selected:", moduleContentId);
+
+  if (!moduleContentId) {
+    setForm(prev => ({ ...prev, moduleContent: "" }));
+    return;
+  }
+
+  setForm(prev => ({ ...prev, moduleContent: moduleContentId }));
+};
+
+
+
 
   const addConstraint = () => {
     if (!constraintInput.variable || !constraintInput.min || !constraintInput.max) {
@@ -67,6 +229,64 @@ const AddProblem = () => {
   const buildTestcases = () => {
     alert(`Generating ${form.numTest} testcases with ${form.solutionLanguage}...`);
   };
+const handleSubmit = async () => {
+  const payload = {
+    name: form.name,
+    frequent: form.frequency,
+    moduleContentId: parseInt(form.moduleContent),
+    difficulty: form.difficulty,
+    timeLimit: parseInt(form.timelimit),
+    memoryLimit: parseInt(form.memorylimit),
+    problemStatement: form.statement,
+    formatInput: form.inputFormat,
+    formatOutput: form.outputFormat,
+    numberOfGeneratedTestcases: parseInt(form.numTest),
+    testGeneratorSource: form.generateInputCode,
+    testGeneratorLanguage: form.solutionLanguage,
+    constraints: form.constraints.map(c => ({
+      variable: c.variable,
+      minValue: parseInt(c.min),
+      maxValue: parseInt(c.max)
+    })),
+    sampleTestcases: testcases.map(t => ({
+      input: t.input,
+      expectedOutput: t.expected,
+      explanation: t.explanation || ""
+    })),
+    solution: {
+      source: form.solutionCode,
+      language: form.solutionLanguage,
+      explanation: form.solutionExplanation
+    }
+  };
+
+  try {
+    console.log("🧪 Payload preview:");
+    console.log("📝 generateInputCode:", form.generateInputCode);
+    console.log("🧪 Full payload:", payload);
+    const token = localStorage.getItem("accessToken");
+
+    const response = await fetch("https://localhost:7157/api/Problem/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+
+    if (response.ok) {
+      alert("✅ Problem created successfully!");
+    } else {
+      const err = await response.text();
+      alert("❌ Error: " + err);
+    }
+  } catch (error) {
+    console.error("Submit error:", error);
+    alert("❌ Submit failed. Check console.");
+  }
+};
 
   const FormInput = ({ label, type = "text", name, value, onChange, placeholder, className = "", ...props }) => (
     <div className={`mb-4 ${className}`}>
@@ -164,33 +384,52 @@ const AddProblem = () => {
               <FormSelect
                 label="Difficulty"
                 name="difficulty"
-                value={form.difficulty}
+                value={form.difficulty || ""}
                 onChange={handleFormChange}
-                options={["Easy", "Medium", "Hard"]}
+                options={[
+                  { value: "", label: "-- Select Difficulty --" },
+                  { value: "Easy", label: "Easy" },
+                  { value: "Medium", label: "Medium" },
+                  { value: "Hard", label: "Hard" }
+                ]}
               />
+
               <FormSelect
                 label="Section"
                 name="section"
-                value={form.section}
-                onChange={handleFormChange}
-                options={["Math", "Graph", "DP"]}
+                value={selectedSectionId || ""}
+                onChange={handleSectionChange}
+                options={[
+                  { value: "", label: "-- Select Section --" },   
+                  ...sections.map(s => ({ value: s.id, label: s.name }))
+                ]}
               />
+
               <FormSelect
                 label="Module"
                 name="module"
-                value={form.module}
-                onChange={handleFormChange}
-                options={["Module 1", "Module 2"]}
+                value={selectedModuleId || ""}
+                onChange={handleModuleChange}
+                options={[
+                  { value: "", label: "-- Select Module --" },
+                  ...modules.map(m => ({ value: m.id, label: m.name }))
+                ]}
               />
+
+              <FormSelect
+                label="Module Content"
+                name="moduleContent"
+                value={form.moduleContent || ""}
+                onChange={handleModuleContentChange}
+                options={[
+                  { value: "", label: "-- Select Module Content --" },
+                  ...moduleContents.map(mc => ({ value: mc.id, label: mc.title }))
+                ]}
+              />
+
+
             </div>
 
-            <FormSelect
-              label="Module Content"
-              name="moduleContent"
-              value={form.moduleContent}
-              onChange={handleFormChange}
-              options={["Content 1", "Content 2"]}
-            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
@@ -644,7 +883,7 @@ const AddProblem = () => {
                   setActiveTab(tabs[currentIndex + 1]);
                 } else {
                   // Submit the form
-                  alert("Problem added successfully!");
+                  handleSubmit();
                 }
               }}
             >
