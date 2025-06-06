@@ -47,6 +47,10 @@ const EditProblem = () => {
 
   const [enableRandomTest, setEnableRandomTest] = useState(false);
 
+  const [originalTestcases, setOriginalTestcases] = useState([]);
+  const [originalNonSampleTestcases, setOriginalNonSampleTestcases] = useState([]);
+
+
   const location = useLocation();
 
   const fetchModulesBySection = (sectionId) => {
@@ -205,25 +209,29 @@ const handleSectionChange = (e) => {
         console.log("✅ Form state after setting:", form);
 
         // Set sample testcases
-        setTestcases(
-          data.sampleTestcases.map(t => ({
-            testcaseId: t.testcaseId, 
-            input: t.input,
-            expected: t.output,
-            explanation: t.explanation || "",
-            isSample: true
-          }))
-        );
+        const parsedSamples = data.sampleTestcases.map(t => ({
+          testcaseId: t.testcaseId,
+          input: t.input,
+          expected: t.output,
+          explanation: t.explanation || "",
+          isSample: true
+        }));
 
-        setNonSampleTestcases(
-          data.testcases.map(t => ({
-            testcaseId: t.testcaseId,
-            input: t.input,
-            expected: t.output,
-            explanation: t.explanation,
-            isSample: false
-          }))
-        );
+        setTestcases(parsedSamples);
+        setOriginalTestcases(JSON.parse(JSON.stringify(parsedSamples))); // deep clone bản gốc
+
+
+        const parsedRegulars = data.testcases.map(t => ({
+          testcaseId: t.testcaseId,
+          input: t.input,
+          expected: t.output,
+          explanation: t.explanation || "",
+          isSample: false
+        }));
+
+        setNonSampleTestcases(parsedRegulars);
+        setOriginalNonSampleTestcases(JSON.parse(JSON.stringify(parsedRegulars)));
+
 
 
         console.log("🧪 Testcases state set:", testcases);
@@ -441,6 +449,20 @@ const submitSampleTestcases = async () => {
 
 const handleSubmit = async () => {
   const token = localStorage.getItem("accessToken");
+  const isTestcaseModified = (a, b) => {
+    if (!a || !b) return true;
+    return a.input !== b.input || a.expected !== b.expected || a.explanation !== b.explanation;
+  };
+
+  const toUpdateSample = testcases.filter(current => {
+    const original = originalTestcases.find(o => o.testcaseId === current.testcaseId);
+    return current.testcaseId && isTestcaseModified(current, original);
+  });
+
+  const toUpdateNonSample = nonSampleTestcases.filter(current => {
+    const original = originalNonSampleTestcases.find(o => o.testcaseId === current.testcaseId);
+    return current.testcaseId && isTestcaseModified(current, original);
+  });
 
   try {
     // 1. Update Problem Info + Constraints + Solution
@@ -474,9 +496,20 @@ const handleSubmit = async () => {
     // 2. Update Sample Testcases
     const samplePayload = {
       toAdd: testcases.filter(t => !t.testcaseId).map(t => ({ input: t.input, expectedOutput: t.expected, explanation: t.explanation })),
-      toUpdate: testcases.filter(t => t.testcaseId).map(t => ({ testcaseId: t.testcaseId, input: t.input, expectedOutput: t.expected, explanation: t.explanation })),
+      toUpdate: toUpdateSample.map(t => ({
+        testcaseId: t.testcaseId,
+        input: t.input,
+        expectedOutput: t.expected,
+        explanation: t.explanation
+      })),
       toDelete: deletedTestcaseIds
     };
+    console.log("📦 Payload gửi lên (sample):", {
+      toAdd: testcases.filter(t => !t.testcaseId),
+      toUpdate: toUpdateSample,
+      toDelete: deletedTestcaseIds
+    });
+
 
     await fetch(`https://localhost:7157/api/Problem/update-sample-testcases/${problemId}`, {
       method: "PUT",
@@ -487,12 +520,25 @@ const handleSubmit = async () => {
       body: JSON.stringify(samplePayload)
     });
 
+
     // 3. Update Non-Sample Testcases
     const nonSamplePayload = {
       toAdd: nonSampleTestcases.filter(t => !t.testcaseId).map(t => ({ input: t.input, expectedOutput: t.expected, explanation: t.explanation })),
-      toUpdate: nonSampleTestcases.filter(t => t.testcaseId).map(t => ({ testcaseId: t.testcaseId, input: t.input, expectedOutput: t.expected, explanation: t.explanation })),
+      toUpdate: toUpdateNonSample.map(t => ({
+        testcaseId: t.testcaseId,
+        input: t.input,
+        expectedOutput: t.expected,
+        explanation: t.explanation
+      })),
       toDelete: deletedNonSampleIds
     };
+
+
+    console.log("📦 Payload gửi lên (non-sample):", {
+      toAdd: nonSampleTestcases.filter(t => !t.testcaseId),
+      toUpdate: toUpdateNonSample,
+      toDelete: deletedNonSampleIds
+    });
 
     await fetch(`https://localhost:7157/api/Problem/update-non-sample-testcases/${problemId}`, {
       method: "PUT",

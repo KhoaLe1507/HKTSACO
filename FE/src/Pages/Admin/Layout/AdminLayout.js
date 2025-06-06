@@ -4,6 +4,8 @@ import { Outlet, useNavigate, Routes, Route } from "react-router-dom";
 import ProblemsPage from '../../ProblemsPage';
 import ProblemDetail from '../../ProblemDetail';
 
+import ModuleContentDetail from '../../LearningPathSource/ModuleContentDetail';
+
 // import AddProblem from '../AddProblem';
 import AddProblem from '../../Professor/Problems/AddProblem';
 
@@ -196,12 +198,14 @@ const AdminLayout = () => {
             <Route path="section/add" element={<AddSection />} />
             <Route path="section/:id/edit" element={<EditSection />} />
             <Route path="section/:sectionId/modules" element={<ListModule />} />
-            <Route path="module/add" element={<AddModule />} />
+            <Route path="section/:sectionId/module/add" element={<AddModule />} />
 
-            <Route path="module/:id/edit" element={<EditModule />} />
+            <Route path="section/:sectionId/module/:moduleId/edit" element={<EditModule />} />
             <Route path="module/:moduleId/contents" element={<ListModuleContent />} />
-            <Route path="module-content/add" element={<AddModuleContent />} />
-            <Route path="module-content/:id/edit" element={<EditModuleContent />} />
+            <Route path="module-content/:moduleId/add" element={<AddModuleContent />} />
+            <Route path="module/:moduleId/module-content/:modulecontentId/edit" element={<EditModuleContent />} />
+
+            <Route path="section/:level/module-content/:moduleId/detail" element={<ModuleContentDetail />} />
 
             <Route path="blogs" element={<BlogsPage />} />
             <Route path="blogs/add" element={<AddBlog />} />

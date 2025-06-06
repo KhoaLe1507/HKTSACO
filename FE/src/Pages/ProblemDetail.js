@@ -24,6 +24,7 @@ const ProblemDetails = () => {
     const fetchProblem = async () => {
       try {
         const token = localStorage.getItem("accessToken");
+        const role = parseInt(localStorage.getItem("role"));
   
         const response = await fetch(`https://localhost:7157/api/Problem/Details/${id}`, {
           method: "GET",
@@ -84,7 +85,7 @@ const ProblemDetails = () => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-gray-700">No problem selected</h2>
+        <h2 className="text-xl font-bold text-gray-700">Loading Problem</h2>
         <p className="mt-2 text-gray-500">Please select a problem from the problem list to view its details.</p>
         <button
           onClick={() => navigate(-1)}
@@ -96,7 +97,8 @@ const ProblemDetails = () => {
     </div>
   );
 
-  const sample = problem.samples?.find((s) => s.isSample) || problem.samples?.[0];
+  const sampleTestcases = problem.samples?.filter((s) => s.isSample) || [];
+
 
   return (
     <div className="min-h-screen bg-white py-6 px-4 transition-all duration-300 ease-in-out">
@@ -105,6 +107,11 @@ const ProblemDetails = () => {
         
         {/* Header Card with problem info */}
         <div className="bg-blue-500 rounded-lg shadow-lg mb-6 p-4 text-white">
+        <h1 className="text-2xl font-extrabold text-white mb-3 drop-shadow-md">
+         <span className="decoration-yellow-100">Problem : {problem.name}</span>
+        </h1>
+
+
           <div className="flex justify-between items-start">
             <div>
               <div className="flex items-center text-sm mb-2">
@@ -233,16 +240,29 @@ const ProblemDetails = () => {
               <h2 className="text-lg font-semibold text-gray-800">Sample Testcases</h2>
             </div>
             <div className="px-4 pb-4">
-              {sample ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <div className="font-medium text-gray-700 mb-1">Input:</div>
-                    <pre className="bg-gray-50 p-3 rounded text-sm font-mono whitespace-pre-wrap text-gray-700 border border-gray-200">{sample.input}</pre>
-                  </div>
-                  <div>
-                    <div className="font-medium text-gray-700 mb-1">Output:</div>
-                    <pre className="bg-gray-50 p-3 rounded text-sm font-mono whitespace-pre-wrap text-gray-700 border border-gray-200">{sample.output}</pre>
-                  </div>
+              {sampleTestcases.length > 0 ? (
+                <div className="space-y-4">
+                  {sampleTestcases.map((sample, index) => (
+                    <div key={index} className="border-b pb-4 space-y-3">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <div className="font-medium text-gray-700 mb-1">Input #{index + 1}:</div>
+                          <pre className="bg-gray-50 p-3 rounded text-sm font-mono whitespace-pre-wrap text-gray-700 border border-gray-200">{sample.input}</pre>
+                        </div>
+                        <div>
+                          <div className="font-medium text-gray-700 mb-1">Expected Output #{index + 1}:</div>
+                          <pre className="bg-gray-50 p-3 rounded text-sm font-mono whitespace-pre-wrap text-gray-700 border border-gray-200">{sample.output}</pre>
+                        </div>
+                      </div>
+                      
+                      {sample.explanation && (
+                        <div>
+                          <div className="font-medium text-gray-700 mb-1">Explanation for Testcase #{index + 1}:</div>
+                          <pre className="bg-yellow-50 p-3 rounded text-sm font-mono whitespace-pre-wrap text-gray-700 border border-yellow-200">{sample.explanation}</pre>
+                        </div>
+                      )}
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <p className="text-gray-500 italic">No sample testcases available for this problem.</p>
@@ -254,16 +274,32 @@ const ProblemDetails = () => {
         {/* Action Buttons */}
         <div className="flex justify-between">
           <div className="flex space-x-3">
-            <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition-colors flex items-center"
-              onClick={() => navigate(`/submit/${problem.id}`)}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-              </svg>
-              Submit Solution
-            </button>
-            
+            {(() => {
+              const token = localStorage.getItem("accessToken");
+              const role = parseInt(localStorage.getItem("role"));
+
+              if (isNaN(role) || role === 0) {
+                return (
+                  <button
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg shadow transition-colors flex items-center"
+                    onClick={() => {
+                      if (!token) {
+                        navigate("/login"); // nếu bạn dùng route login
+                      } else {
+                        navigate(`/submit/${problem.id}`);
+                      }
+                    }}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    Submit Solution
+                  </button>
+                );
+              }
+              return null;
+            })()}
+ 
             <button
               className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow transition-colors flex items-center"
               onClick={() => navigate(`/viewsolution/${problem.id}`)}

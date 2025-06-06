@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useContext, useEffect } from "react";
+import { AuthContext } from "../Context/AuthContext";
 
 const BlogsPage = () => {
   // Mock auth context for demo purposes
-  const isLoggedIn = true;
-  const role = "Student";
-  const username = "DemoUser";
+  const { isLoggedIn, role, username } = useContext(AuthContext);
   const currentUsername = username || "Guest";
 
   const [blogs, setBlogs] = useState([]);

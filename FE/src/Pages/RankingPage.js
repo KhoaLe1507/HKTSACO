@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from "react";
-
+import Section from "../Components/Section";
+import { useNavigate } from "react-router-dom";
 const RankingPage = () => {
   const [activeTab, setActiveTab] = useState("Student");
   const [searchUser, setSearchUser] = useState("");
   const [searchSchool, setSearchSchool] = useState("");
   const [rankingData, setRankingData] = useState([]);
   
-  // Mock navigation function for demo
-  const navigate = (path) => {
-    window.location.href = path;
-  };
+  const navigate = useNavigate();
 
   // Mock data for demo purposes
-  const currentUserId = 123;
-  const currentUserRole = 0;
+  const currentUserId = parseInt(localStorage.getItem("userId"));
+  const currentUserRole = parseInt(localStorage.getItem("role"));
+
 
   useEffect(() => {
     const fetchRanking = async () => {

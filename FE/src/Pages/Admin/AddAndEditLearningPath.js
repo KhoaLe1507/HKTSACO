@@ -1,22 +1,72 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const initialSections = [
-  { name: 'Bronze', color: 'from-yellow-400 to-yellow-500', id: 1 },
-  { name: 'Silver', color: 'from-gray-300 to-gray-400', id: 2 },
-  { name: 'Gold', color: 'from-yellow-500 to-amber-600', id: 3 },
-  { name: 'Platinum', color: 'from-blue-300 to-blue-500', id: 4 },
-];
+
 
 const AddAndEditLearningPath = () => {
   const navigate = useNavigate();
-  const [sections, setSections] = useState(initialSections);
+  const [sections, setSections] = useState([]);
 
-  const handleDelete = (id) => {
-    if (window.confirm("Are you sure you want to delete this section?")) {
-      setSections(prev => prev.filter(sec => sec.id !== id));
+  useEffect(() => {
+    const fetchSections = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const res = await fetch("https://localhost:7157/api/roadmap/ListAllSectionsDetails", {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch sections");
+        const data = await res.json();
+        setSections(data);
+        const colorMap = {
+          Bronze: 'from-yellow-500 to-amber-600',
+          Silver: 'from-gray-300 to-gray-400',
+          Gold: 'from-yellow-400 to-yellow-500',
+          Platinum: 'from-blue-300 to-blue-500',
+        };
+
+        const enhanced = data.map(s => ({
+          ...s,
+          color: colorMap[s.name] || 'from-gray-200 to-gray-300' // fallback nếu không khớp
+        }));
+        setSections(enhanced);
+      } catch (error) {
+        console.error("❌ Error fetching sections:", error);
+      }
+    };
+
+    fetchSections();
+  }, []);
+
+
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this section?")) return;
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      const res = await fetch(`https://localhost:7157/api/roadmap/DeleteSection/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      if (res.ok) {
+        setSections(prev => prev.filter(sec => sec.id !== id));
+        alert("✅ Section deleted successfully!");
+      } else {
+        const errorText = await res.text();
+        alert("❌ Failed to delete section: " + errorText);
+      }
+    } catch (err) {
+      console.error("❌ Delete error:", err);
+      alert("❌ Error deleting section.");
     }
   };
+
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md animate-fadeIn max-w-2xl mx-auto">

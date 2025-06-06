@@ -167,6 +167,36 @@ const ProblemsPage = () => {
     navigate(`/professor/problems/${problem.id}/edit`);
   };
   
+  const handleDeleteClick = async (e, problemId) => {
+    e.stopPropagation();
+
+    const confirmDelete = window.confirm("Are you sure you want to delete this problem?");
+    if (!confirmDelete) return;
+
+    try {
+      const token = localStorage.getItem("accessToken");
+      const response = await fetch(`https://localhost:7157/api/Problem/delete/${problemId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        // Xoá thành công → cập nhật lại danh sách
+        setProblems(problems.filter(p => p.id !== problemId));
+        alert("Problem deleted successfully.");
+      } else {
+        alert("Failed to delete the problem.");
+      }
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Error occurred while deleting the problem.");
+    }
+  };
+
+
   return (
     selectedProblem ? (
       <Submit problem={selectedProblem} onBack={() => setSelectedProblem(null)} />
@@ -337,20 +367,34 @@ const ProblemsPage = () => {
                     </div>
                     
                     {/* Added Edit button below, aligned to the right */}
-                    <div className="mt-2 flex justify-end">
-                    {(role === "2") || (role === "1" && p.authorId === userId) ? (
-                        <button
-                          onClick={(e) => handleEditClick(e, p)}
-                          className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-1 font-medium text-xs"
-                          title="Edit problem"
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                          </svg>
-                          <span>Edit</span>
-                        </button>
+                    <div className="mt-2 flex justify-end space-x-2">
+                      {(role === "2") || (role === "1" && p.authorId === userId) ? (
+                        <>
+                          <button
+                            onClick={(e) => handleEditClick(e, p)}
+                            className="bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-1 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-1 font-medium text-xs"
+                            title="Edit problem"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536M6.5 21.036H3v-3.572L16.732 3.732z" />
+                            </svg>
+                            <span>Edit</span>
+                          </button>
+
+                          <button
+                            onClick={(e) => handleDeleteClick(e, p.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md flex items-center space-x-1 font-medium text-xs"
+                            title="Delete problem"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                            <span>Delete</span>
+                          </button>
+                        </>
                       ) : null}
                     </div>
+
                     <div className="absolute bottom-0 left-0 w-full h-0.5 bg-indigo-500 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
                   </div>
                 ))}
