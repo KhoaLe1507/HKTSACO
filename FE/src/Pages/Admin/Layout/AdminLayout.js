@@ -33,6 +33,10 @@ import ProfileDetail from '../ProfileDetail';
 import EditProfile from '../EditProfile';
 import AdminHome from '../Home';
 
+import axios from "axios";
+import { useEffect } from "react";
+
+
 const Sidebar = () => {
   const [open, setOpen] = useState({
     module: true,
@@ -40,9 +44,15 @@ const Sidebar = () => {
     blog: false,
     account: false,
   });
+  const [sections, setSections] = useState([]);
   const [learningPathDropdown, setLearningPathDropdown] = useState(false);
   const navigate = useNavigate();
   const toggle = (key) => setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
+  useEffect(() => {
+    axios.get("https://localhost:7157/api/roadmap/ListAllSectionsDropdown")
+      .then(res => setSections(res.data))
+      .catch(err => console.error("Failed to fetch sections:", err));
+  }, []);
   return (
     <aside className="sidebar w-64 h-screen flex flex-col py-6 px-4 shadow-lg text-sm fixed top-0 left-0 z-50 overflow-y-auto animate-slideIn">
       {/* Logo */}
@@ -84,18 +94,20 @@ const Sidebar = () => {
           <div className="ml-4 mt-2">
             <select
               onChange={(e) => {
-                const value = e.target.value;
-                if (value !== "") navigate(`/admin/learning-path/${value}`);                  ;
+                const selected = JSON.parse(e.target.value);
+                navigate(`/admin/learning-path/${selected.id}/${selected.level}`);
               }}
               defaultValue=""
               className="w-full p-2 rounded bg-white border border-gray-300 shadow-sm cursor-pointer"
             >
-              <option value="" disabled>Choose Level</option>
-              <option value="bronze">Bronze</option>
-              <option value="silver">Silver</option>
-              <option value="gold">Gold</option>
-              <option value="platinum">Platinum</option>
+              <option value="" disabled>Choose Section</option>
+              {sections.map((sec) => (
+                <option key={sec.id} value={JSON.stringify({ id: sec.id, level: sec.name.toLowerCase() })}>
+                  {sec.name}
+                </option>
+              ))}
             </select>
+
 
             <button
               onClick={() => navigate('/admin/learning-path/add-edit')}
@@ -192,7 +204,7 @@ const AdminLayout = () => {
 
             {/* <Route path="problems/add" element={<AddProblem />} /> */}
             <Route path="problems/add" element={<AddProblem />} />
-            <Route path="learning-path/:level" element={<LearningPathPage />} />
+            <Route path="learning-path/:sectionId/:level" element={<LearningPathPage />} />
 
             <Route path="learning-path/add-edit" element={<AddAndEditLearningPath />} />
             <Route path="section/add" element={<AddSection />} />
