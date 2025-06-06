@@ -1,9 +1,16 @@
-Bấm vào các module bên Learning path thì nó sẽ ra như này : https://usaco.guide/bronze
-Tab Problem chỉnh lại bố cục các bài tập giống trên usaco
-blogs làm như 28tech
-ranking chưa cần hỉnh gì
-contact us bỏ cái QR donate
+- Xử lý phần bị mất layout, mất avatar lúc đăng nhập ở phần Edit blogs
+
+
+
+
+
+
 
 bg-[#0f1f3b]
 
-Giữ lại toàn bộ những kết nối api và logic cũ , chỉ upgrade phần hiệu ứng , animation , trang trí về mặt giao diện Web lên sao cho thật đẹp và thật bắt mắt người xem, càng đẹp càng tốt, tone màu chủ đạo là màu trắng, hãy thêm chút màu neon cho đẹp và phần chứa chữ HKT Online Judge ở đầu phải thật bắt mắt người xem, người sử dụng web, nó phải chuyên nghiệp và phù hợp vì đây là web chấm bài lập trình thuật toán. Hãy đặt bạn vào vị trí người đang đi kiếm web học thuật toán, khi bạn thấy giao diện này, bạn sẽ muốn sử dụng nó để học thuật toán. Phần chữ HKT Online Judge phải nằm trên một hàng và nó phải chiếm toàn bộ spotlight của trang web, các phần khác là phù họa
+Giữ lại toàn bộ những kết nối API và logic cũ , chỉ nâng cấp phần hiệu ứng , animation , trang trí về mặt giao diện thật là đẹp, màu chủ đạo là màu trắng, chỉ thêm hiệu ứng liên quan, thật   hiện đại , chuyên nghiệp. Nhớ là phải giữ nguyên các kết nối API và logic mà không thay đổi gì. không cần sinh thêm dữ liệu, chỉ nâng cấp về phần hiệu ứng, còn lại giữ nguyên
+
+
+
+
+
