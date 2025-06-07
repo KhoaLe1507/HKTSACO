@@ -1,10 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../Context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const BlogsPage = () => {
   // Mock auth context for demo purposes
   const { isLoggedIn, role, username } = useContext(AuthContext);
   const currentUsername = username || "Guest";
+  const navigate = useNavigate();
 
   const [blogs, setBlogs] = useState([]);
   const [searchText, setSearchText] = useState("");
@@ -165,7 +167,7 @@ const renderComments = (comments, idx, postId, level = 0) =>
           </div>
           {isLoggedIn && (
             <button
-              onClick={() => window.location.href = "/blogs/add"}
+              onClick={() => navigate("/blogs/add")}
               className="bg-gradient-to-r from-emerald-500 to-teal-500 text-white px-6 py-3 rounded-xl hover:from-emerald-600 hover:to-teal-600 transition-all duration-300 text-sm font-medium shadow-lg hover:shadow-emerald-200 transform hover:scale-105 flex items-center gap-2 hover:shadow-xl"
             >
               <span className="text-lg">➕</span>
@@ -269,7 +271,7 @@ const renderComments = (comments, idx, postId, level = 0) =>
                 <div className="flex items-center gap-4">
                   {blog.authorName === currentUsername && (
                     <button
-                      onClick={() => window.location.href = `/blogs/edit/${blog.id}`}
+                      onClick={() => navigate(`/blogs/edit/${blog.id}`)}
                       className="text-amber-600 hover:text-amber-700 transition-colors duration-200 flex items-center gap-1 hover:bg-amber-50 px-3 py-1 rounded-lg"
                     >
                       <span>✏️</span>

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AddBlog = () => {
   const [title, setTitle] = useState("");
@@ -8,6 +9,7 @@ const AddBlog = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [imageUrl, setImageUrl] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -244,7 +246,7 @@ const AddBlog = () => {
         {/* Back to Blogs Link */}
         <div className="text-center mt-8 animate-fade-in-up" style={{animationDelay: '0.9s'}}>
           <button
-            onClick={() => window.location.href = '/blogs'}
+            onClick={() => navigate("/blogs")}
             className="text-indigo-600 hover:text-indigo-800 font-medium transition-colors duration-200 flex items-center gap-2 mx-auto hover:bg-indigo-50 px-4 py-2 rounded-lg"
           >
             <span>←</span>
