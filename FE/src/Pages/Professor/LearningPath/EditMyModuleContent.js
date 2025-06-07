@@ -31,12 +31,12 @@ const EditMyModuleContent = () => {
 
   const getSectionIcon = (name) => {
     const lowerName = name.toLowerCase();
-    if (lowerName.includes('bronze')) return '🥉';
-    if (lowerName.includes('silver')) return '🥈';
-    if (lowerName.includes('gold')) return '🥇';
-    if (lowerName.includes('platinum') || lowerName.includes('diamond')) return '💎';
-    if (lowerName.includes('beginner') || lowerName.includes('basic')) return '🌱';
-    if (lowerName.includes('advanced') || lowerName.includes('expert')) return '🚀';
+    if (lowerName.includes('bronze')) return '';
+    if (lowerName.includes('silver')) return '';
+    if (lowerName.includes('gold')) return '';
+    if (lowerName.includes('platinum') || lowerName.includes('diamond')) return '';
+    if (lowerName.includes('beginner') || lowerName.includes('basic')) return '';
+    if (lowerName.includes('advanced') || lowerName.includes('expert')) return '';
     return '📚';
   };
 
@@ -167,7 +167,7 @@ const EditMyModuleContent = () => {
                     className="w-full p-3 rounded-xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all duration-300 shadow-sm hover:shadow-md text-slate-800 placeholder-slate-400"
                   />
                   <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg pointer-events-none">
-                    🔍
+                    
                   </div>
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
@@ -184,7 +184,7 @@ const EditMyModuleContent = () => {
                     className="w-full p-3 rounded-xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all duration-300 shadow-sm hover:shadow-md text-slate-800"
                   />
                   <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 text-lg pointer-events-none">
-                    📅
+                    
                   </div>
                   <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                 </div>
@@ -372,28 +372,6 @@ const EditMyModuleContent = () => {
               )}
             </div>
           )}
-
-          {/* Quick Actions */}
-          <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-start gap-3">
-                <div className="text-blue-500 text-xl">💡</div>
-                <div>
-                  <h4 className="font-semibold text-blue-800 mb-1">Content Management Tips</h4>
-                  <p className="text-blue-700 text-sm">
-                    Use filters to quickly find specific content. Click column headers to sort. Edit content to keep materials up-to-date.
-                  </p>
-                </div>
-              </div>
-              <button
-                onClick={() => navigate('/admin/learning-path/add-edit')}
-                className="bg-gradient-to-r from-slate-500 to-slate-600 hover:from-slate-600 hover:to-slate-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg flex items-center gap-2"
-              >
-                <span>📚</span>
-                Browse Sections
-              </button>
-            </div>
-          </div>
         </div>
       </div>
 

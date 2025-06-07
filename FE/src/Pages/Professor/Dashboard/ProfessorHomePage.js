@@ -109,27 +109,31 @@ export default function ProfessorHomePage() {
         </div>
 
         {/* Date Filter Section */}
-        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 mb-8 animate-fade-in-up">
+        <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 mb-8 animate-fade-in-up relative z-50">
           <h3 className="text-lg font-semibold text-slate-800 mb-4">📅 Date Range Filter</h3>
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="group">
+            <div className="group relative z-50">
               <label className="block font-medium text-slate-700 mb-2">Start Date</label>
-              <div className="relative">
+              <div className="relative z-50">
                 <DatePicker 
                   selected={startDate} 
                   onChange={(date) => setStartDate(date)} 
                   className="w-full p-3 rounded-xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all duration-300 shadow-sm hover:shadow-md text-slate-800" 
+                  popperClassName="date-picker-popper"
+                  popperPlacement="bottom-start"
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
             </div>
-            <div className="group">
+            <div className="group relative z-50">
               <label className="block font-medium text-slate-700 mb-2">End Date</label>
-              <div className="relative">
+              <div className="relative z-50">
                 <DatePicker 
                   selected={endDate} 
                   onChange={(date) => setEndDate(date)} 
                   className="w-full p-3 rounded-xl border-2 border-slate-200 bg-white/80 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all duration-300 shadow-sm hover:shadow-md text-slate-800" 
+                  popperClassName="date-picker-popper"
+                  popperPlacement="bottom-start"
                 />
                 <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-indigo-500/10 to-purple-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
               </div>
