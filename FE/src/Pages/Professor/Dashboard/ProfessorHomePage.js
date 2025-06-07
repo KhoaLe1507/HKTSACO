@@ -1,155 +1,129 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell, Legend } from "recharts";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Card, CardContent } from "../../../Components/ui/card";
 
-const mockStats = {
-  problems: 12,
-  moduleContents: 4,
-  blogs: 6,
-  acRate: 72,
-  avgProgress: 65,
-  likes: 320,
-  comments: 85,
-  problemStatus: [
-    { name: "A", completed: 8, inProgress: 2, notStarted: 2 },
-    { name: "B", completed: 7, inProgress: 3, notStarted: 2 },
-    { name: "C", completed: 6, inProgress: 4, notStarted: 2 },
-    { name: "D", completed: 9, inProgress: 1, notStarted: 2 },
-  ],
-  moduleContentStatus: [
-    { title: "DFS", completed: 70, inProgress: 20, notStarted: 10 },
-    { title: "Binary Search", completed: 45, inProgress: 30, notStarted: 25 },
-  ],
-  problemDetail: [
-    { title: "Problem A", completed: 50, inProgress: 15, notStarted: 5 },
-    { title: "Problem B", completed: 30, inProgress: 20, notStarted: 10 },
-  ],
-  blogStats: [
-    { title: "Tư duy Greedy", likes: 120, comments: 33 },
-    { title: "Sắp xếp & thời gian", likes: 88, comments: 14 },
-  ],
-};
+const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1", "#d0ed57", "#a4de6c"];
 
-const ProfessorHomePage = () => {
-  const [start, setStart] = useState("2025-04-01");
-  const [end, setEnd] = useState("2025-04-30");
+export default function ProfessorHomePage() {
+  const [data, setData] = useState(null);
+  const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), 0, 1)); // Jan 1st
+  const [endDate, setEndDate] = useState(new Date());
+
+  const fetchStats = async () => {
+    try {
+      const token = localStorage.getItem("accessToken");
+      const startStr = startDate.toISOString();
+      const endStr = endDate.toISOString();
+      const res = await fetch(`https://localhost:7157/api/statistics/professor-dashboard?startDate=${startStr}&endDate=${endStr}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const json = await res.json();
+      console.log("✅ API response:", json);
+      setData(json);
+    } catch (err) {
+      console.error("Failed to fetch professor stats:", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchStats();
+  }, [startDate, endDate]);
+
+  if (!data) return <p className="p-4 text-black">Loading...</p>;
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
-      {/* Bộ lọc thời gian */}
-      <div className="flex items-center gap-4 mb-6 bg-gray p-4 rounded shadow">
-        <span className="font-semibold text-blue-500">Bộ lọc thời gian</span>
-        <span>Ngày bắt đầu:</span>
-        <input type="date" value={start} onChange={e => setStart(e.target.value)} className="bg-gray text-black p-1 rounded" />
-        <span>Ngày kết thúc:</span>
-        <input type="date" value={end} onChange={e => setEnd(e.target.value)} className="bg-gray text-black p-1 rounded" />
-        <button className="ml-4 px-3 py-1 bg-blue-500 hover:bg-blue-700 text-white rounded font-bold">Lọc dữ liệu</button>
-      </div>
-      {/* Tổng quan */}
-      <div className="bg-gray text-black p-4 rounded shadow mb-6">
-        <div className="flex flex-wrap gap-8 items-center mb-4">
-          <div className="space-y-1">
-            <div>📝 <b>Tổng số Problem tạo:</b> {mockStats.problems}</div>
-            <div>📦 <b>Tổng số ModuleContent tạo:</b> {mockStats.moduleContents}</div>
-            <div>📰 <b>Tổng số bài Blog:</b> {mockStats.blogs}</div>
-          </div>
-          <div className="space-y-1">
-            <div>✅ <b>Tỉ lệ AC trung bình:</b> <span className="text-yellow-500">{mockStats.acRate}%</span></div>
-            <div>📈 <b>Trung bình học xong:</b> <span className="text-yellow-500">{mockStats.avgProgress}%</span></div>
-            <div>👍 <b>Tổng Like:</b> {mockStats.likes}, 💬 <b>Comment:</b> {mockStats.comments}</div>
-          </div>
+    <div className="p-6 space-y-6 text-black">
+      <div className="flex gap-4">
+        <div>
+          <label className="font-medium">Start Date</label>
+          <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="border rounded p-2 text-black" />
         </div>
-        {/* Bar chart Problem Status */}
-        <div className="mb-4">
-          <div className="font-bold mb-1">Bar Chart: Problem Status</div>
-          <div className="flex gap-2 items-end">
-            <div className="text-xs">Completed</div>
-            {mockStats.problemStatus.map((p, idx) => (
-              <div key={idx} className="flex flex-col items-center mx-2">
-                <div className="bg-green-500 w-6" style={{height: p.completed*3}}></div>
-                <div className="bg-yellow-500 w-6" style={{height: p.inProgress*3}}></div>
-                <div className="bg-red-500 w-6" style={{height: p.notStarted*3}}></div>
-                <div className="text-xs mt-1">{p.name}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Donut chart ModuleContent Progress (giả lập) */}
-        <div className="mb-4">
-          <div className="font-bold mb-1">Donut Chart: ModuleContent Progress</div>
-          <div className="text-pink-500">Graph - DFS: 70% Complete, 20% IP, 10% NS</div>
+        <div>
+          <label className="font-medium">End Date</label>
+          <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} className="border rounded p-2 text-black" />
         </div>
       </div>
-      {/* Chi tiết ModuleContent */}
-      <div className="bg-gray text-black p-4 rounded shadow mb-6">
-        <div className="font-bold text-blue-500 mb-2">Chi tiết ModuleContent</div>
-        <table className="w-full text-center">
-          <thead>
-            <tr className="border-b border-gray-500">
-              <th>Title</th>
-              <th>Completed</th>
-              <th>In Progress</th>
-              <th>Not Started</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockStats.moduleContentStatus.map((m, idx) => (
-              <tr key={idx} className="border-b border-gray-500">
-                <td>{m.title}</td>
-                <td>{m.completed}</td>
-                <td>{m.inProgress}</td>
-                <td>{m.notStarted}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {/* Chi tiết Problem */}
-      <div className="bg-gray text-black p-4 rounded shadow mb-6">
-        <div className="font-bold text-pink-500 mb-2">Chi tiết Problem</div>
-        <table className="w-full text-center">
-          <thead>
-            <tr className="border-b border-gray-500">
-              <th>Problem</th>
-              <th>Completed</th>
-              <th>In Progress</th>
-              <th>Not Started</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockStats.problemDetail.map((p, idx) => (
-              <tr key={idx} className="border-b border-gray-500">
-                <td>{p.title}</td>
-                <td>{p.completed}</td>
-                <td>{p.inProgress}</td>
-                <td>{p.notStarted}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {/* Thống kê Blog */}
-      <div className="bg-gray text-black p-4 rounded shadow mb-6">
-        <div className="font-bold text-yellow-500 mb-2">Thống kê Blog</div>
-        <table className="w-full text-center">
-          <thead>
-            <tr className="border-b border-gray-500">
-              <th>Blog Title</th>
-              <th>Likes</th>
-              <th>Comments</th>
-            </tr>
-          </thead>
-          <tbody>
-            {mockStats.blogStats.map((b, idx) => (
-              <tr key={idx} className="border-b border-gray-500">
-                <td>{b.title}</td>
-                <td className="text-yellow-500 font-bold">{b.likes}</td>
-                <td className="text-pink-500 font-bold">{b.comments}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+
+      <Card>
+        <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4 p-6">
+          <div>
+            <h3 className="font-bold text-lg">Total ModuleContents</h3>
+            <p>{data.moduleContent?.total ?? 0}</p>
+          </div>
+          <div>
+            <h3 className="font-bold text-lg">Total Problems</h3>
+            <p>{data.problem?.total ?? 0}</p>
+          </div>
+          <div>
+            <h3 className="font-bold text-lg">Total Blogs</h3>
+            <p>{data.blog?.total ?? 0}</p>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold mb-2">ModuleContent by Section</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data.moduleContent?.bySection ?? []}>
+              <XAxis dataKey="section" stroke="#000" />
+              <YAxis allowDecimals={false} stroke="#000" />
+              <Tooltip />
+              <Bar dataKey="count" fill="#8884d8" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold mb-2">ModuleContent by Frequent</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie data={data.moduleContent?.byFrequent ?? []} dataKey="count" nameKey="frequent" cx="50%" cy="50%" outerRadius={100} label>
+                {(data.moduleContent?.byFrequent ?? []).map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Legend />
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold mb-2">Problems by Difficulty</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data.problem?.byDifficulty ?? []}>
+              <XAxis dataKey="difficulty" stroke="#000" />
+              <YAxis allowDecimals={false} stroke="#000" />
+              <Tooltip />
+              <Bar dataKey="count" fill="#82ca9d" />
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold mb-2">Blog Status Distribution</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie data={data.blog?.byStatus ?? []} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={100} label>
+                {(data.blog?.byStatus ?? []).map((_, index) => (
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                ))}
+              </Pie>
+              <Legend />
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
-export default ProfessorHomePage;
+}

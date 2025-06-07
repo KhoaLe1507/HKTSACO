@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import { NavLink, useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
@@ -8,6 +9,14 @@ const Sidebar = () => {
     roadmap: false,
     blog: false,
   });
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("https://localhost:7157/api/roadmap/ListAllSectionsDropdown")
+      .then((res) => setSections(res.data))
+      .catch((err) => console.error("Failed to fetch sections:", err));
+  }, []);
 
   const toggle = (key) =>
     setOpen((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -80,18 +89,20 @@ const Sidebar = () => {
           <select
             title="Select a learning level to view its roadmap"
             onChange={(e) => {
-              const value = e.target.value;
-              if (value !== "") navigate(`/professor/learning-path/${value}`);
+              const selected = JSON.parse(e.target.value);
+              if (selected) navigate(`/professor/learning-path/${selected.id}/${selected.name.toLowerCase()}`);
             }}
             defaultValue=""
             className="w-full p-2 rounded bg-white border border-gray-300 shadow-sm cursor-pointer"
           >
-            <option value="" disabled>Choose Level</option>
-            <option value="bronze">Bronze</option>
-            <option value="silver">Silver</option>
-            <option value="gold">Gold</option>
-            <option value="platinum">Platinum</option>
+            <option value="" disabled>Choose Section</option>
+            {sections.map((sec) => (
+              <option key={sec.id} value={JSON.stringify({ id: sec.id, name: sec.name })}>
+                {sec.name}
+              </option>
+            ))}
           </select>
+
 
           <button
             onClick={() => navigate('/professor/my-module-content')}

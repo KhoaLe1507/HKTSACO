@@ -74,6 +74,7 @@ const EditModuleContent = () => {
     e.preventDefault();
 
     const token = localStorage.getItem("accessToken");
+    const role = localStorage.getItem("role");
     const formData = new FormData();
 
     formData.append("Title", form.title);
@@ -97,7 +98,8 @@ const EditModuleContent = () => {
 
     if (res.ok) {
       alert("✅ Module content updated!");
-      navigate(`/admin/module/${moduleId}/contents`);
+      if(role == "2" ) navigate(`/admin/module/${moduleId}/contents`);
+      else if ( role == "1") navigate(`/admin/my-module-content`);
     } else {
       const msg = await res.text();
       alert("❌ Failed to update: " + msg);

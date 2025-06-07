@@ -35,6 +35,7 @@ import AdminHome from '../Home';
 
 import axios from "axios";
 import { useEffect } from "react";
+import EditMyModuleContent from "../../Professor/LearningPath/EditMyModuleContent";
 
 const Sidebar = () => {
   const [open, setOpen] = useState({
@@ -652,6 +653,9 @@ const AdminLayout = () => {
             <Route path="accounts/add" element={<AddAccount />} />
             <Route path="profile/:id" element={<ProfileDetail />} />
             <Route path="profile/:id/edit" element={<EditProfile />} />
+
+            <Route path="my-module-content" element={<EditMyModuleContent />} />
+
             <Route path="*" element={<div className='text-center text-2xl mt-20'>Not Found</div>} />
           </Routes>
         </div>

@@ -232,16 +232,23 @@ const renderComments = (comments, idx, postId, level = 0) =>
                 <div className="ml-4">
                   <div className="font-semibold text-lg text-slate-800">{blog.authorName}</div>
                   <div className="text-sm text-slate-600 flex items-center gap-2">
-                    <span className="bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-700 px-2 py-1 rounded-full text-xs font-medium">
-                      {blog.role}
-                    </span>
+                    <div className="flex items-center gap-2 mt-1">
+                      <span className="text-xs bg-indigo-100 text-indigo-700 px-2 py-1 rounded-full font-semibold">
+                        {blog.role}
+                      </span>
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full font-semibold">
+                        Public
+                      </span>
+                    </div>
                     <span>•</span>
                     <span>{new Date(blog.createdAt).toLocaleString()}</span>
                   </div>
                 </div>
               </div>
-
               {/* Content */}
+              <div className="text-xl font-bold text-indigo-700 mb-2">
+                {blog.title}
+              </div>
               <div className="mb-4 p-4 bg-gradient-to-r from-slate-50/80 to-indigo-50/60 rounded-xl border border-slate-100">
                 <p className="whitespace-pre-line text-slate-800 leading-relaxed">{blog.content}</p>
               </div>

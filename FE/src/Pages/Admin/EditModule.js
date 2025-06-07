@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
 const EditModule = () => {
-  const { sectionId, moduleId } = useParams();
+  const { sectionId,  moduleId } = useParams();
   const navigate = useNavigate();
 
   const [form, setForm] = useState({

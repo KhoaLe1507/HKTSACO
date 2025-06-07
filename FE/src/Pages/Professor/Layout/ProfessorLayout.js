@@ -26,8 +26,8 @@ import LearningPathPage from '../../LearningPathSource/LearningPathPage';
 import EditModule from "../LearningPath/EditModule";
 // import AddModuleContent from "../LearningPath/AddModuleContent";
 import EditMyModuleContent from "../LearningPath/EditMyModuleContent";
-import ModuleContentDetail from "../LearningPath/ModuleContentDetail";
-import EditModuleContent from "../LearningPath/EditModuleContent";
+import ModuleContentDetail from "../../LearningPathSource/ModuleContentDetail";
+import EditModuleContent from "../../Admin/EditModuleContent";
 
 import ViewSolution from "../Problems/ViewSolution";
 import AllSubmission from "../Problems/AllSubmission";
@@ -56,9 +56,14 @@ const ProfessorLayout = () => {
           <Route path="blogs/:id/edit" element={<EditBlog />} />
 
           {/* Learning Path */}
-          <Route path="learning-path/:level" element={<LearningPathPage />} />
+          <Route path="learning-path/:sectionId/:level" element={<LearningPathPage />} />
           <Route path="my-module-content" element={<EditMyModuleContent />} />
           <Route path="modules/:id/edit" element={<EditModule />} />
+          <Route path="section/:level/module-content/:moduleId/detail" element={<ModuleContentDetail />} />
+
+          <Route path="module/:moduleId/module-content/:modulecontentId/edit" element={<EditModuleContent />} />
+
+
           {/* <Route path="modules/:id/add-content" element={<AddModuleContent />} /> */}
           <Route path="modules/content/:id" element={<ModuleContentDetail />} />
           <Route path="modules/content/:id/edit" element={<EditModuleContent />} />
