@@ -71,7 +71,6 @@ const Sidebar = () => {
 
         <div className="text-center animate-slide-up" style={{animationDelay: '0.5s'}}>
           <h1 className="text-2xl font-black text-gray-900 mb-2 tracking-tight">ADMIN DASHBOARD</h1>
-          <div className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full mx-8 animate-expand-width"></div>
         </div>
       </div>
 
