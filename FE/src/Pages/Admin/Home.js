@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { FaUsers, FaBook, FaCode, FaChalkboardTeacher } from "react-icons/fa";
 import { useMemo } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell,
@@ -11,91 +10,11 @@ import { Card, CardContent } from "../../Components/ui/card";
 
 const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1", "#d0ed57", "#a4de6c"];
 
-const getRoleIcon = (role) => {
-  if (!role) return '👤';
-  // Handle both string and number inputs
-  const roleStr = typeof role === 'string' ? role.toLowerCase() : String(role);
-  switch(roleStr) {
-    case 'student':
-    case '0':
-      return '👤';
-    case 'professor':
-    case '1':
-      return '👨‍🏫';
-    case 'admin':
-    case '2':
-      return '👑';
-    default:
-      return '👤';
-  }
-};
-
-const getRoleName = (role) => {
-  // Convert number to role name
-  const roleStr = String(role);
-  switch(roleStr) {
-    case 'student':
-    case '0':
-      return 'Student';
-    case 'professor':
-    case '1':
-      return 'Professor';
-    case 'admin':
-    case '2':
-      return 'Admin';
-    default:
-      return 'Student'; // Default to Student instead of Unknown
-  }
-};
-
-const getDifficultyIcon = (difficulty) => {
-  if (!difficulty || typeof difficulty !== 'string') return '⚪';
-  switch(difficulty.toLowerCase()) {
-    case 'easy': return '🟢';
-    case 'medium': return '🟡';
-    case 'hard': return '🔴';
-    default: return '⚪';
-  }
-};
-
-const getStatusIcon = (status) => {
-  if (!status || typeof status !== 'string') return '📄';
-  switch(status.toLowerCase()) {
-    case 'accepted': return '✅';
-    case 'wrong answer': return '❌';
-    case 'time limit exceeded': return '⏰';
-    case 'memory limit exceeded': return '💾';
-    case 'public': return '🌍';
-    case 'private': return '🔒';
-    default: return '📄';
-  }
-};
-
-const getFrequencyIcon = (frequent) => {
-  if (!frequent || typeof frequent !== 'string') return '📝';
-  switch(frequent) {
-    case 'Very Frequent': return '🔥';
-    case 'Frequent': return '⭐';
-    case 'Rare': return '💎';
-    default: return '📝';
-  }
-};
-
 export default function AdminHomePage() {
   const [data, setData] = useState(null);
   const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), 0, 1));
   const [endDate, setEndDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
-
-  // Transform role data to show names instead of numbers
-  const transformedRoleData = useMemo(() => {
-    if (!data?.user?.byRole) return [];
-    return data.user.byRole.map(item => ({
-      ...item,
-      role: getRoleName(item.role),
-      originalRole: item.role
-    }));
-  }, [data?.user?.byRole]);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -147,14 +66,14 @@ export default function AdminHomePage() {
         {/* Header Section */}
         <div className="text-center mb-8 animate-fade-in-down">
           <h1 className="text-4xl font-bold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 bg-clip-text text-transparent mb-2 hover:from-purple-600 hover:via-pink-500 hover:to-rose-500 transition-all duration-500">
-            🛡️ Admin Dashboard
+            Admin Dashboard
           </h1>
           <p className="text-slate-600">Comprehensive platform analytics and system overview</p>
         </div>
 
         {/* Date Filter Section */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 mb-8 animate-fade-in-up relative z-50">
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">📅 Analytics Date Range</h3>
+          <h3 className="text-lg font-semibold text-slate-800 mb-4">Analytics Date Range</h3>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="group relative z-50">
               <label className="block font-medium text-slate-700 mb-2">Start Date</label>
@@ -185,16 +104,16 @@ export default function AdminHomePage() {
           </div>
         </div>
 
-        {/* Overview Statistics */}
+        {/* Overview Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-2xl">
-                👥
+                <div className="w-8 h-8 bg-white/40 rounded-lg"></div>
               </div>
               <div>
                 <p className="text-blue-100 font-medium">Total Users</p>
-                <h2 className="text-3xl font-bold">{data.user?.total ?? 0}</h2>
+                <h2 className="text-3xl font-bold">{data.user?.byRole?.reduce((sum, role) => sum + role.count, 0) ?? 0}</h2>
                 <p className="text-blue-200 text-sm">Platform members</p>
               </div>
             </div>
@@ -203,11 +122,11 @@ export default function AdminHomePage() {
           <div className="bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-2xl">
-                📚
+                <div className="w-8 h-8 bg-white/40 rounded-lg"></div>
               </div>
               <div>
                 <p className="text-emerald-100 font-medium">Total Blogs</p>
-                <h2 className="text-3xl font-bold">{data.blog?.total ?? 0}</h2>
+                <h2 className="text-3xl font-bold">{data.blog?.blogByStatus?.reduce((sum, status) => sum + status.count, 0) ?? 0}</h2>
                 <p className="text-emerald-200 text-sm">Published articles</p>
               </div>
             </div>
@@ -216,11 +135,11 @@ export default function AdminHomePage() {
           <div className="bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-2xl">
-                💻
+                <div className="w-8 h-8 bg-white/40 rounded-lg"></div>
               </div>
               <div>
                 <p className="text-purple-100 font-medium">Total Problems</p>
-                <h2 className="text-3xl font-bold">{data.problem?.total ?? 0}</h2>
+                <h2 className="text-3xl font-bold">{data.problem?.problemByDifficulty?.reduce((sum, diff) => sum + diff.count, 0) ?? 0}</h2>
                 <p className="text-purple-200 text-sm">Coding challenges</p>
               </div>
             </div>
@@ -229,7 +148,7 @@ export default function AdminHomePage() {
           <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl p-6 text-white shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-2xl">
-                🎓
+                <div className="w-8 h-8 bg-white/40 rounded-lg"></div>
               </div>
               <div>
                 <p className="text-amber-100 font-medium">Total Lessons</p>
@@ -243,57 +162,45 @@ export default function AdminHomePage() {
         {/* User Analytics Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-            👥 User Analytics
+            User Analytics
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* User Role Distribution - Updated to show role names */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* User Role Distribution */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '0.5s'}}>
-              <h3 className="text-xl font-semibold text-slate-800 mb-4">👑 User Role Distribution</h3>
-              <ResponsiveContainer width="100%" height={320}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">User Role Distribution</h3>
+              <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <defs>
-                    <linearGradient id="roleGradient1" x1="0" y1="0" x2="1" y2="1">
+                    <linearGradient id="userRoleGradient1" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stopColor="#3b82f6" />
                       <stop offset="100%" stopColor="#1d4ed8" />
                     </linearGradient>
-                    <linearGradient id="roleGradient2" x1="0" y1="0" x2="1" y2="1">
+                    <linearGradient id="userRoleGradient2" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stopColor="#10b981" />
                       <stop offset="100%" stopColor="#059669" />
                     </linearGradient>
-                    <linearGradient id="roleGradient3" x1="0" y1="0" x2="1" y2="1">
+                    <linearGradient id="userRoleGradient3" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stopColor="#f59e0b" />
                       <stop offset="100%" stopColor="#d97706" />
                     </linearGradient>
                   </defs>
                   <Pie 
-                    data={transformedRoleData} 
+                    data={data.user?.byRole ?? []} 
                     dataKey="count" 
                     nameKey="role" 
                     cx="50%" 
                     cy="50%" 
-                    innerRadius={40}
-                    outerRadius={110}
+                    outerRadius={100}
                     paddingAngle={2}
-                    label={({ role, percent, originalRole }) => `${getRoleIcon(originalRole)} ${(percent * 100).toFixed(1)}%`}
-                    labelLine={false}
+                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
                     stroke="rgba(255, 255, 255, 0.8)"
                     strokeWidth={2}
                   >
-                    {transformedRoleData.map((entry, index) => (
-                      <Cell 
-                        key={`cell-${index}`} 
-                        fill={`url(#roleGradient${(index % 3) + 1})`}
-                        style={{ filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))' }}
-                      />
+                    {(data.user?.byRole ?? []).map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={`url(#userRoleGradient${(index % 3) + 1})`} />
                     ))}
                   </Pie>
-                  <Legend 
-                    formatter={(value, entry) => (
-                      <span style={{ color: '#334155', fontWeight: '500' }}>
-                        {getRoleIcon(entry.payload?.originalRole || value)} {value}
-                      </span>
-                    )}
-                  />
+                  <Legend />
                   <Tooltip 
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -302,10 +209,6 @@ export default function AdminHomePage() {
                       boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
                       backdropFilter: 'blur(16px)'
                     }}
-                    formatter={(value, name, props) => [
-                      `${value} users`,
-                      `${getRoleIcon(props.payload?.originalRole || name)} ${name}`
-                    ]}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -313,8 +216,8 @@ export default function AdminHomePage() {
 
             {/* New Users Over Time */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '0.6s'}}>
-              <h3 className="text-xl font-semibold text-slate-800 mb-4">📈 New Users Over Time</h3>
-              <ResponsiveContainer width="100%" height={320}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">New Users Over Time</h3>
+              <ResponsiveContainer width="100%" height={300}>
                 <LineChart data={data.user?.usersOverTime ?? []}>
                   <defs>
                     <linearGradient id="userLineGradient" x1="0" y1="0" x2="0" y2="1">
@@ -348,11 +251,11 @@ export default function AdminHomePage() {
             </div>
           </div>
 
-          {/* Top Users */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
+          {/* Top Users Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '0.7s'}}>
-              <h3 className="text-xl font-semibold text-slate-800 mb-4">🏆 Top Students by Problems Solved</h3>
-              <ResponsiveContainer width="100%" height={320}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Top Students by Problem Solved</h3>
+              <ResponsiveContainer width="100%" height={300}>
                 <BarChart layout="vertical" data={data.user?.topStudents ?? []}>
                   <defs>
                     <linearGradient id="studentGradient" x1="0" y1="0" x2="1" y2="0">
@@ -378,8 +281,8 @@ export default function AdminHomePage() {
             </div>
 
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '0.8s'}}>
-              <h3 className="text-xl font-semibold text-slate-800 mb-4">👨‍🏫 Top Professors by Problems Created</h3>
-              <ResponsiveContainer width="100%" height={320}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Top Professors by Problem Created</h3>
+              <ResponsiveContainer width="100%" height={300}>
                 <BarChart layout="vertical" data={data.user?.topProfessors ?? []}>
                   <defs>
                     <linearGradient id="professorGradient" x1="0" y1="0" x2="1" y2="0">
@@ -409,20 +312,20 @@ export default function AdminHomePage() {
         {/* Blog Analytics Section */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
-            📚 Blog Analytics
+            Blog Analytics
           </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             {/* Blog Status Distribution */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '0.9s'}}>
-              <h3 className="text-xl font-semibold text-slate-800 mb-4">🌍 Blog Status Distribution</h3>
-              <ResponsiveContainer width="100%" height={320}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Blog Status Distribution</h3>
+              <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <defs>
-                    <linearGradient id="publicBlogGradient" x1="0" y1="0" x2="1" y2="1">
+                    <linearGradient id="blogGradient1" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stopColor="#10b981" />
                       <stop offset="100%" stopColor="#059669" />
                     </linearGradient>
-                    <linearGradient id="privateBlogGradient" x1="0" y1="0" x2="1" y2="1">
+                    <linearGradient id="blogGradient2" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stopColor="#f59e0b" />
                       <stop offset="100%" stopColor="#d97706" />
                     </linearGradient>
@@ -433,35 +336,17 @@ export default function AdminHomePage() {
                     nameKey="status" 
                     cx="50%" 
                     cy="50%" 
-                    innerRadius={45}
-                    outerRadius={110}
+                    outerRadius={100}
                     paddingAngle={3}
-                    label={({ status, percent }) => `${getStatusIcon(status)} ${(percent * 100).toFixed(1)}%`}
-                    labelLine={false}
+                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
                     stroke="rgba(255, 255, 255, 0.9)"
                     strokeWidth={3}
                   >
-                    {(data.blog?.blogByStatus ?? []).map((entry, index) => {
-                      const status = entry.status?.toLowerCase();
-                      let fillColor = 'url(#publicBlogGradient)';
-                      if (status === 'private') fillColor = 'url(#privateBlogGradient)';
-                      
-                      return (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={fillColor}
-                          style={{ filter: 'drop-shadow(0 6px 12px rgba(0, 0, 0, 0.15))' }}
-                        />
-                      );
-                    })}
+                    {(data.blog?.blogByStatus ?? []).map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={`url(#blogGradient${(index % 2) + 1})`} />
+                    ))}
                   </Pie>
-                  <Legend 
-                    formatter={(value) => (
-                      <span style={{ color: '#334155', fontWeight: '500' }}>
-                        {getStatusIcon(value)} {value}
-                      </span>
-                    )}
-                  />
+                  <Legend />
                   <Tooltip 
                     contentStyle={{
                       backgroundColor: 'rgba(255, 255, 255, 0.95)',
@@ -469,10 +354,6 @@ export default function AdminHomePage() {
                       borderRadius: '16px',
                       boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
                     }}
-                    formatter={(value, name) => [
-                      `${value} blogs`,
-                      `${getStatusIcon(name)} ${name}`
-                    ]}
                   />
                 </PieChart>
               </ResponsiveContainer>
@@ -480,8 +361,8 @@ export default function AdminHomePage() {
 
             {/* Top Blog Authors */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.0s'}}>
-              <h3 className="text-xl font-semibold text-slate-800 mb-4">✍️ Top Blog Authors</h3>
-              <ResponsiveContainer width="100%" height={320}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Top Blog Authors</h3>
+              <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={data.blog?.topBloggers ?? []}>
                   <defs>
                     <linearGradient id="bloggerGradient" x1="0" y1="0" x2="0" y2="1">
@@ -508,9 +389,9 @@ export default function AdminHomePage() {
           </div>
 
           {/* Top Blogs by Comments */}
-          <div className="mt-6 bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.1s'}}>
-            <h3 className="text-xl font-semibold text-slate-800 mb-4">💬 Top Blogs by Comment Count</h3>
-            <ResponsiveContainer width="100%" height={320}>
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.1s'}}>
+            <h3 className="text-xl font-semibold text-slate-800 mb-4">Top Blogs by Comment Count</h3>
+            <ResponsiveContainer width="100%" height={300}>
               <BarChart data={data.blog?.commentByBlog ?? []}>
                 <defs>
                   <linearGradient id="commentGradient" x1="0" y1="0" x2="0" y2="1">
@@ -536,11 +417,294 @@ export default function AdminHomePage() {
           </div>
         </div>
 
+        {/* Problem Analytics Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+            Problem Analytics
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Problem Difficulty Distribution */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.2s'}}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Problem Difficulty Distribution</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <defs>
+                    <linearGradient id="difficultyGradient1" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#10b981" />
+                      <stop offset="100%" stopColor="#059669" />
+                    </linearGradient>
+                    <linearGradient id="difficultyGradient2" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#d97706" />
+                    </linearGradient>
+                    <linearGradient id="difficultyGradient3" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#ef4444" />
+                      <stop offset="100%" stopColor="#dc2626" />
+                    </linearGradient>
+                  </defs>
+                  <Pie 
+                    data={data.problem?.problemByDifficulty ?? []} 
+                    dataKey="count" 
+                    nameKey="difficulty" 
+                    cx="50%" 
+                    cy="50%" 
+                    outerRadius={100}
+                    paddingAngle={2}
+                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                    stroke="rgba(255, 255, 255, 0.8)"
+                    strokeWidth={2}
+                  >
+                    {(data.problem?.problemByDifficulty ?? []).map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={`url(#difficultyGradient${(index % 3) + 1})`} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: 'none',
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Top Problems by Submission */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.3s'}}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Top Problems by Submission Count</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={data.problem?.topProblems ?? []}>
+                  <defs>
+                    <linearGradient id="problemGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#a4de6c" />
+                      <stop offset="100%" stopColor="#82ca9d" />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="problemName" stroke="#64748b" fontSize={12} />
+                  <YAxis allowDecimals={false} stroke="#64748b" fontSize={12} />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: 'none',
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Bar dataKey="count" fill="url(#problemGradient)" radius={[8, 8, 0, 0]}>
+                    <LabelList dataKey="count" position="top" style={{ fill: '#1e293b', fontSize: '12px', fontWeight: '600' }} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Additional Problem Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Submission Result Distribution */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.4s'}}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Submission Result Distribution</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <defs>
+                    <linearGradient id="judgeGradient1" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#10b981" />
+                      <stop offset="100%" stopColor="#059669" />
+                    </linearGradient>
+                    <linearGradient id="judgeGradient2" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#ef4444" />
+                      <stop offset="100%" stopColor="#dc2626" />
+                    </linearGradient>
+                    <linearGradient id="judgeGradient3" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#d97706" />
+                    </linearGradient>
+                  </defs>
+                  <Pie 
+                    data={data.problem?.judgeDistribution ?? []} 
+                    dataKey="count" 
+                    nameKey="result" 
+                    cx="50%" 
+                    cy="50%" 
+                    outerRadius={100}
+                    paddingAngle={2}
+                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                    stroke="rgba(255, 255, 255, 0.8)"
+                    strokeWidth={2}
+                  >
+                    {(data.problem?.judgeDistribution ?? []).map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={`url(#judgeGradient${(index % 3) + 1})`} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: 'none',
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Submissions Over Time */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.5s'}}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Submissions Over Time</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={data.problem?.submissionOverTime ?? []}>
+                  <defs>
+                    <linearGradient id="submissionLineGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#d88484" stopOpacity={0.8} />
+                      <stop offset="100%" stopColor="#d88484" stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                  <XAxis dataKey="date" stroke="#64748b" fontSize={12} />
+                  <YAxis allowDecimals={false} stroke="#64748b" fontSize={12} />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: 'none',
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+                      backdropFilter: 'blur(16px)'
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="count" 
+                    stroke="#d88484" 
+                    strokeWidth={3}
+                    fill="url(#submissionLineGradient)"
+                    dot={{ fill: '#d88484', strokeWidth: 2, r: 4 }}
+                    activeDot={{ r: 6, stroke: '#d88484', strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+
+        {/* Learning Path Analytics Section */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+            Learning Path Analytics
+          </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+            {/* Lessons by Section */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.6s'}}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Lessons by Section</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={data.learning?.lessonBySection ?? []}>
+                  <defs>
+                    <linearGradient id="sectionGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#8884d8" />
+                      <stop offset="100%" stopColor="#6366f1" />
+                    </linearGradient>
+                  </defs>
+                  <XAxis dataKey="section" stroke="#64748b" fontSize={12} />
+                  <YAxis allowDecimals={false} stroke="#64748b" fontSize={12} />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: 'none',
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                  <Bar dataKey="count" fill="url(#sectionGradient)" radius={[8, 8, 0, 0]}>
+                    <LabelList dataKey="count" position="top" style={{ fill: '#1e293b', fontSize: '12px', fontWeight: '600' }} />
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Lessons by Frequent Level */}
+            <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.7s'}}>
+              <h3 className="text-xl font-semibold text-slate-800 mb-4">Lessons by Frequent Level</h3>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <defs>
+                    <linearGradient id="frequentGradient1" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#ef4444" />
+                      <stop offset="100%" stopColor="#f97316" />
+                    </linearGradient>
+                    <linearGradient id="frequentGradient2" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#eab308" />
+                      <stop offset="100%" stopColor="#f59e0b" />
+                    </linearGradient>
+                    <linearGradient id="frequentGradient3" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#06b6d4" />
+                      <stop offset="100%" stopColor="#0891b2" />
+                    </linearGradient>
+                  </defs>
+                  <Pie 
+                    data={data.learning?.lessonByFrequent ?? []} 
+                    dataKey="count" 
+                    nameKey="frequent" 
+                    cx="50%" 
+                    cy="50%" 
+                    outerRadius={100}
+                    paddingAngle={2}
+                    label={({ percent }) => `${(percent * 100).toFixed(1)}%`}
+                    stroke="rgba(255, 255, 255, 0.8)"
+                    strokeWidth={2}
+                  >
+                    {(data.learning?.lessonByFrequent ?? []).map((_, index) => (
+                      <Cell key={`cell-${index}`} fill={`url(#frequentGradient${(index % 3) + 1})`} />
+                    ))}
+                  </Pie>
+                  <Legend />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                      border: 'none',
+                      borderRadius: '16px',
+                      boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Top Authors by Lesson Created */}
+          <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '1.8s'}}>
+            <h3 className="text-xl font-semibold text-slate-800 mb-4">Top Authors by Lesson Created</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data.learning?.topAuthors ?? []}>
+                <defs>
+                  <linearGradient id="authorGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#d0ed57" />
+                    <stop offset="100%" stopColor="#a4de6c" />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="author" stroke="#64748b" fontSize={12} />
+                <YAxis allowDecimals={false} stroke="#64748b" fontSize={12} />
+                <Tooltip 
+                  contentStyle={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                    border: 'none',
+                    borderRadius: '16px',
+                    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+                <Bar dataKey="count" fill="url(#authorGradient)" radius={[8, 8, 0, 0]}>
+                  <LabelList dataKey="count" position="top" style={{ fill: '#1e293b', fontSize: '12px', fontWeight: '600' }} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
         {/* Footer Info */}
-        <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 animate-fade-in-up" style={{animationDelay: '1.2s'}}>
+        <div className="mt-8 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-xl p-4 animate-fade-in-up" style={{animationDelay: '1.9s'}}>
           <div className="flex items-center justify-between">
             <div className="flex items-start gap-3">
-              <div className="text-blue-500 text-xl">💡</div>
+              <div className="text-blue-500 text-xl"></div>
               <div>
                 <h4 className="font-semibold text-blue-800 mb-1">Admin Dashboard Overview</h4>
                 <p className="text-blue-700 text-sm">
