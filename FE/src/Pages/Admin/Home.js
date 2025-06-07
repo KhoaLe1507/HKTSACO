@@ -1,184 +1,345 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { FaUsers, FaBook, FaCode, FaChalkboardTeacher } from "react-icons/fa";
+import { useMemo } from "react";
+import {
+  BarChart, Bar, XAxis, YAxis, Tooltip, PieChart, Pie, Cell,
+  LineChart, Line, CartesianGrid, ResponsiveContainer, Legend, LabelList
+} from "recharts";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { Card, CardContent } from "../../Components/ui/card";
 
-const mockStats = {
-  problems: 120,
-  easy: 40,
-  medium: 50,
-  hard: 30,
-  lessons: 60,
-  sections: 4,
-  modulesPerSection: [5, 6, 7, 8],
-  moduleContentsPerModule: [3, 4, 5, 6, 7, 8],
-  blogs: 35,
-  blogBy: { teacher: 15, student: 12, admin: 8 },
-  users: 200,
-  userBy: { student: 150, professor: 30, admin: 20 },
-  submits: 5000,
-  submitStatus: { AC: 3200, TLE: 800, WA: 700, RE: 300 },
-  topProblems: [
-    { title: "Sum of Two Numbers", ac: 500 },
-    { title: "Binary Search", ac: 450 },
-    { title: "DFS", ac: 400 },
-    { title: "Knapsack DP", ac: 350 },
-    { title: "Prefix Sums", ac: 300 },
-  ],
-  topStudents: [
-    { name: "Alice", ac: 120 },
-    { name: "Bob", ac: 110 },
-    { name: "Charlie", ac: 105 },
-    { name: "David", ac: 100 },
-    { name: "Eva", ac: 98 },
-  ],
-  topProfessors: [
-    { name: "Prof. An", created: 40 },
-    { name: "Prof. Binh", created: 35 },
-    { name: "Prof. Cuong", created: 30 },
-    { name: "Prof. Dung", created: 28 },
-    { name: "Prof. Em", created: 25 },
-  ],
-};
+const COLORS = ["#8884d8", "#82ca9d", "#ffc658", "#ff8042", "#8dd1e1", "#d0ed57", "#a4de6c"];
 
-const AdminHome = () => {
+
+
+export default function AdminHomePage() {
+  const [data, setData] = useState(null);
+  const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), 0, 1));
+  const [endDate, setEndDate] = useState(new Date());
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem("accessToken");
+        const startStr = startDate.toISOString();
+        const endStr = endDate.toISOString();
+        const res = await fetch(`https://localhost:7157/api/statistics/admin-dashboard?startDate=${startStr}&endDate=${endStr}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error("Failed to fetch admin dashboard stats:", err);
+      }
+    };
+    fetchStats();
+  }, [startDate, endDate]);
+
+  if (!data) return <p className="p-4 text-black">Loading...</p>;
+
   return (
-    <div className="max-w-6xl mx-auto py-8 animate-fadeIn">
-      {/* Bộ lọc thời gian */}
-      <div className="flex flex-wrap gap-4 items-center border rounded-lg p-4 mb-6 bg-white">
-        <span className="font-semibold">Bộ lọc thời gian</span>
-        <label className="ml-2">Ngày bắt đầu: <input type="date" className="border rounded px-2 py-1 ml-1" defaultValue="2025-04-01" /></label>
-        <label className="ml-2">Ngày kết thúc: <input type="date" className="border rounded px-2 py-1 ml-1" defaultValue="2025-04-30" /></label>
-        <button className="ml-2 px-3 py-1 bg-blue-500 text-white rounded font-bold">Lọc dữ liệu</button>
-      </div>
-
-      {/* Tổng quan (Biểu đồ) */}
-      <div className="border rounded-lg p-4 mb-6 bg-white">
-        <div className="flex flex-wrap gap-8 items-center mb-4">
-          <div className="flex-1 min-w-[220px]">
-            <div className="mb-2 font-bold text-blue-600 flex items-center gap-2">Tổng Quan (Biểu đồ)</div>
-            <ul className="text-sm space-y-1">
-              <li>📝 Tổng số Problem tạo: <b>{mockStats.problems}</b></li>
-              <li>📦 Tổng số ModuleContent tạo: <b>{mockStats.lessons}</b></li>
-              <li>📰 Tổng số bài Blog: <b>{mockStats.blogs}</b></li>
-            </ul>
-          </div>
-          <div className="flex-1 min-w-[220px]">
-            <ul className="text-sm space-y-1">
-              <li>✅ Tỉ lệ AC trung bình: <b className="text-green-600">72%</b></li>
-              <li>📈 Trung bình học xong: <b className="text-yellow-600">65%</b></li>
-              <li>👍 Tổng Like: <b>320</b>, 💬 Comment: <b>85</b></li>
-            </ul>
-          </div>
+    <div className="p-6 space-y-6 text-black">
+      {/* Date filter */}
+      <div className="flex gap-4">
+        <div>
+          <label className="font-medium">Start Date</label>
+          <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className="border rounded p-2 text-black" />
         </div>
-        {/* Bar Chart Problem Status */}
-        <div className="mb-4">
-          <div className="font-bold text-red-500 mb-1">Bar Chart: Problem Status</div>
-          <div className="flex items-center gap-4 mb-1">
-            <span className="inline-block w-4 h-4 bg-green-500 mr-1 rounded"></span> Completed
-            <span className="inline-block w-4 h-4 bg-yellow-400 mr-1 rounded"></span> In Progress
-            <span className="inline-block w-4 h-4 bg-gray-400 mr-1 rounded"></span> Not Started
-          </div>
-          <div className="flex gap-2 mt-2">
-            {["A", "B", "C", "D"].map((label, idx) => (
-              <div key={label} className="flex flex-col items-center">
-                <span className="font-bold text-black mb-1">{label}</span>
-                <div className="w-8 h-16 bg-gray-200 border rounded flex items-end">
-                  <div className="w-full bg-green-500" style={{ height: `${30 + idx * 10}%` }}></div>
-                </div>
+        <div>
+          <label className="font-medium">End Date</label>
+          <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} className="border rounded p-2 text-black" />
+        </div>
+      </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+          <Card className="bg-blue-100">
+            <CardContent className="flex items-center gap-4">
+              <FaUsers className="text-3xl text-blue-800" />
+              <div>
+                <h3 className="text-blue-800 font-semibold">Total Users</h3>
+                <p className="text-2xl font-bold">{data.user?.total ?? 0}</p>
               </div>
-            ))}
-          </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-green-100">
+            <CardContent className="flex items-center gap-4">
+              <FaBook className="text-3xl text-green-800" />
+              <div>
+                <h3 className="text-green-800 font-semibold">Total Blogs</h3>
+                <p className="text-2xl font-bold">{data.blog?.total ?? 0}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-purple-100">
+            <CardContent className="flex items-center gap-4">
+              <FaCode className="text-3xl text-purple-800" />
+              <div>
+                <h3 className="text-purple-800 font-semibold">Total Problems</h3>
+                <p className="text-2xl font-bold">{data.problem?.total ?? 0}</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-yellow-100">
+            <CardContent className="flex items-center gap-4">
+              <FaChalkboardTeacher className="text-3xl text-yellow-800" />
+              <div>
+                <h3 className="text-yellow-800 font-semibold">Total Lessons</h3>
+                <p className="text-2xl font-bold">{data.learning?.totalModuleContents ?? 0}</p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
-        {/* Donut Chart ModuleContent Progress */}
-        <div className="mb-2">
-          <div className="font-bold text-pink-500 mb-1">Donut Chart: ModuleContent Progress</div>
-          <div className="text-sm text-gray-700">Graph - DFS: <span className="text-green-600 font-bold">70% Complete</span>, <span className="text-yellow-600 font-bold">20% IP</span>, <span className="text-gray-600 font-bold">10% NS</span></div>
-        </div>
+
+      {/* I. User Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">User Role Distribution</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={data.user?.byRole ?? []} dataKey="count" nameKey="role" cx="50%" cy="50%" outerRadius={100}
+                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}>
+                  {(data.user?.byRole ?? []).map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">New Users Over Time</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={data.user?.usersOverTime ?? []}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" stroke="#000" />
+                <YAxis allowDecimals={false} stroke="#000" />
+                <Tooltip />
+                <Line type="monotone" dataKey="count" stroke="#8884d8" />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Chi tiết ModuleContent */}
-      <div className="border rounded-lg p-4 mb-6 bg-white">
-        <div className="font-bold text-blue-600 mb-2 flex items-center gap-2">🔷 Chi tiết ModuleContent</div>
-        <table className="w-full text-center border-collapse">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2">Title</th>
-              <th className="py-2">Completed</th>
-              <th className="py-2">In Progress</th>
-              <th className="py-2">Not Started</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b">
-              <td>DFS</td>
-              <td className="text-yellow-600 font-bold">70</td>
-              <td className="text-yellow-600 font-bold">20</td>
-              <td className="text-yellow-600 font-bold">10</td>
-            </tr>
-            <tr>
-              <td>Binary Search</td>
-              <td className="text-yellow-600 font-bold">45</td>
-              <td className="text-yellow-600 font-bold">30</td>
-              <td className="text-yellow-600 font-bold">25</td>
-            </tr>
-          </tbody>
-        </table>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Top Students by Problem Solved</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart layout="vertical" data={data.user?.topStudents ?? []}>
+                <XAxis type="number" stroke="#000" />
+                <YAxis dataKey="fullName" type="category" stroke="#000" />
+                <Tooltip />
+                <Bar dataKey="problemSolved" fill="#82ca9d">
+                  <LabelList dataKey="problemSolved" position="right" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Top Professors by Problem Created</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart layout="vertical" data={data.user?.topProfessors ?? []}>
+                <XAxis type="number" stroke="#000" />
+                <YAxis dataKey="fullName" type="category" stroke="#000" />
+                <Tooltip />
+                <Bar dataKey="problemCreated" fill="#ffc658">
+                  <LabelList dataKey="problemCreated" position="right" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Chi tiết Problem */}
-      <div className="border rounded-lg p-4 mb-6 bg-white">
-        <div className="font-bold text-pink-500 mb-2 flex items-center gap-2">💗 Chi tiết Problem</div>
-        <table className="w-full text-center border-collapse">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2">Problem</th>
-              <th className="py-2">Completed</th>
-              <th className="py-2">In Progress</th>
-              <th className="py-2">Not Started</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b">
-              <td>Problem A</td>
-              <td className="text-yellow-600 font-bold">50</td>
-              <td className="text-yellow-600 font-bold">15</td>
-              <td className="text-yellow-600 font-bold">5</td>
-            </tr>
-            <tr>
-              <td>Problem B</td>
-              <td className="text-yellow-600 font-bold">30</td>
-              <td className="text-yellow-600 font-bold">20</td>
-              <td className="text-yellow-600 font-bold">10</td>
-            </tr>
-          </tbody>
-        </table>
+      {/* II. Blog Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Blog Status Distribution</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={data.blog?.blogByStatus ?? []} dataKey="count" nameKey="status" cx="50%" cy="50%" outerRadius={100}
+                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}>
+                  {(data.blog?.blogByStatus ?? []).map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Top Blog Authors</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data.blog?.topBloggers ?? []}>
+                <XAxis dataKey="name" stroke="#000" />
+                <YAxis allowDecimals={false} stroke="#000" />
+                <Tooltip />
+                <Bar dataKey="count" fill="#8dd1e1">
+                  <LabelList dataKey="count" position="top" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Thống kê Blog */}
-      <div className="border rounded-lg p-4 mb-6 bg-white">
-        <div className="font-bold text-orange-500 mb-2 flex items-center gap-2">📊 Thống kê Blog</div>
-        <table className="w-full text-center border-collapse">
-          <thead>
-            <tr className="border-b">
-              <th className="py-2">Blog Title</th>
-              <th className="py-2">Likes</th>
-              <th className="py-2">Comments</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-b">
-              <td>"Tư duy Greedy"</td>
-              <td className="text-yellow-600 font-bold">120</td>
-              <td className="text-yellow-600 font-bold">33</td>
-            </tr>
-            <tr>
-              <td>"Sắp xếp & thời gian"</td>
-              <td className="text-yellow-600 font-bold">88</td>
-              <td className="text-yellow-600 font-bold">14</td>
-            </tr>
-          </tbody>
-        </table>
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold mb-2">Top Blogs by Comment Count</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data.blog?.commentByBlog ?? []}>
+              <XAxis dataKey="blogTitle" stroke="#000" />
+              <YAxis allowDecimals={false} stroke="#000" />
+              <Tooltip />
+              <Bar dataKey="count" fill="#ff8042">
+                <LabelList dataKey="count" position="top" />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
+
+      {/* III. Problem Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Problem Difficulty Distribution</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={data.problem?.problemByDifficulty ?? []} dataKey="count" nameKey="difficulty" cx="50%" cy="50%" outerRadius={100}
+                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}>
+                  {(data.problem?.problemByDifficulty ?? []).map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Top Problems by Submission Count</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data.problem?.topProblems ?? []}>
+                <XAxis dataKey="problemName" stroke="#000" />
+                <YAxis allowDecimals={false} stroke="#000" />
+                <Tooltip />
+                <Bar dataKey="count" fill="#a4de6c">
+                  <LabelList dataKey="count" position="top" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
       </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Submission Result Distribution</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={data.problem?.judgeDistribution ?? []} dataKey="count" nameKey="result" cx="50%" cy="50%" outerRadius={100}
+                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}>
+                  {(data.problem?.judgeDistribution ?? []).map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Submissions Over Time</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={data.problem?.submissionOverTime ?? []}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="date" stroke="#000" />
+                <YAxis allowDecimals={false} stroke="#000" />
+                <Tooltip />
+                <Line type="monotone" dataKey="count" stroke="#d88484" />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* IV. Learning Path Statistics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Lessons by Section</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data.learning?.lessonBySection ?? []}>
+                <XAxis dataKey="section" stroke="#000" />
+                <YAxis allowDecimals={false} stroke="#000" />
+                <Tooltip />
+                <Bar dataKey="count" fill="#8884d8">
+                  <LabelList dataKey="count" position="top" />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent>
+            <h3 className="font-semibold mb-2">Lessons by Frequent Level</h3>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={data.learning?.lessonByFrequent ?? []} dataKey="count" nameKey="frequent" cx="50%" cy="50%" outerRadius={100}
+                  label={({ percent }) => `${(percent * 100).toFixed(1)}%`}>
+                  {(data.learning?.lessonByFrequent ?? []).map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Legend />
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card>
+        <CardContent>
+          <h3 className="font-semibold mb-2">Top Authors by Lesson Created</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data.learning?.topAuthors ?? []}>
+              <XAxis dataKey="author" stroke="#000" />
+              <YAxis allowDecimals={false} stroke="#000" />
+              <Tooltip />
+              <Bar dataKey="count" fill="#d0ed57">
+                <LabelList dataKey="count" position="top" />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </CardContent>
+      </Card>
     </div>
   );
-};
-
-export default AdminHome; 
+}

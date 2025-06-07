@@ -48,8 +48,7 @@ const MyProfile = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 flex items-center justify-center">
         <div className="text-center animate-fade-in">
-          <div className="animate-spin w-12 h-12 border-4 border-indigo-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-          <p className="text-slate-600 text-lg">Loading profile...</p>
+          <p className="text-slate-600 text-lg">Please login to view other profile</p>
         </div>
       </div>
     );
