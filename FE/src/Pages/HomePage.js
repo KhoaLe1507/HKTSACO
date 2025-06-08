@@ -52,7 +52,7 @@ const HomePage = () => {
     }
   }, []);
   
-  // Intersection Observer for stats animation
+  // Intersection Observer for stats section (optional - can be removed if not needed)
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
@@ -108,38 +108,11 @@ const HomePage = () => {
     countries: 75
   });
   
-  // Animated counter component
-  const AnimatedCounter = ({ target, suffix = "+", delay = 0 }) => {
-    const [count, setCount] = useState(0);
-    
-    useEffect(() => {
-      if (!statsInView) return;
-      
-      const timer = setTimeout(() => {
-        const duration = 2000;
-        const steps = 60;
-        const increment = target / steps;
-        let current = 0;
-        
-        const counter = setInterval(() => {
-          current += increment;
-          if (current >= target) {
-            setCount(target);
-            clearInterval(counter);
-          } else {
-            setCount(Math.floor(current));
-          }
-        }, duration / steps);
-        
-        return () => clearInterval(counter);
-      }, delay);
-      
-      return () => clearTimeout(timer);
-    }, [statsInView, target, delay]);
-    
+  // Simple static counter component
+  const StaticCounter = ({ target, suffix = "+" }) => {
     return (
       <span className="tabular-nums">
-        {count.toLocaleString()}{suffix}
+        {target.toLocaleString()}{suffix}
       </span>
     );
   };
@@ -680,7 +653,7 @@ const HomePage = () => {
                   
                   <div className="text-4xl md:text-5xl font-black relative z-10">
                     <span className="bg-gradient-to-r from-gray-900 via-blue-700 to-purple-700 bg-clip-text text-transparent group-hover:from-blue-800 group-hover:to-purple-800 transition-all duration-300">
-                      <AnimatedCounter target={value} delay={index * 200} />
+                      <StaticCounter target={value} />
                     </span>
                   </div>
                   

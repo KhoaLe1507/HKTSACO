@@ -90,7 +90,7 @@ const ModuleContentDetail = () => {
                 <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-2xl">
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold capitalize">
+                  <h2 className="text-xl text-white font-bold capitalize">
                     {level} Path
                   </h2>
                   <p className="text-white/80 text-sm">Learning Journey</p>

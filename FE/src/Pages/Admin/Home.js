@@ -16,6 +16,30 @@ export default function AdminHomePage() {
   const [endDate, setEndDate] = useState(new Date());
   const [isLoading, setIsLoading] = useState(true);
 
+  // Hàm mapping role number sang role name
+  const mapRoleName = (roleNumber) => {
+    switch (roleNumber) {
+      case 0:
+        return "Student";
+      case 1:
+        return "Professor";
+      case 2:
+        return "Admin";
+      default:
+        return `Role ${roleNumber}`;
+    }
+  };
+
+  // Xử lý data với role mapping
+  const processedUserData = useMemo(() => {
+    if (!data?.user?.byRole) return [];
+    
+    return data.user.byRole.map(item => ({
+      ...item,
+      role: mapRoleName(item.role)
+    }));
+  }, [data]);
+
   useEffect(() => {
     const fetchStats = async () => {
       setIsLoading(true);
@@ -165,7 +189,7 @@ export default function AdminHomePage() {
             User Analytics
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* User Role Distribution */}
+            {/* User Role Distribution - Đã được chỉnh sửa */}
             <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border-2 border-slate-100 p-6 hover:shadow-xl transition-all duration-300 animate-fade-in-up" style={{animationDelay: '0.5s'}}>
               <h3 className="text-xl font-semibold text-slate-800 mb-4">User Role Distribution</h3>
               <ResponsiveContainer width="100%" height={300}>
@@ -185,7 +209,7 @@ export default function AdminHomePage() {
                     </linearGradient>
                   </defs>
                   <Pie 
-                    data={data.user?.byRole ?? []} 
+                    data={processedUserData} 
                     dataKey="count" 
                     nameKey="role" 
                     cx="50%" 
@@ -196,7 +220,7 @@ export default function AdminHomePage() {
                     stroke="rgba(255, 255, 255, 0.8)"
                     strokeWidth={2}
                   >
-                    {(data.user?.byRole ?? []).map((_, index) => (
+                    {processedUserData.map((_, index) => (
                       <Cell key={`cell-${index}`} fill={`url(#userRoleGradient${(index % 3) + 1})`} />
                     ))}
                   </Pie>
