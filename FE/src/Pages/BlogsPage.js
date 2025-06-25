@@ -15,10 +15,15 @@ const BlogsPage = () => {
   const [sortBy, setSortBy] = useState("Top Views");
 
   const [showingCommentFor, setShowingCommentFor] = useState(null);
-  const [commentText, setCommentText] = useState("");
+  const [commentTextRoot, setCommentTextRoot] = useState("");
+  const [commentTextReply, setCommentTextReply] = useState("");
   const [commentsData, setCommentsData] = useState({});
 
   const [activeReply, setActiveReply] = useState(null);
+
+  const [isApprovingCommentRoot, setIsApprovingCommentRoot] = useState(false); // ⬅️ cho comment gốc
+  const [isApprovingCommentReply, setIsApprovingCommentReply] = useState(false); // ⬅️ cho reply
+
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -55,93 +60,228 @@ const fetchComments = async (postId, idx) => {
   }));
 };
 
-const renderComments = (comments, idx, postId, level = 0) =>
-  comments.map((c) => (
-    <div key={c.blogCommentId} className={`ml-[${level * 20}px] border-l-2 border-gradient-to-b from-indigo-200 to-purple-200 pl-4 mt-3 animate-fade-in-up transition-all duration-300 hover:border-l-indigo-400`}>
-      <div className="bg-gradient-to-r from-slate-50/80 to-indigo-50/60 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 border border-slate-100">
-        <p className="text-sm font-medium flex items-center">
-          <span className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-xs mr-3 shadow-sm">
-            {c.user?.[0] || "?"}
-          </span>
-          <span className="text-slate-800">{c.user}</span>
-          <span className="text-slate-500 italic text-xs ml-2 bg-slate-200 px-2 py-1 rounded-full">
-            {c.role } • {new Date(c.createdAt).toLocaleString()}
-          </span>
-        </p>
-        <p className="text-sm mt-2 text-slate-700 leading-relaxed">{c.content}</p>
+const handleDeleteComment = async (commentId, postId, idx) => {
+  if (!window.confirm("Bạn có chắc muốn xóa bình luận này và các phản hồi của nó không?")) return;
 
-        {isLoggedIn && (
-          <button
-            className="text-indigo-500 text-xs mt-2 hover:text-indigo-700 transition-colors duration-200 flex items-center gap-1 hover:bg-indigo-50 px-2 py-1 rounded-md"
-            onClick={() => {
-              setActiveReply({ idx, parentId: c.blogCommentId });
-              setCommentText("");
-            }}
-          >
-            <span className="transform transition-transform hover:scale-110">↩️</span>
-            Reply
-          </button>
-        )}
-      </div>
+  try {
+    const res = await fetch(`https://localhost:7157/api/blog/comment/delete/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+      }
+    });
 
-      {/* Nếu đang reply comment này thì hiển thị input tại đây */}
-      {activeReply?.idx === idx && activeReply.parentId === c.blogCommentId && (
-        <div className="mt-3 space-y-3 animate-slide-down bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-indigo-100 shadow-sm">
-          <div className="text-sm text-slate-600 flex items-center justify-between">
-            <span className="flex items-center gap-2">
-              <span className="text-indigo-500">↪️</span>
-              Replying to <span className="font-medium text-slate-800">{c.user}</span>
+    if (res.ok) {
+      alert("✅ Bình luận đã được xoá");
+      await fetchComments(postId, idx);
+    } else {
+      alert("❌ Xoá bình luận thất bại.");
+    }
+  } catch (err) {
+    console.error("Lỗi xoá bình luận:", err);
+    alert("⚠️ Có lỗi xảy ra.");
+  }
+};
+
+const handleDeleteBlog = async (postId) => {
+  if (!window.confirm("Bạn có chắc chắn muốn xoá bài viết này?")) return;
+
+  try {
+    const res = await fetch(`https://localhost:7157/api/blog/delete/${postId}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+      }
+    });
+
+    if (res.ok) {
+      alert("✅ Bài viết đã được xoá.");
+      // Reload lại blog
+      const updated = blogs.filter((b) => b.postId !== postId);
+      setBlogs(updated);
+    } else {
+      alert("❌ Xoá bài viết thất bại.");
+    }
+  } catch (err) {
+    console.error("Lỗi xoá blog:", err);
+    alert("⚠️ Có lỗi xảy ra.");
+  }
+};
+
+
+const renderComments = (comments, idx, postId, blogAuthorId, level = 0) => {
+  const currentUserId = parseInt(localStorage.getItem("userId"));
+  const currentUserRole = parseInt(localStorage.getItem("role"));
+
+  return comments.map((c) => {
+    const canDelete =
+      currentUserId === blogAuthorId ||
+      currentUserId === c.userId ||
+      currentUserRole === 2;
+    console.log("🧾 Comment:", {
+      commentId: c.blogCommentId,
+      commentAuthorId: c.userId,
+      blogAuthorId: blogAuthorId,
+      currentUserId,
+      currentUserRole
+    });
+
+    console.log("✅ isBlogOwner:", currentUserId === blogAuthorId);
+    console.log("✅ isCommentAuthor:", currentUserId === c.userId);
+    console.log("✅ isAdmin:", currentUserRole === 2);    
+
+    return (
+      <div
+        key={c.blogCommentId}
+        className={`ml-[${level * 20}px] border-l-2 border-gradient-to-b from-indigo-200 to-purple-200 pl-4 mt-3 animate-fade-in-up transition-all duration-300 hover:border-l-indigo-400`}
+      >
+        <div className="bg-gradient-to-r from-slate-50/80 to-indigo-50/60 rounded-xl px-4 py-3 shadow-sm hover:shadow-md transition-all duration-300 transform hover:-translate-y-0.5 border border-slate-100">
+          <p className="text-sm font-medium flex items-center">
+            <span className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-xs mr-3 shadow-sm">
+              {c.user?.[0] || "?"}
             </span>
-            <button
-              onClick={() => setActiveReply(null)}
-              className="text-red-500 hover:text-red-700 transition-colors duration-200 hover:bg-red-50 px-2 py-1 rounded-md text-xs"
-            >
-              Cancel
-            </button>
+            <span className="text-slate-800">{c.user}</span>
+            <span className="text-slate-500 italic text-xs ml-2 bg-slate-200 px-2 py-1 rounded-full">
+              {c.role} • {new Date(c.createdAt).toLocaleString()}
+            </span>
+          </p>
+
+          <p className="text-sm mt-2 text-slate-700 leading-relaxed">{c.content}</p>
+
+          <div className="mt-2 flex gap-2">
+            {isLoggedIn && (
+              <button
+                className="text-indigo-500 text-xs hover:text-indigo-700 transition-colors duration-200 flex items-center gap-1 hover:bg-indigo-50 px-3 py-1 rounded-md border border-indigo-100 shadow-sm"
+                onClick={() => {
+                  setActiveReply({ idx, parentId: c.blogCommentId });
+                  setCommentTextReply("");
+                }}
+              >
+                ↩️ Reply
+              </button>
+            )}
+
+            {canDelete && (
+              <button
+                onClick={() => handleDeleteComment(c.blogCommentId, postId, idx)}
+                className="text-red-500 text-xs hover:text-red-700 transition-colors duration-200 flex items-center gap-1 hover:bg-red-50 px-3 py-1 rounded-md border border-red-100 shadow-sm"
+              >
+                🗑 Delete
+              </button>
+            )}
           </div>
-          <div className="flex gap-3">
-            <input
-              type="text"
-              placeholder="Write a reply..."
-              className="flex-1 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
-              value={commentText}
-              onChange={(e) => setCommentText(e.target.value)}
-            />
-            <button
-              className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg text-sm hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
-              onClick={async () => {
-                if (!commentText.trim()) return;
 
-                const payload = {
-                  postId: postId,
-                  content: commentText.trim(),
-                  parentCommentId: c.blogCommentId
-                };
-
-                await fetch("https://localhost:7157/api/blog/comment", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${localStorage.getItem("accessToken")}`
-                  },
-                  body: JSON.stringify(payload)
-                });
-
-                await fetchComments(postId, idx);
-                setCommentText("");
-                setActiveReply(null);
-              }}
-            >
-              Post
-            </button>
-          </div>
         </div>
-      )}
 
-      {/* Đệ quy comment con */}
-      {c.children && renderComments(c.children, idx, postId, level + 1)}
-    </div>
-  ));
+        {activeReply?.idx === idx && activeReply.parentId === c.blogCommentId && (
+          <div className="mt-3 space-y-3 animate-slide-down bg-white/80 backdrop-blur-sm p-4 rounded-xl border border-indigo-100 shadow-sm">
+            <div className="text-sm text-slate-600 flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <span className="text-indigo-500">↪️</span>
+                Replying to <span className="font-medium text-slate-800">{c.user}</span>
+              </span>
+              <button
+                onClick={() => setActiveReply(null)}
+                className="text-red-500 hover:text-red-700 transition-colors duration-200 hover:bg-red-50 px-2 py-1 rounded-md text-xs"
+              >
+                Cancel
+              </button>
+            </div>
+            <div className="flex gap-3">
+              <input
+                type="text"
+                placeholder="Write a reply..."
+                className="flex-1 border border-slate-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm"
+                value={commentTextReply}
+                onChange={(e) => setCommentTextReply(e.target.value)}
+              />
+              <button
+                className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-2 rounded-lg text-sm hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                disabled={isApprovingCommentReply}
+                onClick={async () => {
+                  const rawContent = commentTextReply.trim();
+                  if (!rawContent) return;
+
+                  const autoMode = localStorage.getItem("autoMode") === "true";
+                  const criteria = localStorage.getItem("autoCriteria") || "";
+
+                  if (autoMode) {
+                    try {
+                      setIsApprovingCommentReply(true);
+                      const aiRes = await fetch("https://localhost:7157/api/chatbot/analyze-blog", {
+                        method: "POST",
+                        headers: {
+                          "Content-Type": "application/json",
+                          Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+                        },
+                        body: JSON.stringify({
+                          content: `Comment: ${rawContent}`,
+                          criteria
+                        })
+                      });
+
+                      const aiResult = await aiRes.json();
+                      console.log("[AI-Reply-Comment]", aiResult);
+
+                      if (aiResult.decision === "Rejected") {
+                        alert("❌ Bình luận bị từ chối:\n" + aiResult.reason);
+                        setIsApprovingCommentReply(false);
+                        return;
+                      }
+                    } catch (err) {
+                      console.error("AI lỗi:", err);
+                      alert("⚠️ Không thể kiểm duyệt bằng AI.");
+                      setIsApprovingCommentReply(false);
+                      return;
+                    }
+                  }
+
+                  const payload = {
+                    postId: postId,
+                    content: rawContent,
+                    parentCommentId: c.blogCommentId
+                  };
+
+                  await fetch("https://localhost:7157/api/blog/comment", {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/json",
+                      Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+                    },
+                    body: JSON.stringify(payload)
+                  });
+
+                  await fetchComments(postId, idx);
+                  setCommentTextReply("");
+                  setActiveReply(null);
+                  setIsApprovingCommentReply(false);
+                }}
+              >
+              <button
+                disabled={isApprovingCommentReply}
+                className="... flex items-center gap-2"
+              >
+                {isApprovingCommentReply ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                    Approving...
+                  </>
+                ) : (
+                  "Post"
+                )}
+              </button>
+
+              </button>
+            </div>
+          </div>
+        )}
+
+        {c.children && renderComments(c.children, idx, postId, blogAuthorId, level + 1)}
+      </div>
+    );
+  });
+};
+
 
   const filteredBlogs = blogs
     .filter((b) =>
@@ -269,19 +409,24 @@ const renderComments = (comments, idx, postId, level = 0) =>
               {/* Actions */}
               <div className="flex justify-between items-center text-sm text-slate-600 mt-4 pt-4 border-t border-slate-100">
                 <div className="flex items-center gap-4">
-                  {blog.authorName === currentUsername && (
-                    <button
-                      onClick={() => navigate(`/blogs/edit/${blog.id}`)}
-                      className="text-amber-600 hover:text-amber-700 transition-colors duration-200 flex items-center gap-1 hover:bg-amber-50 px-3 py-1 rounded-lg"
-                    >
-                      <span>✏️</span>
-                      Edit
-                    </button>
+                  {(blog.userId === parseInt(localStorage.getItem("userId")) || parseInt(localStorage.getItem("role")) === 2) && (
+                    <>
+                      <button
+                        onClick={() => navigate(`/blogs/edit/${blog.postId}`)}
+                        className="text-amber-600 hover:text-amber-700 transition-colors duration-200 flex items-center gap-1 hover:bg-amber-50 px-3 py-1 rounded-lg"
+                      >
+                        ✏️ Edit
+                      </button>
+
+                      <button
+                        onClick={() => handleDeleteBlog(blog.postId)}
+                        className="text-red-500 hover:text-red-600 transition-colors duration-200 flex items-center gap-1 hover:bg-red-50 px-3 py-1 rounded-lg"
+                      >
+                        🗑 Delete
+                      </button>
+                    </>
                   )}
-                  <span className="flex items-center gap-1 text-slate-500">
-                    <span>👁</span>
-                    0 views
-                  </span>
+
                 </div>
                 <button
                   onClick={() => {
@@ -312,17 +457,53 @@ const renderComments = (comments, idx, postId, level = 0) =>
                         type="text"
                         placeholder="Write a comment..."
                         className="flex-1 border-2 border-slate-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition-all duration-200 bg-white/80 backdrop-blur-sm shadow-sm"
-                        value={commentText}
-                        onChange={(e) => setCommentText(e.target.value)}
+                        value={commentTextRoot}
+                        onChange={(e) => setCommentTextRoot(e.target.value)}
                       />
                       <button
                         className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white px-6 py-3 rounded-xl text-sm hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg font-medium"
+                        disabled={isApprovingCommentRoot}
                         onClick={async () => {
-                          if (!commentText.trim()) return;
+                          const rawContent = commentTextRoot.trim();
+                          if (!rawContent) return;
+
+                          const autoMode = localStorage.getItem("autoMode") === "true";
+                          const criteria = localStorage.getItem("autoCriteria") || "";
+
+                          if (autoMode) {
+                            try {
+                              setIsApprovingCommentRoot(true);
+                              const aiRes = await fetch("https://localhost:7157/api/chatbot/analyze-blog", {
+                                method: "POST",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                  Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+                                },
+                                body: JSON.stringify({
+                                  content: `Comment: ${rawContent}`,
+                                  criteria
+                                })
+                              });
+
+                              const aiResult = await aiRes.json();
+                              console.log("[AI-Comment-Gốc]", aiResult);
+
+                              if (aiResult.decision === "Rejected") {
+                                alert("❌ Bình luận bị từ chối:\n" + aiResult.reason);
+                                setIsApprovingCommentRoot(false);
+                                return;
+                              }
+                            } catch (err) {
+                              console.error("AI lỗi:", err);
+                              alert("⚠️ Không thể kiểm duyệt bằng AI.");
+                              setIsApprovingCommentRoot(false);
+                              return;
+                            }
+                          }
 
                           const payload = {
                             postId: blog.postId,
-                            content: commentText.trim(),
+                            content: rawContent,
                             parentCommentId: null
                           };
 
@@ -336,23 +517,38 @@ const renderComments = (comments, idx, postId, level = 0) =>
                           });
 
                           await fetchComments(blog.postId, idx);
-                          setCommentText("");
+                          setCommentTextRoot(""); 
+                          setIsApprovingCommentRoot(false);
                         }}
                       >
-                        Post
+                        {isApprovingCommentRoot ? (
+                          <>
+                            <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                            Approving...
+                          </>
+                        ) : (
+                          "Post"
+                        )}
                       </button>
+
                     </div>
                   )}
 
                   {/* ✅ Hiển thị danh sách comment phân cấp */}
                   <div className="space-y-3">
-                    {commentsData[idx]
-                      ? renderComments(commentsData[idx], idx, blog.postId)
-                      : <div className="flex items-center justify-center py-8 text-slate-500">
-                          <div className="animate-spin w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full mr-2"></div>
-                          Loading comments...
-                        </div>}
+                    {commentsData[idx] ? (
+                      <>
+                        {console.log("📌 blog.UserId =", blog.userId)}
+                        {renderComments(commentsData[idx], idx, blog.postId, blog.userId)}
+                      </>
+                    ) : (
+                      <div className="flex items-center justify-center py-8 text-slate-500">
+                        <div className="animate-spin w-6 h-6 border-2 border-indigo-500 border-t-transparent rounded-full mr-2"></div>
+                        Loading comments...
+                      </div>
+                    )}
                   </div>
+
                 </div>
               )}
             </div>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const EditProblem = () => {
   const { id: problemId } = useParams();
@@ -21,6 +22,7 @@ const EditProblem = () => {
     solutionExplanation: "",
     solutionCode: "",
     generateInputCode: "",
+    descriptionForGenerator: "",
     numTest: 1
   });
 
@@ -29,6 +31,8 @@ const EditProblem = () => {
   const [moduleContents, setModuleContents] = useState([]);
   const [selectedSectionId, setSelectedSectionId] = useState("");
   const [selectedModuleId, setSelectedModuleId] = useState(null);
+  const [isBuilding, setIsBuilding] = useState(false);
+
 
 
   const [constraintInput, setConstraintInput] = useState({ variable: "", min: "", max: "" });
@@ -52,6 +56,9 @@ const EditProblem = () => {
 
 
   const location = useLocation();
+
+  const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchModulesBySection = (sectionId) => {
     const token = localStorage.getItem("accessToken");
@@ -448,6 +455,7 @@ const submitSampleTestcases = async () => {
 
 
 const handleSubmit = async () => {
+  setIsSubmitting(true);
   const token = localStorage.getItem("accessToken");
   const isTestcaseModified = (a, b) => {
     if (!a || !b) return true;
@@ -573,11 +581,69 @@ const handleSubmit = async () => {
     }
 
     alert("✅ All changes submitted successfully!");
+  navigate("/professor/problems");
   } catch (err) {
     console.error("❌ Submit error:", err);
     alert("❌ An error occurred while submitting.");
   }
+   finally {
+    setIsSubmitting(false); 
+  }
 };
+const cleanCode = (raw) => {
+  return raw
+    .replace(/```[a-zA-Z]*\n?/g, "") // loại bỏ ```cpp hoặc ```python
+    .replace(/```$/, "")             // loại bỏ dấu ``` cuối
+    .trim();
+};
+
+const handleBuildInputGenerator = async () => {
+  const { inputFormat, solutionLanguage, constraints, descriptionForGenerator } = form;
+
+  if (!inputFormat.trim()) return alert("⚠️ Please enter Input Format");
+  if (!solutionLanguage.trim()) return alert("⚠️ Please select a Language");
+  if (!constraints || constraints.length === 0) return alert("⚠️ Please add at least one constraint");
+
+  setIsBuilding(true);
+
+  const payload = {
+    inputFormat,
+    language: solutionLanguage,
+    description: descriptionForGenerator || "",
+    constraints: constraints.map(c => ({
+      variable: c.variable,
+      minValue: parseInt(c.min),
+      maxValue: parseInt(c.max)
+    })),
+    sampleInput: testcases.length > 0 ? testcases[0].input : ""
+  };
+
+  try {
+    const token = localStorage.getItem("accessToken");
+    const res = await fetch("https://localhost:7157/api/chatbot/generate-input-code", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    if (res.ok && data.code) {
+      const clean = cleanCode(data.code);
+      setForm(prev => ({ ...prev, generateInputCode: clean }));
+    } else {
+      alert("❌ Error: " + (data.message || "Unknown error"));
+    }
+  } catch (err) {
+    console.error("❌ API error:", err);
+    alert("❌ Failed to call backend.");
+  } finally {
+    setIsBuilding(false);
+  }
+};
+
 
 
   const FormInput = ({ label, type = "text", name, value, onChange, placeholder, className = "", ...props }) => (
@@ -1071,7 +1137,17 @@ const handleSubmit = async () => {
                           { value: "java", label: "Java" }
                         ]}
                       />
-
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Your Description for the Code
+                      </label>
+                      <textarea
+                        name="descriptionForGenerator"
+                        value={form.descriptionForGenerator || ""}
+                        onChange={(e) => setForm({ ...form, descriptionForGenerator: e.target.value })}
+                        placeholder="Describe what the input generator should do (e.g., generate array of size n with random values)..."
+                        rows={3}
+                        className="w-full border rounded px-3 py-2"
+                      />
                       <div className="mb-4">
                         <label className="block text-gray-700 font-semibold mb-2">Generate Input Code</label>
                         <div className="relative">
@@ -1089,6 +1165,37 @@ const handleSubmit = async () => {
                             rows={8}
                             className="w-full px-4 py-2 rounded-lg border text-black border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 font-mono pt-12"
                           />
+                        </div>
+                        <div className="flex justify-center mt-4">
+                          <button
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 mt-2 rounded-lg transition duration-200 flex items-center justify-center"
+                            onClick={handleBuildInputGenerator}
+                            disabled={isBuilding}
+                          >
+                            {isBuilding && (
+                              <svg
+                                className="animate-spin h-5 w-5 mr-2 text-white"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                />
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v8H4z"
+                                />
+                              </svg>
+                            )}
+                            {isBuilding ? "Generating..." : "🤖 Let AlgoExpert Build It"}
+                          </button>
                         </div>
                       </div>
                     </>
@@ -1191,20 +1298,27 @@ const handleSubmit = async () => {
             </button>
 
             <button
-              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md transition duration-200"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg shadow-md transition duration-200 flex items-center justify-center"
               onClick={() => {
                 const tabs = ["details", "description", "constraints", "samples", "solution"];
                 const currentIndex = tabs.indexOf(activeTab);
                 if (currentIndex < tabs.length - 1) {
                   setActiveTab(tabs[currentIndex + 1]);
                 } else {
-                  // Submit the form
                   handleSubmit();
                 }
               }}
+              disabled={isSubmitting}
             >
-              {activeTab === "solution" ? "Submit" : "Next"}
+              {isSubmitting ? (
+                <svg className="animate-spin h-5 w-5 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+              ) : null}
+              {activeTab === "solution" ? (isSubmitting ? "Saving..." : "Save Changes") : "Next"}
             </button>
+
           </div>
         </div>
       </div>

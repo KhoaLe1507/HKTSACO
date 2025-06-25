@@ -1,5 +1,8 @@
-import React from "react";
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import ChatBot from "./Components/Chatbot";
+
 import Navbar from "./Components/Navbar";
 import Footer from "./Components/Footer";
 import HomePage from "./Pages/HomePage";
@@ -34,9 +37,16 @@ import ViewSolution from "./Pages/ViewSolution";
 
 import AllSubmission from "./Pages/AllSubmission";
 const App = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (window.resetChatContext) {
+      window.resetChatContext(); // ✅ reset mỗi lần route thay đổi
+    }
+  }, [location.pathname]);
+
   return (
     <AuthProvider>
-      <BrowserRouter>
         <div className="bg-white min-h-screen text-gray-800 font-[Inter] flex flex-col justify-between">
           <Navbar />
 
@@ -77,8 +87,8 @@ const App = () => {
           </main>
 
           <Footer />
+          <ChatBot /> 
         </div>
-      </BrowserRouter>
     </AuthProvider>
   );
 };

@@ -218,12 +218,16 @@ const LoginPage = () => {
           </form>
           
           {/* Register link */}
-          <div className={`text-center mt-8 text-gray-600 transform transition-all duration-500 delay-500 ${mounted ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
+          <p className="text-center mt-8 text-gray-600">
             Don't have an account? 
-            <a href="#" className="text-blue-500 hover:text-blue-700 ml-1 transition-colors duration-300 font-medium">
+            <button
+              onClick={() => navigate("/register")}
+              className="text-blue-500 hover:text-blue-700 ml-1 transition-colors duration-300 font-medium"
+            >
               Register
-            </a>
-          </div>
+            </button>
+          </p>
+
         </div>
       </div>
     </div>

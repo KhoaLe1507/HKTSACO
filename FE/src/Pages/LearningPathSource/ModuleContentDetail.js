@@ -40,6 +40,15 @@ const ModuleContentDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (window.setChatContext) {
+      window.setChatContext({
+        type: "module",
+        id: parseInt(moduleId),
+      });
+    }
+  }, [moduleId]);
+
+  useEffect(() => {
     const sectionId = levelToSectionId[level?.toLowerCase()];
     if (!sectionId || !moduleId) return;
 

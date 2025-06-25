@@ -25,63 +25,148 @@ const AddBlog = () => {
     }
   };
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
+const handleSubmit = async () => {
+  setIsSubmitting(true);
 
-    let uploadedImageUrl = "";
+  let uploadedImageUrl = "";
 
-    if (imageFile) {
-      const formData = new FormData();
-      formData.append("file", imageFile);
-
-      try {
-        const res = await fetch("https://localhost:7157/api/upload/image", {
-          method: "POST",
-          body: formData,
-        });
-        const data = await res.json();
-        uploadedImageUrl = data.url;
-      } catch (err) {
-        console.error("Image upload failed", err);
-        alert("Image upload failed.");
-        setIsSubmitting(false);
-        return;
-      }
-    }
-
-    const blogPayload = {
-      title,
-      content,
-      visibility,
-      imageUrl: uploadedImageUrl,
-    };
+  if (imageFile) {
+    const formData = new FormData();
+    formData.append("file", imageFile);
 
     try {
-      const token = localStorage.getItem("accessToken"); // hoặc sessionStorage tùy cách bạn lưu
-
-      await fetch("https://localhost:7157/api/blog/add", {
+      const res = await fetch("https://localhost:7157/api/upload/image", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify(blogPayload),
+        body: formData,
       });
-
-      alert("Blog added successfully!");
-      setTitle("");
-      setContent("");
-      setVisibility("Private");
-      setImageFile(null);
-      setImagePreview(null);
-      setImageUrl("");
+      const data = await res.json();
+      uploadedImageUrl = data.url;
     } catch (err) {
-      console.error("Blog submit failed", err);
-      alert("Blog submission failed.");
-    } finally {
+      console.error("Image upload failed", err);
+      alert("Image upload failed.");
       setIsSubmitting(false);
+      return;
     }
+  }
+
+  const autoMode = localStorage.getItem("autoMode") === "true";
+  const criteria = localStorage.getItem("autoCriteria") || "";
+  
+
+  console.log("[AUTO] Auto Approval Enabled:", autoMode);
+  console.log("[AUTO] Approval Criteria:", criteria);
+  // Bước 1: Gửi blog (status mặc định là Pending)
+  const blogPayload = {
+    title,
+    content,
+    visibility,
+    imageUrl: uploadedImageUrl,
+    approvalStatus: "Pending"
   };
+
+  try {
+    const token = localStorage.getItem("accessToken");
+
+    const res = await fetch("https://localhost:7157/api/blog/add", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify(blogPayload),
+    });
+
+    if (!res.ok) throw new Error("Failed to add blog");
+
+    const addedBlog = await res.json();
+    const postId = addedBlog.postId;
+
+
+    // Bước 2: Nếu có autoMode, thì gửi content đến Gemini để duyệt
+    if (autoMode) {
+      try {
+        console.log("[AI] Sending to Gemini:", {
+          content: `Title: ${title}\n\nContent: ${content}`,
+          criteria,
+        });
+
+        const aiRes = await fetch("https://localhost:7157/api/chatbot/analyze-blog", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            content: `Title: ${title}\n\nContent: ${content}`,
+            criteria,
+          }),
+        });
+
+        const aiResult = await aiRes.json();
+
+        console.log("[AI] Gemini Response:", aiResult);
+
+        if (aiResult.decision === "Rejected") {
+          alert("🚫 Blog bị từ chối bởi AI:\n" + aiResult.reason);
+
+          await fetch(`https://localhost:7157/api/blog/approve/${postId}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              newStatus: "Rejected"
+            }),
+          });
+
+          setIsSubmitting(false);
+          return;
+        }
+
+
+        // Bước 3: Nếu được duyệt → gọi API update status = Approved
+        const approvalRes = await fetch(`https://localhost:7157/api/blog/approve/${postId}`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            newStatus: "Approved"
+          }),
+        });
+
+        if (!approvalRes.ok) {
+          console.warn("✅ Blog thêm thành công nhưng cập nhật trạng thái thất bại");
+        } else {
+          alert("✅ Blog đã được AI duyệt và đăng!");
+        }
+
+      } catch (err) {
+        console.error("AI approval failed", err);
+        alert("⚠️ Không thể dùng AI duyệt. Blog vẫn được gửi ở trạng thái Pending.");
+      }
+    } else {
+      alert("✅ Blog đã được gửi với trạng thái Pending.");
+    }
+
+    // Reset form
+    setTitle("");
+    setContent("");
+    setVisibility("Private");
+    setImageFile(null);
+    setImagePreview(null);
+    setImageUrl("");
+
+  } catch (err) {
+    console.error("Blog submit failed", err);
+    alert("❌ Blog submission failed.");
+  } finally {
+    setIsSubmitting(false);
+  }
+};
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 py-8">
@@ -221,17 +306,17 @@ const AddBlog = () => {
                     : "bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white"
                 }`}
               >
-                {isSubmitting ? (
-                  <>
-                    <div className="animate-spin w-6 h-6 border-2 border-white border-t-transparent rounded-full"></div>
-                    Publishing...
-                  </>
-                ) : (
-                  <>
-                    <span className="text-xl">🚀</span>
-                    Publish Blog
-                  </>
-                )}
+              {isSubmitting ? (
+                <>
+                  <div className="animate-spin w-6 h-6 border-2 border-white border-t-transparent rounded-full"></div>
+                  {localStorage.getItem("autoMode") === "true" ? "AI is approving your POST..." : "Submitting..."}
+                </>
+              ) : (
+                <>
+                  <span className="text-xl">🚀</span>
+                  Publish Blog
+                </>
+              )}
               </button>
             </div>
 

@@ -4,6 +4,27 @@ const ApprovedBlogPage = () => {
   const [blogs, setBlogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
+  const [autoMode, setAutoMode] = useState(() => localStorage.getItem("autoMode") === "true");
+  const [criteria, setCriteria] = useState(() => localStorage.getItem("autoCriteria") || "");
+
+  const [analysisResult, setAnalysisResult] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+
+  const [analyzingId, setAnalyzingId] = useState(null); // lưu blog đang phân tích
+
+
+  const handleToggleAutoMode = () => {
+    const newValue = !autoMode;
+    setAutoMode(newValue);
+    localStorage.setItem("autoMode", newValue.toString());
+  };
+
+  const handleCriteriaChange = (e) => {
+    const value = e.target.value;
+    setCriteria(value);
+    localStorage.setItem("autoCriteria", value);
+  };
+
 
   const fetchPendingBlogs = async () => {
     try {
@@ -64,6 +85,34 @@ const ApprovedBlogPage = () => {
     );
   }
 
+  const handleAnalyze = async (blog) => {
+    const criteria = localStorage.getItem("autoCriteria") || "";
+    const fullContent = `Title: ${blog.title}\n\n${blog.content}`;
+
+    try {
+      setAnalyzingId(blog.postId); // Bắt đầu loading
+
+      const res = await fetch("https://localhost:7157/api/chatbot/analyze-blog-full", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("accessToken")}`
+        },
+        body: JSON.stringify({ content: fullContent, criteria })
+      });
+
+      const result = await res.json();
+      setAnalysisResult(result);
+      setShowModal(true);
+    } catch (err) {
+      alert("❌ AI phân tích thất bại.");
+    } finally {
+      setAnalyzingId(null); // Dừng loading
+    }
+  };
+
+
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50/30 py-8 px-4">
       <div className="max-w-4xl mx-auto">
@@ -73,6 +122,28 @@ const ApprovedBlogPage = () => {
             📝 Pending Blog Posts
           </h1>
           <p className="text-slate-600">Review and moderate blog posts awaiting approval</p>
+        </div>
+
+        <div className="bg-white/80 p-4 mb-6 rounded-xl border shadow">
+          <label className="flex items-center gap-3 font-semibold text-slate-700 mb-2">
+            <input
+              type="checkbox"
+              checked={autoMode}
+              onChange={handleToggleAutoMode}
+              className="w-5 h-5 accent-indigo-500"
+            />
+            Enable Automatic AI Approval
+          </label>
+
+          {autoMode && (
+            <textarea
+              value={criteria}
+              onChange={handleCriteriaChange}
+              placeholder="Enter approval criteria..."
+              rows={3}
+              className="w-full p-3 border border-slate-300 rounded-lg text-sm text-slate-700"
+            />
+          )}
         </div>
 
         {/* Stats Card */}
@@ -164,6 +235,24 @@ const ApprovedBlogPage = () => {
                   </div>
                   
                   <div className="flex items-center gap-3">
+                  <button
+                    disabled={analyzingId === blog.postId}
+                    onClick={() => handleAnalyze(blog)}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium shadow-sm flex items-center gap-2 ${
+                      analyzingId === blog.postId
+                        ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                        : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+                    }`}
+                  >
+                    {analyzingId === blog.postId ? (
+                      <>
+                        <div className="w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                        Analyzing...
+                      </>
+                    ) : (
+                      "🔍 Using AI for Analytic"
+                    )}
+                  </button>
                     <button
                       onClick={() => handleApproval(blog.postId, "Approved")}
                       disabled={processingId === blog.postId}
@@ -207,6 +296,26 @@ const ApprovedBlogPage = () => {
                 </div>
               </div>
             ))}
+            {showModal && analysisResult && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+                <div className="bg-white p-6 rounded-xl shadow-lg w-[90%] max-w-md space-y-4">
+                  <h2 className="text-xl font-semibold text-indigo-700">🔍 AI Analysis Result</h2>
+                  <p><b>📝 Summary:</b> {analysisResult.summary}</p>
+                  <p><b>🚫 Violations:</b> {analysisResult.violations || "None"}</p>
+                  <p><b>😊 Sentiment:</b> {analysisResult.sentiment}</p>
+                  <p><b>✅ Decision:</b> {analysisResult.decision}</p>
+                  <p><b>📌 Reason:</b> {analysisResult.reason}</p>
+
+                  <button
+                    onClick={() => setShowModal(false)}
+                    className="mt-4 px-4 py-2 rounded-lg bg-indigo-500 text-white hover:bg-indigo-600"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
+
           </div>
         )}
       </div>

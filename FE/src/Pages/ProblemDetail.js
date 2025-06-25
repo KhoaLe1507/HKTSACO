@@ -21,6 +21,15 @@ const ProblemDetails = () => {
   const { id } = useParams();
 
   useEffect(() => {
+    if (window.setChatContext) {
+      window.setChatContext({
+        type: "problem",
+        id: parseInt(id)
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
     const fetchProblem = async () => {
       try {
         const token = localStorage.getItem("accessToken");

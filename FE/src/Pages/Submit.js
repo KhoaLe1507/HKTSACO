@@ -18,6 +18,15 @@ const Submit = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
+  useEffect(() => {
+    if (window.setChatContext) {
+      window.setChatContext({
+        type: "problem",
+        id: parseInt(id)
+      });
+    }
+  }, [id]);
+
   const languages = [
     {
       id: "cpp",

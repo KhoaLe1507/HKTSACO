@@ -88,6 +88,15 @@ const ViewSolution = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    if (window.setChatContext) {
+      window.setChatContext({
+        type: "problem",
+        id: parseInt(id)
+      });
+    }
+  }, [id]);
+
+  useEffect(() => {
     const fetchSolution = async () => {
       setIsLoading(true);
       try {
